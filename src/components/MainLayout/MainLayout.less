@@ -1,0 +1,41 @@
+.layout_wrap {
+  width: 100vw;
+  height: 100vh;
+
+  .layout_left {
+    .logo {
+      height: 32px;
+      background: #333;
+      border-radius: 6px;
+      margin: 16px;
+    }
+  }
+
+  .layout_top {
+    background: rgb(255, 255, 255) none repeat scroll 0 0;
+  }
+
+  .layout_body_wrap {
+    padding: 24px 32px 0;
+    overflow: scroll;
+
+    .layout_body {
+      padding: 24px;
+      border-radius: 4px;
+      background: rgb(255, 255, 255) none repeat scroll 0 0;
+      min-height: 80vh;
+      overflow: scroll;
+    }
+  }
+
+  .layout_bottom {
+    text-align: center;
+    height: 24px;
+  }
+}
+
+:global {
+  html, body, #root {
+    height: 100%;
+  }
+}
