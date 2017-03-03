@@ -4,21 +4,21 @@ import { Table, Pagination, Popconfirm ,Row,Col,Button,Icon} from 'antd';
 import { routerRedux } from 'dva/router';
 import styles from '../list.less';
 let PAGE_SIZE = 10
-import ReportModal from './ReportModal';
+import ColorModal from './ColorModal';
 
-function Reports({ dispatch, list: dataSource, loading, total, page: current }) {
+function Colors({ dispatch, list: dataSource, loading, total, page: current }) {
 
   function deleteHandler(itm) {
       console.log('deleteHandler',itm)
     dispatch({
-      type: 'reports/remove',
+      type: 'colors/remove',
       payload: {id:itm._id},
     });
   }
 
   function pageChangeHandler(page) {
     dispatch(routerRedux.push({
-      pathname: '/reports',
+      pathname: '/colors',
       query: { page },
     }));
   }
@@ -26,12 +26,12 @@ function Reports({ dispatch, list: dataSource, loading, total, page: current }) 
   function editHandler(id, values) {
       if(id){
           dispatch({
-            type: 'reports/patch',
+            type: 'colors/patch',
             payload: { id, values },
           });
       }else {
           dispatch({
-            type: 'reports/add',
+            type: 'colors/add',
             payload: { id, values },
           });
       }
@@ -46,30 +46,29 @@ function Reports({ dispatch, list: dataSource, loading, total, page: current }) 
       render: text => <a href="">{text}</a>,
     },
     {
-      title: '编号',
-      dataIndex: 'cnum',
-      key: 'cnum',
-      render: text => <a href="">{text}</a>,
-    },
-    {
       title: '名字',
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: '地址',
-      dataIndex: 'address',
-      key: 'address',
+      title: '色系',
+      dataIndex: 'seriesId',
+      key: 'seriesId',
     },
     {
-      title: 'Operation',
+      title: '分类',
+      dataIndex: 'categoryId',
+      key: 'categoryId',
+    },
+    {
+      title: '操作',
       key: 'operation',
       render: (text, record) => (
         <span className={styles.operation2}>
-          <ReportModal record={record} onOk={editHandler.bind(null, record._id)}>
+          <ColorModal record={record} onOk={editHandler.bind(null, record._id)}>
             <Icon type="edit" className={styles.icon}/>
-          </ReportModal>
-          <Popconfirm title={"确定要删除客户【"+record.name+"】吗？"} onConfirm={deleteHandler.bind(null, record)}>
+          </ColorModal>
+          <Popconfirm title={"确定要删除颜色【"+record.name+"】吗？"} onConfirm={deleteHandler.bind(null, record)}>
             <Icon type="delete" className={styles.icon}/>
           </Popconfirm>
         </span>
@@ -81,9 +80,9 @@ function Reports({ dispatch, list: dataSource, loading, total, page: current }) 
     <div className={styles.normal}>
       <div>
         <Row type="flex" justify="end">
-            <ReportModal record={{}} onOk={editHandler.bind(null,'')}>
+            <ColorModal record={{}} onOk={editHandler.bind(null,'')}>
                 <Button  icon="plus-circle-o">添加</Button>
-            </ReportModal>
+            </ColorModal>
         </Row>
         <Table
           columns={columns}
@@ -106,13 +105,13 @@ function Reports({ dispatch, list: dataSource, loading, total, page: current }) 
 
 function mapStateToProps(state) {
 
-  const { list, total, page } = state.reports;
+  const { list, total, page } = state.colors;
   return {
-    loading: state.loading.models.reports,
+    loading: state.loading.models.colors,
     list,
     total,
     page,
   };
 }
 
-export default connect(mapStateToProps)(Reports);
+export default connect(mapStateToProps)(Colors);

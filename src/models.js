@@ -53,7 +53,7 @@ let generate = (name,serviceName)=> {return {
   },
 }}
 
-['Buy','Customer','Order','Receive','Report','User'].map(cls=>{
+['Buy','Customer','Order','Receive','Color','User','Series'].map(cls=>{
     exports[cls+'Model']= generate(cls.toLowerCase()+'s',cls+'Service')
 })
 

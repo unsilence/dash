@@ -28,6 +28,7 @@ try{
       })
     //   var d = await models.login()
     //   console.log("dd",{d})
+    console.log(app);
     app.router(require('./router'));
     app.start('#root');
 

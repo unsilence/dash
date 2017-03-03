@@ -16,7 +16,7 @@ async function request(url, dt) {
   return ret;
 }
 
-['Buy','Customer','Order','Receive','Report','User'].map(cls=>{
+['Buy','Customer','Order','Receive','Color','User','Seriess'].map(cls=>{
     exports[cls+'Service']={
         fetch({ page = 1 }) {
             return request(`/api/${cls}/fetch?token=${localStorage.token}`,{orderBy:{cnum:-1},limit:10,startPos:10*(page-1)});

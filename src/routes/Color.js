@@ -1,14 +1,14 @@
 import React from 'react';
 import { connect } from 'dva';
 import styles from './common.less';
-import ReportsComponent from '../components/Reports/Reports';
+import ColorsComponent from '../components/Color/Colors';
 import MainLayout from '../components/MainLayout/MainLayout';
 
-function Reports(props) {
+function Colors(props) {
   return (
       <MainLayout location={location}>
         <div className={styles.normal}>
-          <ReportsComponent />
+          <ColorsComponent />
         </div>
       </MainLayout>
   );
@@ -18,4 +18,4 @@ function mapStateToProps(state) {
   return {};
 }
 
-export default connect(mapStateToProps)(Reports);
+export default connect(mapStateToProps)(Colors);

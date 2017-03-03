@@ -11,7 +11,7 @@
   ],
   "proxy": {
     "/api": {
-      "target": "http://59.110.23.212:10000",
+      "target": "http://localhost:20000",
       "changeOrigin": true,
       "pathRewrite": {
         "^/api": "/"

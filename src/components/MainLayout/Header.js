@@ -28,13 +28,15 @@ function Header({ location }) {
       <Menu.Item key="/buys">
         <Link to="/buys"><Icon type="rocket" />支付</Link>
       </Menu.Item>
-      <Menu.Item key="/reports">
-        <Link to="/reports"><Icon type="calculator" />已竣工</Link>
+      <Menu.Item key="/colors">
+        <Link to="/colors"><Icon type="calculator" />颜色</Link>
+      </Menu.Item>
+      <Menu.Item key="/seriess">
+        <Link to="/seriess"><Icon type="calculator" />色系</Link>
       </Menu.Item>
       <Menu.Item key="/404">
         <Link to="/page-you-dont-know"><Icon type="frown-circle" />404</Link>
       </Menu.Item>
-
     </Menu>
   );
 }
