@@ -1,14 +1,14 @@
 import React from 'react';
 import { connect } from 'dva';
 import styles from './common.less';
-import ReceivesComponent from '../components/Receives/Receives';
+import CategorysComponent from '../components/Category/Categorys';
 import MainLayout from '../components/MainLayout/MainLayout';
 
-function Receives(props) {
+function Categorys(props) {
   return (
       <MainLayout location={location}>
         <div className={styles.normal}>
-          <ReceivesComponent />
+          <CategorysComponent />
         </div>
       </MainLayout>
   );
@@ -18,4 +18,4 @@ function mapStateToProps(state) {
   return {};
 }
 
-export default connect(mapStateToProps)(Receives);
+export default connect(mapStateToProps)(Categorys);

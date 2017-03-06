@@ -8,7 +8,7 @@ function Header({ location }) {
       selectedKeys={[location.pathname]}
       mode="vertical"
       theme="dark"
-      
+
     >
       <Menu.Item key="/">
         <Link to="/"><Icon type="home" />首页</Link>
@@ -19,20 +19,20 @@ function Header({ location }) {
       <Menu.Item key="/customers">
         <Link to="/customers"><Icon type="user" />客户</Link>
       </Menu.Item>
-      <Menu.Item key="/receives">
-        <Link to="/receives"><Icon type="pay-circle" />收款</Link>
+      <Menu.Item key="/countrys">
+        <Link to="/countrys"><Icon type="pay-circle" />国家</Link>
       </Menu.Item>
       <Menu.Item key="/orders">
         <Link to="/orders"><Icon type="file" />订单</Link>
       </Menu.Item>
-      <Menu.Item key="/buys">
-        <Link to="/buys"><Icon type="rocket" />支付</Link>
+      <Menu.Item key="/categorys">
+        <Link to="/categorys"><Icon type="rocket" />分类</Link>
       </Menu.Item>
       <Menu.Item key="/colors">
         <Link to="/colors"><Icon type="calculator" />颜色</Link>
       </Menu.Item>
-      <Menu.Item key="/seriess">
-        <Link to="/seriess"><Icon type="calculator" />色系</Link>
+      <Menu.Item key="/serials">
+        <Link to="/serials"><Icon type="calculator" />色系</Link>
       </Menu.Item>
       <Menu.Item key="/404">
         <Link to="/page-you-dont-know"><Icon type="frown-circle" />404</Link>

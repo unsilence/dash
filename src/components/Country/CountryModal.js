@@ -4,7 +4,7 @@ import styles from '../item.less';
 
 const FormItem = Form.Item;
 
-class ReceiveEditModal extends Component {
+class CountryEditModal extends Component {
 
   constructor(props) {
     super(props);
@@ -81,4 +81,4 @@ class ReceiveEditModal extends Component {
   }
 }
 
-export default Form.create()(ReceiveEditModal);
+export default Form.create()(CountryEditModal);

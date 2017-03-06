@@ -4,21 +4,21 @@ import { Table, Pagination, Popconfirm ,Row,Col,Button,Icon} from 'antd';
 import { routerRedux } from 'dva/router';
 import styles from '../list.less';
 let PAGE_SIZE = 10
-import ReceiveModal from './ReceiveModal';
+import CategoryModal from './CategoryModal';
 
-function Receives({ dispatch, list: dataSource, loading, total, page: current }) {
-console.log("ta laizi nali!",dataSource)
+function Categorys({ dispatch, list: dataSource, loading, total, page: current }) {
+
   function deleteHandler(itm) {
       console.log('deleteHandler',itm)
     dispatch({
-      type: 'receives/remove',
+      type: 'buys/remove',
       payload: {id:itm._id},
     });
   }
 
   function pageChangeHandler(page) {
     dispatch(routerRedux.push({
-      pathname: '/receives',
+      pathname: '/buys',
       query: { page },
     }));
   }
@@ -26,12 +26,12 @@ console.log("ta laizi nali!",dataSource)
   function editHandler(id, values) {
       if(id){
           dispatch({
-            type: 'receives/patch',
+            type: 'buys/patch',
             payload: { id, values },
           });
       }else {
           dispatch({
-            type: 'receives/add',
+            type: 'buys/add',
             payload: { id, values },
           });
       }
@@ -66,9 +66,9 @@ console.log("ta laizi nali!",dataSource)
       key: 'operation',
       render: (text, record) => (
         <span className={styles.operation2}>
-          <ReceiveModal record={record} onOk={editHandler.bind(null, record._id)}>
+          <CategoryModal record={record} onOk={editHandler.bind(null, record._id)}>
             <Icon type="edit" className={styles.icon}/>
-          </ReceiveModal>
+          </CategoryModal>
           <Popconfirm title={"确定要删除客户【"+record.name+"】吗？"} onConfirm={deleteHandler.bind(null, record)}>
             <Icon type="delete" className={styles.icon}/>
           </Popconfirm>
@@ -81,9 +81,9 @@ console.log("ta laizi nali!",dataSource)
     <div className={styles.normal}>
       <div>
         <Row type="flex" justify="end">
-            <ReceiveModal record={{}} onOk={editHandler.bind(null,'')}>
+            <CategoryModal record={{}} onOk={editHandler.bind(null,'')}>
                 <Button  icon="plus-circle-o">添加</Button>
-            </ReceiveModal>
+            </CategoryModal>
         </Row>
         <Table
           columns={columns}
@@ -106,13 +106,13 @@ console.log("ta laizi nali!",dataSource)
 
 function mapStateToProps(state) {
 
-  const { list, total, page } = state.receives;
+  const { list, total, page } = state.categorys;
   return {
-    loading: state.loading.models.receives,
+    loading: state.loading.models.categorys,
     list,
     total,
     page,
   };
 }
 
-export default connect(mapStateToProps)(Receives);
+export default connect(mapStateToProps)(Categorys);

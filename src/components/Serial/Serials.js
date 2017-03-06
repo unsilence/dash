@@ -4,21 +4,21 @@ import { Table, Pagination, Popconfirm ,Row,Col,Button,Icon} from 'antd';
 import { routerRedux } from 'dva/router';
 import styles from '../list.less';
 let PAGE_SIZE = 10
-import SeriesModal from './SeriesModal';
+import SerialModal from './SerialModal';
 
 function Series({ dispatch, list: dataSource, loading, total, page: current }) {
 
   function deleteHandler(itm) {
       console.log('deleteHandler',itm)
     dispatch({
-      type: 'seriess/remove',
+      type: 'serials/remove',
       payload: {id:itm._id},
     });
   }
 
   function pageChangeHandler(page) {
     dispatch(routerRedux.push({
-      pathname: '/seriess',
+      pathname: '/serials',
       query: { page },
     }));
   }
@@ -26,12 +26,12 @@ function Series({ dispatch, list: dataSource, loading, total, page: current }) {
   function editHandler(id, values) {
       if(id){
           dispatch({
-            type: 'seriess/patch',
+            type: 'serials/patch',
             payload: { id, values },
           });
       }else {
           dispatch({
-            type: 'seriess/add',
+            type: 'serials/add',
             payload: { id, values },
           });
       }
@@ -55,9 +55,9 @@ function Series({ dispatch, list: dataSource, loading, total, page: current }) {
       key: 'operation',
       render: (text, record) => (
         <span className={styles.operation2}>
-          <SeriesModal record={record} onOk={editHandler.bind(null, record._id)}>
+          <SerialModal record={record} onOk={editHandler.bind(null, record._id)}>
             <Icon type="edit" className={styles.icon}/>
-          </SeriesModal>
+          </SerialModal>
           <Popconfirm title={"确定要删除色系【"+record.name+"】吗？"} onConfirm={deleteHandler.bind(null, record)}>
             <Icon type="delete" className={styles.icon}/>
           </Popconfirm>
@@ -70,9 +70,9 @@ function Series({ dispatch, list: dataSource, loading, total, page: current }) {
     <div className={styles.normal}>
       <div>
         <Row type="flex" justify="end">
-            <SeriesModal record={{}} onOk={editHandler.bind(null,'')}>
+            <SerialModal record={{}} onOk={editHandler.bind(null,'')}>
                 <Button  icon="plus-circle-o">添加</Button>
-            </SeriesModal>
+            </SerialModal>
         </Row>
         <Table
           columns={columns}
@@ -95,9 +95,9 @@ function Series({ dispatch, list: dataSource, loading, total, page: current }) {
 
 function mapStateToProps(state) {
 
-  const { list, total, page } = state.series;
+  const { list, total, page } = state.serials;
   return {
-    loading: state.loading.models.series,
+    loading: state.loading.models.serials,
     list,
     total,
     page,

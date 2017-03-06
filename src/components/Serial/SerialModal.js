@@ -4,7 +4,7 @@ import styles from '../item.less';
 
 const FormItem = Form.Item;
 
-class SeriesEditModal extends Component {
+class SerialEditModal extends Component {
 
   constructor(props) {
     super(props);
@@ -70,4 +70,4 @@ class SeriesEditModal extends Component {
   }
 }
 
-export default Form.create()(SeriesEditModal);
+export default Form.create()(SerialEditModal);

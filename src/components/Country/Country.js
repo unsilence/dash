@@ -4,21 +4,21 @@ import { Table, Pagination, Popconfirm ,Row,Col,Button,Icon} from 'antd';
 import { routerRedux } from 'dva/router';
 import styles from '../list.less';
 let PAGE_SIZE = 10
-import BuyModal from './BuyModal';
+import CountryModal from './CountryModal';
 
-function Buys({ dispatch, list: dataSource, loading, total, page: current }) {
-
+function Countrys({ dispatch, list: dataSource, loading, total, page: current }) {
+console.log("ta laizi nali!",dataSource)
   function deleteHandler(itm) {
       console.log('deleteHandler',itm)
     dispatch({
-      type: 'buys/remove',
+      type: 'countrys/remove',
       payload: {id:itm._id},
     });
   }
 
   function pageChangeHandler(page) {
     dispatch(routerRedux.push({
-      pathname: '/buys',
+      pathname: '/countrys',
       query: { page },
     }));
   }
@@ -26,12 +26,12 @@ function Buys({ dispatch, list: dataSource, loading, total, page: current }) {
   function editHandler(id, values) {
       if(id){
           dispatch({
-            type: 'buys/patch',
+            type: 'countrys/patch',
             payload: { id, values },
           });
       }else {
           dispatch({
-            type: 'buys/add',
+            type: 'countrys/add',
             payload: { id, values },
           });
       }
@@ -66,9 +66,9 @@ function Buys({ dispatch, list: dataSource, loading, total, page: current }) {
       key: 'operation',
       render: (text, record) => (
         <span className={styles.operation2}>
-          <BuyModal record={record} onOk={editHandler.bind(null, record._id)}>
+          <CountryModal record={record} onOk={editHandler.bind(null, record._id)}>
             <Icon type="edit" className={styles.icon}/>
-          </BuyModal>
+          </CountryModal>
           <Popconfirm title={"确定要删除客户【"+record.name+"】吗？"} onConfirm={deleteHandler.bind(null, record)}>
             <Icon type="delete" className={styles.icon}/>
           </Popconfirm>
@@ -81,9 +81,9 @@ function Buys({ dispatch, list: dataSource, loading, total, page: current }) {
     <div className={styles.normal}>
       <div>
         <Row type="flex" justify="end">
-            <BuyModal record={{}} onOk={editHandler.bind(null,'')}>
+            <CountryModal record={{}} onOk={editHandler.bind(null,'')}>
                 <Button  icon="plus-circle-o">添加</Button>
-            </BuyModal>
+            </CountryModal>
         </Row>
         <Table
           columns={columns}
@@ -106,13 +106,13 @@ function Buys({ dispatch, list: dataSource, loading, total, page: current }) {
 
 function mapStateToProps(state) {
 
-  const { list, total, page } = state.buys;
+  const { list, total, page } = state.countrys;
   return {
-    loading: state.loading.models.buys,
+    loading: state.loading.models.countrys,
     list,
     total,
     page,
   };
 }
 
-export default connect(mapStateToProps)(Buys);
+export default connect(mapStateToProps)(Countrys);
