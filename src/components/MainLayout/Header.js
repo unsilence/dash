@@ -13,6 +13,9 @@ function Header({ location }) {
       <Menu.Item key="/">
         <Link to="/"><Icon type="home" />首页</Link>
       </Menu.Item>
+      <Menu.Item key="/brands">
+        <Link to="/brands"><Icon type="smile" />品牌</Link>
+      </Menu.Item>
       <Menu.Item key="/users">
         <Link to="/users"><Icon type="smile" />系统用户</Link>
       </Menu.Item>

@@ -5,15 +5,24 @@ import Users from "./routes/Users.js";
 import Customers from "./routes/Customers.js";
 import Countrys from "./routes/Countrys";
 import Orders from "./routes/Orders.js";
+<<<<<<< Updated upstream
 import Categorys from "./routes/Categorys";
 import Colors from "./routes/Color.js";
 import Serials from "./routes/Serials";
+=======
+import Brands from "./routes/Brands.js";
+
+import Buys from "./routes/Buys.js";
+
+import Reports from "./routes/Reports.js";
+>>>>>>> Stashed changes
 import Login from "./routes/login.js";
 
 function RouterConfig({ history }) {
   return (
     <Router history={history}>
       <Route path="/" component={IndexPage} />
+      <Route path="/brands" component={Brands} />
       <Route path="/users" component={Users} />
       <Route path="/customers" component={Customers} />
       <Route path="/countrys" component={Countrys} />
