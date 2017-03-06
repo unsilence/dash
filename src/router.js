@@ -5,17 +5,14 @@ import Users from "./routes/Users.js";
 import Customers from "./routes/Customers.js";
 import Countrys from "./routes/Countrys";
 import Orders from "./routes/Orders.js";
-<<<<<<< Updated upstream
 import Categorys from "./routes/Categorys";
 import Colors from "./routes/Color.js";
 import Serials from "./routes/Serials";
-=======
 import Brands from "./routes/Brands.js";
 
-import Buys from "./routes/Buys.js";
+// import Buys from "./routes/Buys.js";
 
-import Reports from "./routes/Reports.js";
->>>>>>> Stashed changes
+// import Reports from "./routes/Reports.js";
 import Login from "./routes/login.js";
 
 function RouterConfig({ history }) {

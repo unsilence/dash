@@ -15,14 +15,8 @@ async function request(url, dt) {
     console.log(url, "RETRUN:", data)
     return ret;
 }
-
-<<<<<<< Updated upstream
-['Category', 'Customer', 'Order', 'Country', 'Color', 'User', 'Serial'].map(cls => {
+['Category', 'Customer', 'Order', 'Country','Brand', 'Color', 'User', 'Serial'].map(cls => {
     exports[cls + 'Service'] = {
-=======
-['Buy','Customer','Order','Receive','Brand','Report','User'].map(cls=>{
-    exports[cls+'Service']={
->>>>>>> Stashed changes
         fetch({ page = 1 }) {
             return request(`/api/${cls}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 10, startPos: 10 * (page - 1) });
         },

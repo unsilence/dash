@@ -56,14 +56,8 @@ let generate = (name, serviceName) => {
   }
 }
 
-
-<<<<<<< Updated upstream
-['Category', 'Customer', 'Order', 'Country', 'Color', 'User', 'Serial'].map(cls => {
+['Category', 'Customer', 'Order', 'Country','Brand', 'Color', 'User', 'Serial'].map(cls => {
   exports[cls + 'Model'] = generate(cls.toLowerCase() + 's', cls + 'Service')
-=======
-['Buy','Customer','Order','Receive','Brand','Report','User'].map(cls=>{
-    exports[cls+'Model']= generate(cls.toLowerCase()+'s',cls+'Service')
->>>>>>> Stashed changes
 })
 
 exports['login'] = function () { return service.login() }
