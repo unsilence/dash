@@ -6,7 +6,7 @@ import styles from '../list.less';
 let PAGE_SIZE = 10
 import SerialModal from './SerialModal';
 
-function Series({ dispatch, list: dataSource, loading, total, page: current }) {
+function Serials({ dispatch, list: dataSource, loading, total, page: current }) {
 
   function deleteHandler(itm) {
       console.log('deleteHandler',itm)
@@ -53,12 +53,12 @@ function Series({ dispatch, list: dataSource, loading, total, page: current }) {
     {
       title: '操作',
       key: 'operation',
-      render: (text, record) => (
+      render: (text, serial) => (
         <span className={styles.operation2}>
-          <SerialModal record={record} onOk={editHandler.bind(null, record._id)}>
+          <SerialModal serial={serial} onOk={editHandler.bind(null, serial._id)}>
             <Icon type="edit" className={styles.icon}/>
           </SerialModal>
-          <Popconfirm title={"确定要删除色系【"+record.name+"】吗？"} onConfirm={deleteHandler.bind(null, record)}>
+          <Popconfirm title={"确定要删除色系【"+serial.name+"】吗？"} onConfirm={deleteHandler.bind(null, serial)}>
             <Icon type="delete" className={styles.icon}/>
           </Popconfirm>
         </span>
@@ -70,7 +70,7 @@ function Series({ dispatch, list: dataSource, loading, total, page: current }) {
     <div className={styles.normal}>
       <div>
         <Row type="flex" justify="end">
-            <SerialModal record={{}} onOk={editHandler.bind(null,'')}>
+            <SerialModal serial={{}} onOk={editHandler.bind(null,'')}>
                 <Button  icon="plus-circle-o">添加</Button>
             </SerialModal>
         </Row>
@@ -78,7 +78,7 @@ function Series({ dispatch, list: dataSource, loading, total, page: current }) {
           columns={columns}
           dataSource={dataSource}
           loading={loading}
-          rowKey={record => record._id}
+          rowKey={serial => serial._id}
           pagination={false}
         />
         <Pagination
@@ -104,4 +104,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(Series);
+export default connect(mapStateToProps)(Serials);

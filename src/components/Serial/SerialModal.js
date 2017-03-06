@@ -39,8 +39,7 @@ class SerialEditModal extends Component {
   render() {
     const { children } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { _id, cnum, name, address, channel, channel_name, market_master, design_center
-      , bzman, designer, center_master, operator_master, city_master, note, status, finishAt } = this.props.record;
+    const { _id, name, note } = this.props.serial;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -52,17 +51,14 @@ class SerialEditModal extends Component {
           {children}
         </span>
         <Modal
-          title={_id ? "修改：" + cnum : '新建'}
+          title={_id ? "修改：": '新建'}
           visible={this.state.visible}
           onOk={this.okHandler}
           onCancel={this.hideModelHandler}
         >
           <Form horizontal onSubmit={this.okHandler}>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="客户姓名" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="业务渠道" >    {getFieldDecorator('channel', { initialValue: channel })(
-              <Select size="small">{['其他', '设计师', '客户经理', '客源一部', '客源二部', '网销部', '外部渠道', '特殊渠道', '回头客'].map(v => <Select.Option key={v} value={v}>{v}</Select.Option>)}</Select>
-            )}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="城市总监" >    {getFieldDecorator('city_master', { initialValue: city_master })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="色系名字" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="备注" >    {getFieldDecorator('note', { initialValue: note })(<Input size="small" />)}</FormItem>
           </Form>
         </Modal>
       </span>
