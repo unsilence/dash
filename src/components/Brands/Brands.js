@@ -40,16 +40,10 @@ console.log("ta laizi nali!",dataSource)
 
   const columns = [
     {
-      title: 'ID',
+      title: '品牌Id',
       dataIndex: '_id',
       key: '_id',
       render: text => <a href=''>{text}</a>,
-    },
-    {
-      title: '品牌Id',
-      dataIndex: 'brandId',
-      key: 'brandId',
-      render: text => <a href="">{text}</a>,
     },
     {
       title: '中文名',
@@ -85,7 +79,7 @@ console.log("ta laizi nali!",dataSource)
           <BrandModal record={record} onOk={editHandler.bind(null, record._id)}>
             <Icon type="edit" className={styles.icon}/>
           </BrandModal>
-          <Popconfirm title={"确定要删除客户【"+record.name+"】吗？"} onConfirm={deleteHandler.bind(null, record)}>
+          <Popconfirm title={"确定要删除品牌【"+record.name+"】吗？"} onConfirm={deleteHandler.bind(null, record)}>
             <Icon type="delete" className={styles.icon}/>
           </Popconfirm>
         </span>

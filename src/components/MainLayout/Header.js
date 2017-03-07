@@ -1,5 +1,7 @@
 import React from 'react';
 import { Menu, Icon } from 'antd';
+const SubMenu = Menu.SubMenu;
+
 import { Link } from 'dva/router';
 
 function Header({ location }) {
@@ -8,7 +10,6 @@ function Header({ location }) {
       selectedKeys={[location.pathname]}
       mode="vertical"
       theme="dark"
-
     >
       <Menu.Item key="/">
         <Link to="/"><Icon type="home" />首页</Link>
@@ -31,12 +32,14 @@ function Header({ location }) {
       <Menu.Item key="/categorys">
         <Link to="/categorys"><Icon type="rocket" />分类</Link>
       </Menu.Item>
-      <Menu.Item key="/colors">
+      {/*<SubMenu key='color' title={<span><Icon type="book" /><span>Navigation One</span></span>}>*/}
+      <Menu.Item key="colors">
         <Link to="/colors"><Icon type="calculator" />颜色</Link>
       </Menu.Item>
       <Menu.Item key="/serials">
         <Link to="/serials"><Icon type="calculator" />色系</Link>
       </Menu.Item>
+      {/*</SubMenu>*/}
       <Menu.Item key="/404">
         <Link to="/page-you-dont-know"><Icon type="frown-circle" />404</Link>
       </Menu.Item>

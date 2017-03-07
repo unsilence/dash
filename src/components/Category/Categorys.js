@@ -11,14 +11,14 @@ function Categorys({ dispatch, list: dataSource, loading, total, page: current }
   function deleteHandler(itm) {
       console.log('deleteHandler',itm)
     dispatch({
-      type: 'buys/remove',
+      type: 'countrys/remove',
       payload: {id:itm._id},
     });
   }
 
   function pageChangeHandler(page) {
     dispatch(routerRedux.push({
-      pathname: '/buys',
+      pathname: '/countrys',
       query: { page },
     }));
   }
@@ -26,12 +26,12 @@ function Categorys({ dispatch, list: dataSource, loading, total, page: current }
   function editHandler(id, values) {
       if(id){
           dispatch({
-            type: 'buys/patch',
+            type: 'countrys/patch',
             payload: { id, values },
           });
       }else {
           dispatch({
-            type: 'buys/add',
+            type: 'countrys/add',
             payload: { id, values },
           });
       }
@@ -57,11 +57,6 @@ function Categorys({ dispatch, list: dataSource, loading, total, page: current }
       key: 'name',
     },
     {
-      title: '地址',
-      dataIndex: 'address',
-      key: 'address',
-    },
-    {
       title: 'Operation',
       key: 'operation',
       render: (text, record) => (
@@ -69,7 +64,7 @@ function Categorys({ dispatch, list: dataSource, loading, total, page: current }
           <CategoryModal record={record} onOk={editHandler.bind(null, record._id)}>
             <Icon type="edit" className={styles.icon}/>
           </CategoryModal>
-          <Popconfirm title={"确定要删除客户【"+record.name+"】吗？"} onConfirm={deleteHandler.bind(null, record)}>
+          <Popconfirm title={"确定要删除国家【"+record.name+"】吗？"} onConfirm={deleteHandler.bind(null, record)}>
             <Icon type="delete" className={styles.icon}/>
           </Popconfirm>
         </span>

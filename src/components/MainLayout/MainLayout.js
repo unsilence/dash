@@ -25,7 +25,7 @@ function MainLayout({ children, location }) {
     </Sider>
     <Layout>
       <Header className={styles.layout_top}>
-          <Button>财务系统</Button>
+          <Button>美学管家</Button>
           <Button onClick={handleSubmit}>退出</Button>
       </Header>
       <Content className={styles.layout_body_wrap}>
