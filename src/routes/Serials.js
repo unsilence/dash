@@ -15,7 +15,8 @@ function Serials(props) {
 }
 
 function mapStateToProps(state) {
-  return {};
+  console.log(state,'--------------------');
+  return state.serials;
 }
 
 export default connect(mapStateToProps)(Serials);

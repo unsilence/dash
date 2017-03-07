@@ -94,7 +94,6 @@ function Serials({ dispatch, list: dataSource, loading, total, page: current }) 
 }
 
 function mapStateToProps(state) {
-
   const { list, total, page } = state.serials;
   return {
     loading: state.loading.models.serials,

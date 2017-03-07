@@ -1,7 +1,7 @@
 import * as service from './services';
 
 let generate = (name, serviceName) => {
-  console.log(name,serviceName,'-----------------generate')
+  console.log(name, serviceName, '-----------------generate')
   return {
     namespace: name,
     state: {
@@ -9,9 +9,9 @@ let generate = (name, serviceName) => {
       total: null,
     },
     reducers: {
-      save22(state, { payload: { data: list, total, page } }) {
+      save22(state, { payload: { data: list, total, page ,serialList} }) {
         page = page || 1
-        return { ...state, list, total, page };
+        return { ...state, list, total, page, serialList };
       },
     },
     effects: {
@@ -45,7 +45,6 @@ let generate = (name, serviceName) => {
           if (pathname === '/' + name) {
             if (localStorage.token.length > 10) {
               dispatch({ type: 'fetch', payload: query });
-
             } else {
               history.push('/login')
             }
@@ -64,3 +63,10 @@ let generate = (name, serviceName) => {
 exports['login'] = function () { return service.login() }
 exports['checkAccount'] = function () { return service.checkAccount() }
 exports['logout'] = function () { return service.logout() }
+/**-----------------------------自定义------------------------- */
+exports["ColorModel"].effects.fetch = function* ({ payload: { page } }, { call, put }) {
+  const colors = yield call(service["ColorService"].fetch, { page });
+  const serials = yield call(service["SerialService"].fetch, { page });
+  const rd = { data: colors.data.data.list, total: colors.data.data.count, page: parseInt(page),serialList:serials.data.data.list}
+  yield put({ type: 'save22', payload: rd });
+}
