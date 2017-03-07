@@ -55,8 +55,7 @@ let generate = (name, serviceName) => {
   }
 }
 
-
-['Category', 'Customer', 'Order', 'Country', 'Color', 'User', 'Serial'].map(cls => {
+['Category', 'Customer', 'Order', 'Country','Brand', 'Color', 'User', 'Serial'].map(cls => {
   exports[cls + 'Model'] = generate(cls.toLowerCase() + 's', cls + 'Service')
 })
 
