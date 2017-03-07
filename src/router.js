@@ -21,9 +21,9 @@ function RouterConfig({ history }) {
       <Route path="/" component={IndexPage} />
       <Route path="/brands" component={Brands} />
       <Route path="/users" component={Users} />
-      <Route path="/customers" component={Customers} />
+      {/*<Route path="/customers" component={Customers} />*/}
       <Route path="/countrys" component={Countrys} />
-      <Route path="/orders" component={Orders} />
+      {/*<Route path="/orders" component={Orders} />*/}
       <Route path="/categorys" component={Categorys} />
       <Route path="/colors" component={Colors} />
       <Route path="/serials" component={Serials} />

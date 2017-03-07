@@ -20,15 +20,15 @@ function Header({ location }) {
       <Menu.Item key="/users">
         <Link to="/users"><Icon type="smile" />系统用户</Link>
       </Menu.Item>
-      <Menu.Item key="/customers">
+      {/*<Menu.Item key="/customers">
         <Link to="/customers"><Icon type="user" />客户</Link>
-      </Menu.Item>
+      </Menu.Item>*/}
       <Menu.Item key="/countrys">
         <Link to="/countrys"><Icon type="pay-circle" />国家</Link>
       </Menu.Item>
-      <Menu.Item key="/orders">
+      {/*<Menu.Item key="/orders">
         <Link to="/orders"><Icon type="file" />订单</Link>
-      </Menu.Item>
+      </Menu.Item>*/}
       <Menu.Item key="/categorys">
         <Link to="/categorys"><Icon type="rocket" />分类</Link>
       </Menu.Item>
