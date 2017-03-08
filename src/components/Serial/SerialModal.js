@@ -12,10 +12,10 @@ class SerialEditModal extends Component {
       visible: false,
     };
   }
-  componentDidMount() {
-    // To disabled submit button at the beginning.
-    this.props.form.validateFields();
-  }
+  // componentDidMount() {
+  //   // To disabled submit button at the beginning.
+  //   this.props.form.validateFields();
+  // }
   showModelHandler = (e) => {
     if (e) e.stopPropagation();
     this.setState({
@@ -29,9 +29,12 @@ class SerialEditModal extends Component {
     });
   };
 
-  okHandler = () => {
+  okHandler = (e) => {
     const { onOk } = this.props;
-    this.preventDefault();
+    // if(!e){
+    //   return
+    // }
+    // e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
         onOk(values);
@@ -63,8 +66,8 @@ class SerialEditModal extends Component {
           onCancel={this.hideModelHandler}
         >
           <Form horizontal onSubmit={this.okHandler}>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="色系名字" >    {getFieldDecorator('name', { initialValue: name },{rules:[{required: true, message: 'Please input your name!'}]})(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="备注" >    {getFieldDecorator('note', { initialValue: note },{rules:[{required: true, message: 'Please input your note!'}]})(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="色系名字" >    {getFieldDecorator('name',{rules:[{required: true, message: 'Please input your name!'}],initialValue: name})(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="备注" >    {getFieldDecorator('note',{rules:[{required: true, message: 'Please input your note!'}],initialValue: note})(<Input size="small" />)}</FormItem>
           </Form>
         </Modal>
       </span>
