@@ -1,21 +1,21 @@
 import React from 'react';
 import { connect } from 'dva';
 import styles from './common.less';
-import CustomersComponent from '../components/Customers/Customers';
+import AttributesComponent from '../components/Attribute/Attributes';
 import MainLayout from '../components/MainLayout/MainLayout';
 
-function Customers(props) {
+function Attributes(props) {
   return (
       <MainLayout location={location}>
         <div className={styles.normal}>
-          <CustomersComponent />
+          <AttributesComponent />
         </div>
       </MainLayout>
   );
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state) {  
   return {};
 }
 
-export default connect(mapStateToProps)(Customers);
+export default connect(mapStateToProps)(Attributes);

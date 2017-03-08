@@ -24,6 +24,7 @@ class BuyEditModal extends Component {
     this.setState({
       visible: false,
     });
+    this.props.form.resetFields(['name','parentId','note']);
   };
 
   okHandler = () => {

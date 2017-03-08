@@ -24,6 +24,7 @@ class SerialEditModal extends Component {
     this.setState({
       visible: false,
     });
+    this.props.form.resetFields(['name','note']);
   };
 
   okHandler = () => {

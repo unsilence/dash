@@ -4,9 +4,9 @@ import { Table, Pagination, Popconfirm ,Row,Col,Button,Icon} from 'antd';
 import { routerRedux } from 'dva/router';
 import styles from '../list.less';
 let PAGE_SIZE = 10
-import CustomerModal from './CustomerModal';
+import AttributeModal from './AttributeModal';
 
-function Customers({ dispatch, list: dataSource, loading, total, page: current }) {
+function Attributes({ dispatch, list: dataSource, loading, total, page: current }) {
 
   function deleteHandler(itm) {
       console.log('deleteHandler',itm)
@@ -45,31 +45,57 @@ function Customers({ dispatch, list: dataSource, loading, total, page: current }
       key: '_id',
       render: text => <a href="">{text}</a>,
     },
-    {
-      title: '编号',
-      dataIndex: 'cnum',
-      key: 'cnum',
-      render: text => <a href="">{text}</a>,
-    },
+    
     {
       title: '名字',
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: '地址',
-      dataIndex: 'address',
-      key: 'address',
+      title: '所属分类',
+      dataIndex: 'categoryId',
+      key: 'categoryId',//分类类型
+      render: text => <a href="">{text}</a>,
+    },
+    {
+      title: '属性类别',
+      dataIndex: 'type',
+      key: 'type',//关键分类、销售属性、其他属性
+    },
+    {
+      title: '继承公共属性',
+      dataIndex: 'etype',
+      key: 'etype',//继承公共属性
+    },
+    {
+      title: '属性选项',
+      dataIndex: 'stype',
+      key: 'stype',//继承公共属性
+    },
+    {
+      title: '可以为空',
+      dataIndex: 'isNull',
+      key: 'isNull',//继承公共属性
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createAt',
+      key: 'createAt',//继承公共属性
+    },
+    {
+      title: '修改时间',
+      dataIndex: 'updateAt',
+      key: 'updateAt',//继承公共属性
     },
     {
       title: 'Operation',
       key: 'operation',
       render: (text, record) => (
         <span className={styles.operation2}>
-          <CustomerModal record={record} onOk={editHandler.bind(null, record._id)}>
+          <AttributeModal record={record} onOk={editHandler.bind(null, record._id)}>
             <Icon type="edit" className={styles.icon}/>
-          </CustomerModal>
-          <Popconfirm title={"确定要删除客户【"+record.name+"】吗？"} onConfirm={deleteHandler.bind(null, record)}>
+          </AttributeModal>
+          <Popconfirm title={"确定要删除属性【"+record.name+"】吗？"} onConfirm={deleteHandler.bind(null, record)}>
             <Icon type="delete" className={styles.icon}/>
           </Popconfirm>
         </span>
@@ -81,9 +107,9 @@ function Customers({ dispatch, list: dataSource, loading, total, page: current }
     <div className={styles.normal}>
       <div>
         <Row type="flex" justify="end">
-            <CustomerModal record={{}} onOk={editHandler.bind(null,'')}>
+            <AttributeModal record={{}} onOk={editHandler.bind(null,'')}>
                 <Button  icon="plus-circle-o">添加</Button>
-            </CustomerModal>
+            </AttributeModal>
         </Row>
         <Table
           columns={columns}
@@ -115,4 +141,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(Customers);
+export default connect(mapStateToProps)(Attributes);

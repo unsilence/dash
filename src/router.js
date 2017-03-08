@@ -2,7 +2,7 @@ import React from 'react';
 import { Router, Route } from 'dva/router';
 import IndexPage from './routes/IndexPage';
 import Users from "./routes/Users.js";
-import Customers from "./routes/Customers.js";
+import Attributes from "./routes/Attributes";
 import Countrys from "./routes/Countrys";
 import Orders from "./routes/Orders.js";
 import Categorys from "./routes/Categorys";
@@ -21,7 +21,7 @@ function RouterConfig({ history }) {
       <Route path="/" component={IndexPage} />
       <Route path="/brands" component={Brands} />
       <Route path="/users" component={Users} />
-      {/*<Route path="/customers" component={Customers} />*/}
+      <Route path="/attributes" component={Attributes} />
       <Route path="/countrys" component={Countrys} />
       {/*<Route path="/orders" component={Orders} />*/}
       <Route path="/categorys" component={Categorys} />
