@@ -12,7 +12,10 @@ class SerialEditModal extends Component {
       visible: false,
     };
   }
-
+  // componentDidMount() {
+  //   // To disabled submit button at the beginning.
+  //   this.props.form.validateFields();
+  // }
   showModelHandler = (e) => {
     if (e) e.stopPropagation();
     this.setState({
@@ -27,8 +30,12 @@ class SerialEditModal extends Component {
     this.props.form.resetFields(['name','note']);
   };
 
-  okHandler = () => {
+  okHandler = (e) => {
     const { onOk } = this.props;
+    // if(!e){
+    //   return
+    // }
+    // e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
         onOk(values);
@@ -41,6 +48,8 @@ class SerialEditModal extends Component {
     const { children } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { _id, name, note } = this.props.serial;
+    // const nameError = isFieldTouched('name') && getFieldError('name');
+    // const noteError = isFieldTouched('note') && getFieldError('note');
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -58,8 +67,8 @@ class SerialEditModal extends Component {
           onCancel={this.hideModelHandler}
         >
           <Form horizontal onSubmit={this.okHandler}>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="色系名字" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="备注" >    {getFieldDecorator('note', { initialValue: note })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="色系名字" >    {getFieldDecorator('name',{rules:[{required: true, message: 'Please input your name!'}],initialValue: name})(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="备注" >    {getFieldDecorator('note',{rules:[{required: true, message: 'Please input your note!'}],initialValue: note})(<Input size="small" />)}</FormItem>
           </Form>
         </Modal>
       </span>
