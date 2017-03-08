@@ -51,6 +51,11 @@ function Serials({ dispatch, list: dataSource, loading, total, page: current }) 
       key: 'name',
     },
     {
+      title: '备注',
+      dataIndex: 'note',
+      key: 'note',
+    },
+    {
       title: '操作',
       key: 'operation',
       render: (text, serial) => (
