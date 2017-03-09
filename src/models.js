@@ -9,9 +9,9 @@ let generate = (name, serviceName) => {
       total: null,
     },
     reducers: {
-      save22(state, { payload: { data: list, total, page, serialList } }) {
+      save22(state, { payload: { data: list, total, page, serialList ,categoryList} }) {
         page = page || 1
-        return { ...state, list, total, page, serialList };
+        return { ...state, list, total, page, serialList ,categoryList};
       },
     },
     effects: {
@@ -55,10 +55,9 @@ let generate = (name, serviceName) => {
   }
 }
 
-['Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial'].map(cls => {
+['Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial','Attribute'].map(cls => {
   exports[cls + 'Model'] = generate(cls.toLowerCase() + 's', cls + 'Service')
 })
-
 exports['login'] = function () { return service.login() }
 exports['checkAccount'] = function () { return service.checkAccount() }
 exports['logout'] = function () { return service.logout() }
@@ -68,5 +67,12 @@ exports["ColorModel"].effects.fetch = function* ({ payload: { page } }, { call, 
   const colors = yield call(service["ColorService"].fetch, { page });
   const serials = yield call(service["SerialService"].fetch, { page });
   const rd = { data: colors.data.data.list, total: colors.data.data.count, page: parseInt(page), serialList: serials.data.data.list }
+  yield put({ type: 'save22', payload: rd });
+}
+
+exports["AttributeModel"].effects.fetch = function*({ payload: { page } }, { call, put }) {
+  const attributes = yield call(service["AttributeService"].fetch, { page });
+  const categories = yield call(service["CategoryService"].fetch, { page });
+  const rd = { data: attributes.data.data.list, total: attributes.data.data.count, page: parseInt(page), categoryList: categories.data.data.list }
   yield put({ type: 'save22', payload: rd });
 }

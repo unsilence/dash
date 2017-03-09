@@ -6,7 +6,7 @@ import styles from '../list.less';
 let PAGE_SIZE = 10
 import AttributeModal from './AttributeModal';
 
-function Attributes({ dispatch, list: dataSource, loading, total, page: current }) {
+function Attributes({ dispatch, list: dataSource, loading, total, page: current ,categoryList}) {
 
   function deleteHandler(itm) {
       console.log('deleteHandler',itm)
@@ -39,13 +39,6 @@ function Attributes({ dispatch, list: dataSource, loading, total, page: current 
   }
 
   const columns = [
-    {
-      title: 'id',
-      dataIndex: '_id',
-      key: '_id',
-      render: text => <a href="">{text}</a>,
-    },
-    
     {
       title: '名字',
       dataIndex: 'name',
@@ -92,7 +85,7 @@ function Attributes({ dispatch, list: dataSource, loading, total, page: current 
       key: 'operation',
       render: (text, record) => (
         <span className={styles.operation2}>
-          <AttributeModal record={record} onOk={editHandler.bind(null, record._id)}>
+          <AttributeModal record={{ ...record, categoryList: categoryList }} onOk={editHandler.bind(null, record._id)}>
             <Icon type="edit" className={styles.icon}/>
           </AttributeModal>
           <Popconfirm title={"确定要删除属性【"+record.name+"】吗？"} onConfirm={deleteHandler.bind(null, record)}>
@@ -107,7 +100,7 @@ function Attributes({ dispatch, list: dataSource, loading, total, page: current 
     <div className={styles.normal}>
       <div>
         <Row type="flex" justify="end">
-            <AttributeModal record={{}} onOk={editHandler.bind(null,'')}>
+            <AttributeModal record={{categoryList: categoryList}} onOk={editHandler.bind(null,'')}>
                 <Button  icon="plus-circle-o">添加</Button>
             </AttributeModal>
         </Row>
@@ -132,12 +125,13 @@ function Attributes({ dispatch, list: dataSource, loading, total, page: current 
 
 function mapStateToProps(state) {
 
-  const { list, total, page } = state.customers;
+  const { list, total, page ,categoryList} = state.attributes;
   return {
-    loading: state.loading.models.customers,
+    loading: state.loading.models.attributes,
     list,
     total,
     page,
+    categoryList
   };
 }
 
