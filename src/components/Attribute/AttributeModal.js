@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, Select, Cascader, Radio } from 'antd';
+import { Modal, Form, Input, Select, Cascader, Radio ,Checkbox} from 'antd';
 const RadioGroup = Radio.Group;
 import styles from '../item.less';
 import TagsInput from 'react-tagsinput'
@@ -13,6 +13,7 @@ class AttributeModalEditModal extends Component {
     super(props);
     this.state = {
       visible: false,
+      extendsOption:[]
     };
   }
 
@@ -69,10 +70,21 @@ class AttributeModalEditModal extends Component {
 
   }
 
+  etypeOnChange = (e) => {
+    console.log(e.target.value)
+    if(e.target.value === '1')
+    {
+      this.setState({extendsOption:['长','宽','高','半径']})
+    }
+    else{
+      this.setState({extendsOption:[]})
+    }
+  }
+
   render() {
     const { children } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { _id, name, categoryId, type, etype, stype, isNull, svalue ,createAt,updateAt} = this.props.record;
+    const { _id, name, categoryId, type, etype, stype, isNull, svalue, createAt, updateAt } = this.props.record;
     let data = [];
     (this.props.record.categoryList || []).forEach(v => data.unshift(v));
     let cascaderOptions = this.getFormatData(data);
@@ -80,6 +92,8 @@ class AttributeModalEditModal extends Component {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
+
+    let checkOptions = this.state.extendsOption.map(v => <Checkbox name='chichun'>{v}</Checkbox>)
     return (
       <span>
         <span onClick={this.showModelHandler}>
@@ -102,6 +116,18 @@ class AttributeModalEditModal extends Component {
                 <Radio value={'3'}>其他属性</Radio>
               </RadioGroup>
             )}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="继承公共属性" >    {getFieldDecorator('etype', { initialValue: etype })(
+              <RadioGroup onChange={this.etypeOnChange}>
+                <Radio value={'1'}>尺寸</Radio>
+                <Radio value={'2'}>颜色</Radio>
+                <Radio value={'3'}>原产地</Radio>
+                <Radio value={'4'}>品牌国别</Radio>
+              </RadioGroup>
+            )}
+            {/*{getFieldDecorator('etypeaaa',{})(*/}
+            {checkOptions}
+            {/*)}*/}
+            </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="属性名称" >    {getFieldDecorator('name', { initialValue: name })(
               <Input size="small" />
             )}</FormItem>
@@ -111,21 +137,21 @@ class AttributeModalEditModal extends Component {
                 <Radio value={'2'}>使用SKU配图</Radio>
                 <Radio value={'3'}>下拉使用</Radio>
               </RadioGroup>
-
-            )
+              )
             }
-              {getFieldDecorator('svalue', { initialValue: svalue||[] })(<TagsInput value={[]} onChange={v=>{console.log(v)}}/>)}
+              {getFieldDecorator('svalue', { initialValue: svalue || [] })(<TagsInput value={[]} onlyUnique={{onlyUnique:true}} onChange={v => { console.log(v) }} />)}
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="可以为空"> {getFieldDecorator('isNull', { initialValue: isNull })(
               <RadioGroup key=''>
                 <Radio value={'1'}>是</Radio>
                 <Radio value={'2'}>否</Radio>
               </RadioGroup>
-              )}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="创建时间" >    {getFieldDecorator('createAt', { initialValue: createAt })(
+            )}</FormItem>
+
+            <FormItem className={styles.FormItem} {...formItemLayout} label="创建时间" style={_id ? { display: 'block' } : { display: 'none' }}>    {getFieldDecorator('createAt', { initialValue: createAt })(
               <Input size="small" />
             )}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="客户经理" >    {getFieldDecorator('updateAt', { initialValue: updateAt })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="客户经理" style={_id ? { display: 'block' } : { display: 'none' }}>    {getFieldDecorator('updateAt', { initialValue: updateAt })(<Input size="small" />)}</FormItem>
           </Form>
         </Modal>
       </span>
