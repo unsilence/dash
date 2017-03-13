@@ -67,8 +67,8 @@ class SerialEditModal extends Component {
           onCancel={this.hideModelHandler}
         >
           <Form horizontal onSubmit={this.okHandler}>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="色系名字" >    {getFieldDecorator('name',{rules:[{required: true, message: 'Please input your name!'}],initialValue: name})(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="备注" >    {getFieldDecorator('note',{rules:[{required: true, message: 'Please input your note!'}],initialValue: note})(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="色系名字" >    {getFieldDecorator('name',{rules:[{required: true, message: '请输入色系名字!'}],initialValue: name})(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="备注" >    {getFieldDecorator('note',{rules:[{required: true, message: '请输入备注!'}],initialValue: note})(<Input size="small" />)}</FormItem>
           </Form>
         </Modal>
       </span>

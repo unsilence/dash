@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, Select, Cascader, Radio ,Checkbox} from 'antd';
+import { Modal, Form, Input, Select, Cascader, Radio, Checkbox } from 'antd';
 const RadioGroup = Radio.Group;
+const CheckboxGroup = Checkbox.Group;
 import styles from '../item.less';
 import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
+import moment from 'moment';
 
 const FormItem = Form.Item;
 
@@ -13,7 +15,7 @@ class AttributeModalEditModal extends Component {
     super(props);
     this.state = {
       visible: false,
-      extendsOption:[]
+      extendsOption: []
     };
   }
 
@@ -66,34 +68,63 @@ class AttributeModalEditModal extends Component {
     return rst;
   };
 
+
   cascaderOnChange = (value) => {
 
   }
 
+  etypeOnClick = (e) => {
+
+    console.log(e);
+  }
+
   etypeOnChange = (e) => {
-    console.log(e.target.value)
-    if(e.target.value === '1')
-    {
-      this.setState({extendsOption:['长','宽','高','半径']})
+    let key = e.target.value;
+    this.props.form.setFieldsValue({ 'name': this.setExtendsText(key) });
+    switch (key) {
+      case "1":
+        this.setState({ extendsOption: ['长', '宽', '高', '半径'] })
+        break;
+      case "2":
+      case "3":
+      case "4":
+        this.setState({ extendsOption: [] })
+        this.props.form.resetFields(['size']);
+        break;
     }
-    else{
-      this.setState({extendsOption:[]})
+  }
+
+  setExtendsText = (type) => {
+    let strExt = '';
+    if (type === '1') {
+      strExt = '尺寸';
     }
+    else if (type === '2') {
+      strExt = '颜色';
+    }
+    else if (type === '3') {
+      strExt = '原产地';
+    }
+    else if (type === '4') {
+      strExt = '品牌国别';
+    }
+    return strExt;
   }
 
   render() {
     const { children } = this.props;
-    const { getFieldDecorator } = this.props.form;
-    const { _id, name, categoryId, type, etype, stype, isNull, svalue, createAt, updateAt } = this.props.record;
+    const { getFieldDecorator, setFieldsValue } = this.props.form;
+    const { _id, name, categoryId, type, etype, stype, isNull, svalue, createAt, updateAt, size } = this.props.record;
     let data = [];
     (this.props.record.categoryList || []).forEach(v => data.unshift(v));
     let cascaderOptions = this.getFormatData(data);
+
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
 
-    let checkOptions = this.state.extendsOption.map(v => <Checkbox name='chichun'>{v}</Checkbox>)
+    let checkOptions = getFieldDecorator('size', { initialValue: size })(<CheckboxGroup options={this.state.extendsOption} />);
     return (
       <span>
         <span onClick={this.showModelHandler}>
@@ -117,29 +148,27 @@ class AttributeModalEditModal extends Component {
               </RadioGroup>
             )}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="继承公共属性" >    {getFieldDecorator('etype', { initialValue: etype })(
-              <RadioGroup onChange={this.etypeOnChange}>
+              <RadioGroup onChange={this.etypeOnChange} onClick={this.etypeOnClick}>
                 <Radio value={'1'}>尺寸</Radio>
                 <Radio value={'2'}>颜色</Radio>
                 <Radio value={'3'}>原产地</Radio>
                 <Radio value={'4'}>品牌国别</Radio>
               </RadioGroup>
             )}
-            {/*{getFieldDecorator('etypeaaa',{})(*/}
-            {checkOptions}
-            {/*)}*/}
+              {checkOptions}
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="属性名称" >    {getFieldDecorator('name', { initialValue: name })(
               <Input size="small" />
             )}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="属性选项" >    {getFieldDecorator('stype', { initialValue: stype })(
-              <RadioGroup key=''>
+              <RadioGroup key='' >
                 <Radio value={'1'}>运营输入</Radio>
                 <Radio value={'2'}>使用SKU配图</Radio>
                 <Radio value={'3'}>下拉使用</Radio>
               </RadioGroup>
-              )
+            )
             }
-              {getFieldDecorator('svalue', { initialValue: svalue || [] })(<TagsInput value={[]} onlyUnique={{onlyUnique:true}} onChange={v => { console.log(v) }} />)}
+              {getFieldDecorator('svalue', { initialValue: svalue || [] })(<TagsInput value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v) }} />)}
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="可以为空"> {getFieldDecorator('isNull', { initialValue: isNull })(
               <RadioGroup key=''>
@@ -148,10 +177,10 @@ class AttributeModalEditModal extends Component {
               </RadioGroup>
             )}</FormItem>
 
-            <FormItem className={styles.FormItem} {...formItemLayout} label="创建时间" style={_id ? { display: 'block' } : { display: 'none' }}>    {getFieldDecorator('createAt', { initialValue: createAt })(
+            <FormItem className={styles.FormItem} {...formItemLayout} label="创建时间" style={_id ? { display: 'block' } : { display: 'none' }}>    {getFieldDecorator('createAt', { initialValue: moment(new Date(createAt)).format('YYYY-MM-DD HH:mm:ss') })(
               <Input size="small" />
             )}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="客户经理" style={_id ? { display: 'block' } : { display: 'none' }}>    {getFieldDecorator('updateAt', { initialValue: updateAt })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="客户经理" style={_id ? { display: 'block' } : { display: 'none' }}>    {getFieldDecorator('updateAt', { initialValue: moment(new Date(updateAt)).format('YYYY-MM-DD HH:mm:ss') })(<Input size="small" />)}</FormItem>
           </Form>
         </Modal>
       </span>

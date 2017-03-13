@@ -27,7 +27,6 @@ function Categorys({ dispatch, list: dataSource, loading, total, page: current }
     if (_id === '' || !_id) {
       return '';
     }
-
     let cate = (dataSource||[]).filter(s => s._id === _id);
     if (cate) {
       return cate[0].name;
@@ -35,7 +34,6 @@ function Categorys({ dispatch, list: dataSource, loading, total, page: current }
     else {
       return ''
     }
-
   }
 
   function editHandler(id, values) {
