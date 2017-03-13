@@ -15,7 +15,11 @@ class AttributeModalEditModal extends Component {
     super(props);
     this.state = {
       visible: false,
-      extendsOption: []
+      extendsOption: [],
+      disabled: false,
+      threeDisabled: false,//选择颜色、原产地、品牌时间状态
+      isNullValue: '1',//默认值
+      useSkuImg: true,//使用sku配图的状态
     };
   }
 
@@ -42,6 +46,10 @@ class AttributeModalEditModal extends Component {
     });
   };
 
+  /**
+   * 格式化服务端数据
+   * @param {*} data 
+   */
   getFormatData(data) {
     let rst = [];
     if (data) {
@@ -73,9 +81,28 @@ class AttributeModalEditModal extends Component {
 
   }
 
+  stypeOnChange = (e) => {
+
+  }
+
   etypeOnClick = (e) => {
 
     console.log(e);
+  }
+
+  /**
+   * 属性分类切换
+   */
+  typeOnChange = (e) => {
+    let type = e.target.value;
+    if (type === '2') {
+      this.props.form.setFieldsValue({ 'isNull': '2' });
+      this.setState({useSkuImg:false})
+    }
+    else {
+      this.props.form.setFieldsValue({ 'isNull': '1' });
+      this.setState({useSkuImg:true})
+    }
   }
 
   etypeOnChange = (e) => {
@@ -84,14 +111,25 @@ class AttributeModalEditModal extends Component {
     switch (key) {
       case "1":
         this.setState({ extendsOption: ['长', '宽', '高', '半径'] })
+        this.setState({ "disabled": true })
         break;
       case "2":
       case "3":
       case "4":
         this.setState({ extendsOption: [] })
         this.props.form.resetFields(['size']);
+        this.setState({ "disabled": true })
+        break;
+      case "0":
+        this.setState({ extendsOption: [] })
+        this.props.form.resetFields(['size']);
+        this.setState({ "disabled": false })
         break;
     }
+  }
+
+  componentDidMount() {
+    this.props.form.setFieldsValue({ 'svalue': this.props.record.svalue || [] });
   }
 
   setExtendsText = (type) => {
@@ -116,6 +154,7 @@ class AttributeModalEditModal extends Component {
     const { getFieldDecorator, setFieldsValue } = this.props.form;
     const { _id, name, categoryId, type, etype, stype, isNull, svalue, createAt, updateAt, size } = this.props.record;
     let data = [];
+
     (this.props.record.categoryList || []).forEach(v => data.unshift(v));
     let cascaderOptions = this.getFormatData(data);
 
@@ -124,7 +163,8 @@ class AttributeModalEditModal extends Component {
       wrapperCol: { span: 14 },
     };
 
-    let checkOptions = getFieldDecorator('size', { initialValue: size })(<CheckboxGroup options={this.state.extendsOption} />);
+    let checkOptions = getFieldDecorator('size', { initialValue: size || [] })(<CheckboxGroup options={this.state.extendsOption} />);
+    let tagsInput = <TagsInput disabled={this.state.disabled} value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v) }} />;
     return (
       <span>
         <span onClick={this.showModelHandler}>
@@ -138,17 +178,18 @@ class AttributeModalEditModal extends Component {
         >
           <Form horizontal onSubmit={this.okHandler}>
             <FormItem className={styles.FormItem} {...formItemLayout} label="所属分类" >
-              {getFieldDecorator('categoryId', { initialValue: name })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange} placeholder='Please select' />)}
+              {getFieldDecorator('categoryId', { initialValue: categoryId })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange} placeholder='Please select' />)}
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="属性分类" >    {getFieldDecorator('type', { initialValue: type })(
-              <RadioGroup >
+              <RadioGroup key='typeSelect' onChange={this.typeOnChange}>
                 <Radio value={'1'}>关键属性</Radio>
                 <Radio value={'2'}>销售属性</Radio>
                 <Radio value={'3'}>其他属性</Radio>
               </RadioGroup>
             )}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="继承公共属性" >    {getFieldDecorator('etype', { initialValue: etype })(
+            <FormItem className={styles.FormItem} {...formItemLayout} label="继承公共属性" >    {getFieldDecorator('etype', { initialValue: etype || '0' })(
               <RadioGroup onChange={this.etypeOnChange} onClick={this.etypeOnClick}>
+                <Radio value={'0'}>不继承</Radio>
                 <Radio value={'1'}>尺寸</Radio>
                 <Radio value={'2'}>颜色</Radio>
                 <Radio value={'3'}>原产地</Radio>
@@ -158,20 +199,20 @@ class AttributeModalEditModal extends Component {
               {checkOptions}
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="属性名称" >    {getFieldDecorator('name', { initialValue: name })(
-              <Input size="small" />
+              <Input size="small" disabled={this.state.disabled} />
             )}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="属性选项" >    {getFieldDecorator('stype', { initialValue: stype })(
-              <RadioGroup key='' >
-                <Radio value={'1'}>运营输入</Radio>
-                <Radio value={'2'}>使用SKU配图</Radio>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="属性选项" >    {getFieldDecorator('stype', { initialValue: stype || '3' })(
+              <RadioGroup key='' disabled={this.state.disabled} onChange={this.stypeOnChange}>
                 <Radio value={'3'}>下拉使用</Radio>
+                <Radio value={'1'} >运营输入</Radio>
+                <Radio value={'2'} disabled={this.state.useSkuImg}>使用SKU配图</Radio>
               </RadioGroup>
             )
             }
-              {getFieldDecorator('svalue', { initialValue: svalue || [] })(<TagsInput value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v) }} />)}
+              {getFieldDecorator('svalue')(tagsInput)}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="可以为空"> {getFieldDecorator('isNull', { initialValue: isNull })(
-              <RadioGroup key=''>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="可以为空" > {getFieldDecorator('isNull', { initialValue: isNull || '1' })(
+              <RadioGroup key='isNull' >
                 <Radio value={'1'}>是</Radio>
                 <Radio value={'2'}>否</Radio>
               </RadioGroup>
