@@ -26,6 +26,9 @@ function Header({ location }) {
       <Menu.Item key="countrys">
         <Link to="/countrys"><Icon type="pay-circle" />国家</Link>
       </Menu.Item>
+      <Menu.Item key="cases">
+        <Link to="/cases"><Icon type="pay-circle" />案例</Link>
+      </Menu.Item>
       {/*<Menu.Item key="/orders">
         <Link to="/orders"><Icon type="file" />订单</Link>
       </Menu.Item>*/}

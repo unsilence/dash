@@ -15,7 +15,7 @@ async function request(url, dt) {
     console.log(url, "RETRUN:", data)
     return ret;
 }
-['Category', 'Customer', 'Order', 'Country','Brand', 'Color', 'User', 'Serial','Attribute'].map(cls => {
+['Category', 'Customer', 'Order', 'Country','Brand', 'Color', 'User', 'Serial','Case','Attribute'].map(cls => {
     exports[cls + 'Service'] = {
         fetch({ page = 1 }) {
             return request(`/api/${cls}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 10, startPos: 10 * (page - 1) });

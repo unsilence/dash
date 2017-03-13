@@ -9,6 +9,7 @@ import Categorys from "./routes/Categorys";
 import Colors from "./routes/Color.js";
 import Serials from "./routes/Serials";
 import Brands from "./routes/Brands.js";
+import Cases from "./routes/Cases.js";
 
 // import Buys from "./routes/Buys.js";
 
@@ -20,6 +21,7 @@ function RouterConfig({ history }) {
     <Router history={history}>
       <Route path="/" component={IndexPage} />
       <Route path="/brands" component={Brands} />
+      <Route path="/cases" component={Cases} />
       <Route path="/users" component={Users} />
       <Route path="/attributes" component={Attributes} />
       <Route path="/countrys" component={Countrys} />
