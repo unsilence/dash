@@ -9,6 +9,8 @@ import moment from 'moment';
 
 const FormItem = Form.Item;
 
+const extendsObject = {"0":'不继承','1':'尺寸','2':'颜色','3':'原产地','4':'品牌国别'};
+
 class AttributeModalEditModal extends Component {
 
   constructor(props) {
@@ -17,9 +19,11 @@ class AttributeModalEditModal extends Component {
       visible: false,
       extendsOption: [],
       disabled: false,
+      tagsInputDisabled:false,//tagsInput
       threeDisabled: false,//选择颜色、原产地、品牌时间状态
       isNullValue: '1',//默认值
-      useSkuImg: true,//使用sku配图的状态
+      useSkuImg: false,//使用sku配图的状态
+      isNullDisabled:true,//isNull的状态 为销售属性时不能修改
     };
   }
 
@@ -34,6 +38,7 @@ class AttributeModalEditModal extends Component {
     this.setState({
       visible: false,
     });
+    this.props.form.resetFields(['name', 'categoryId', 'type', 'etype', 'stype', 'isNull', 'createAt', 'updateAt', 'size'])
   };
 
   okHandler = () => {
@@ -82,6 +87,14 @@ class AttributeModalEditModal extends Component {
   }
 
   stypeOnChange = (e) => {
+    let stype = e.target.value;
+    if(stype === '3')
+    {
+      this.setState({ tagsInputDisabled:false});
+    }
+    else {
+      this.setState({ tagsInputDisabled:true});
+    }
 
   }
 
@@ -97,11 +110,11 @@ class AttributeModalEditModal extends Component {
     let type = e.target.value;
     if (type === '2') {
       this.props.form.setFieldsValue({ 'isNull': '2' });
-      this.setState({useSkuImg:false})
+      this.setState({useSkuImg:false,isNullDisabled:true})
     }
     else {
       this.props.form.setFieldsValue({ 'isNull': '1' });
-      this.setState({useSkuImg:true})
+      this.setState({useSkuImg:true,isNullDisabled:false})
     }
   }
 
@@ -111,19 +124,19 @@ class AttributeModalEditModal extends Component {
     switch (key) {
       case "1":
         this.setState({ extendsOption: ['长', '宽', '高', '半径'] })
-        this.setState({ "disabled": true })
+        this.setState({ disabled: true ,tagsInputDisabled:true})
         break;
       case "2":
       case "3":
       case "4":
         this.setState({ extendsOption: [] })
         this.props.form.resetFields(['size']);
-        this.setState({ "disabled": true })
+        this.setState({ disabled: true ,tagsInputDisabled:true})
         break;
       case "0":
         this.setState({ extendsOption: [] })
         this.props.form.resetFields(['size']);
-        this.setState({ "disabled": false })
+        this.setState({ disabled: false ,tagsInputDisabled:false})
         break;
     }
   }
@@ -133,20 +146,7 @@ class AttributeModalEditModal extends Component {
   }
 
   setExtendsText = (type) => {
-    let strExt = '';
-    if (type === '1') {
-      strExt = '尺寸';
-    }
-    else if (type === '2') {
-      strExt = '颜色';
-    }
-    else if (type === '3') {
-      strExt = '原产地';
-    }
-    else if (type === '4') {
-      strExt = '品牌国别';
-    }
-    return strExt;
+    return extendsObject[type]?extendsObject[type]:'';
   }
 
   render() {
@@ -164,7 +164,7 @@ class AttributeModalEditModal extends Component {
     };
 
     let checkOptions = getFieldDecorator('size', { initialValue: size || [] })(<CheckboxGroup options={this.state.extendsOption} />);
-    let tagsInput = <TagsInput disabled={this.state.disabled} value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v) }} />;
+    let tagsInput = <TagsInput disabled={this.state.tagsInputDisabled} value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v) }} />;
     return (
       <span>
         <span onClick={this.showModelHandler}>
@@ -180,7 +180,7 @@ class AttributeModalEditModal extends Component {
             <FormItem className={styles.FormItem} {...formItemLayout} label="所属分类" >
               {getFieldDecorator('categoryId', { initialValue: categoryId })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange} placeholder='Please select' />)}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="属性分类" >    {getFieldDecorator('type', { initialValue: type })(
+            <FormItem className={styles.FormItem} {...formItemLayout} label="属性分类" >    {getFieldDecorator('type', { initialValue: type || '3'})(
               <RadioGroup key='typeSelect' onChange={this.typeOnChange}>
                 <Radio value={'1'}>关键属性</Radio>
                 <Radio value={'2'}>销售属性</Radio>
@@ -212,7 +212,7 @@ class AttributeModalEditModal extends Component {
               {getFieldDecorator('svalue')(tagsInput)}
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="可以为空" > {getFieldDecorator('isNull', { initialValue: isNull || '1' })(
-              <RadioGroup key='isNull' >
+              <RadioGroup key='isNull' disabled={this.state.isNullDisabled}>
                 <Radio value={'1'}>是</Radio>
                 <Radio value={'2'}>否</Radio>
               </RadioGroup>
@@ -221,7 +221,6 @@ class AttributeModalEditModal extends Component {
             <FormItem className={styles.FormItem} {...formItemLayout} label="创建时间" style={_id ? { display: 'block' } : { display: 'none' }}>    {getFieldDecorator('createAt', { initialValue: moment(new Date(createAt)).format('YYYY-MM-DD HH:mm:ss') })(
               <Input size="small" />
             )}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="客户经理" style={_id ? { display: 'block' } : { display: 'none' }}>    {getFieldDecorator('updateAt', { initialValue: moment(new Date(updateAt)).format('YYYY-MM-DD HH:mm:ss') })(<Input size="small" />)}</FormItem>
           </Form>
         </Modal>
       </span>

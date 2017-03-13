@@ -7,6 +7,11 @@ let PAGE_SIZE = 10
 import AttributeModal from './AttributeModal';
 import moment from 'moment';
 
+const extendsObject = {"0":'不继承','1':'尺寸','2':'颜色','3':'原产地','4':'品牌国别'};
+const stypeObject = {'1':'运营输入','2':'使用SKU配图','3':'下拉选项'};
+const typeObject = {'1':'关键属性','2':'销售属性','3':'其他属性'};
+
+
 function Attributes({ dispatch, list: dataSource, loading, total, page: current, categoryList }) {
 
   function deleteHandler(itm) {
@@ -57,48 +62,7 @@ function Attributes({ dispatch, list: dataSource, loading, total, page: current,
     }
     return cstr;
   }
-  /**获得属性类别分类 */
-  function getType(_type) {
-    if (_type === '1') {
-      return '关键分类';
-    } else if (_type === '2') {
-      return '关键分类';
-    } else if (_type === '3') {
-      return '关键分类';
-    } else {
-      return ''
-    }
-  }
 
-  /**获得继承公共属性类型 */
-  function getEType(_type) {
-    if (_type === '0') {
-      return '不继承';
-    }else if (_type === '1') {
-      return '尺寸';
-    } else if (_type === '2') {
-      return '颜色';
-    } else if (_type === '3') {
-      return '原产地';
-    } else if (_type === '4') {
-      return '品牌国别'
-    } else {
-      return '';
-    }
-  }
-
-  /**获得属性选项类型 */
-  function getSType(_type) {
-    if (_type === '1') {
-      return '运营输入';
-    } else if (_type === '2') {
-      return '使用SKU配图';
-    } else if (_type === '3') {
-      return '下拉选项';
-    } else {
-      return ''
-    }
-  }
   const columns = [
     {
       title: '名字',
@@ -115,19 +79,19 @@ function Attributes({ dispatch, list: dataSource, loading, total, page: current,
       title: '属性类别',
       dataIndex: 'type',
       key: 'type',//关键分类、销售属性、其他属性
-      render: text => <span>{getType(text)}</span>,
+      render: text => <span>{typeObject[text]?typeObject[text]:''}</span>,
     },
     {
       title: '继承公共属性',
       dataIndex: 'etype',
       key: 'etype',//继承公共属性
-      render: text => <span>{getEType(text)}</span>,
+      render: text => <span>{extendsObject[text]?extendsObject[text]:''}</span>,
     },
     {
       title: '属性选项',
       dataIndex: 'stype',
       key: 'stype',//属性选项属性
-      render: text => <span>{getSType(text)}</span>,
+      render: text => <span>{stypeObject[text]?stypeObject[text]:''}</span>,
     },
     {
       title: '可以为空',
