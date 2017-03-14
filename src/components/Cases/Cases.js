@@ -5,7 +5,7 @@ import { routerRedux } from 'dva/router';
 import styles from '../list.less';
 let PAGE_SIZE = 10
 import CaseModal from './CaseModal';
-
+import moment from 'moment';
 function Cases({ dispatch, list: dataSource, loading, total, page: current }) {
 
   function deleteHandler(itm) {
@@ -54,6 +54,7 @@ function Cases({ dispatch, list: dataSource, loading, total, page: current }) {
       title: '创建时间',
       dataIndex: 'createAt',
       key: 'createAt',
+      render: text => <span>{moment(new Date(text)).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
       title: '户型',
@@ -72,8 +73,9 @@ function Cases({ dispatch, list: dataSource, loading, total, page: current }) {
     },
     {
       title: '推荐系数',
-      dataIndex: 'recommenCoeff',
-      key: 'recommenCoeff',
+      dataIndex: 'updateAt',
+      key: 'updateAt',
+      render: text => <span>{moment(new Date(text)).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
       title: '操作',

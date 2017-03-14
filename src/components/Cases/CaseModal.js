@@ -4,6 +4,10 @@ import styles from '../item.less';
 import moment from 'moment';
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
+const caseModels = [{key:"1",value:"别墅"},{key:"2",value:"平层"}];
+const caseSpaces = [{key:"1",value:"客厅"},{key:"2",value:"书房"},{key:"3",value:"卧室"},{key:"4",value:"餐厅"},{key:"5",value:"厨房"},{key:"6",value:"洗漱间"},{key:"7",value:"儿童房"}];
+const caseStyles = [{key:"1",value:"现代"},{key:"2",value:"欧式"},{key:"3",value:"美式"},{key:"4",value:"古典"},{key:"5",value:"田园"},{key:"6",value:"混搭"}];
 class CaseEditModal extends Component {
 
   constructor(props) {
@@ -22,12 +26,12 @@ class CaseEditModal extends Component {
 
     };
   }
-  onChange = (e) => {
-    console.log('radio checked', e.target.value);
-    this.setState({
-      value: e.target.value,
-    });
-  }
+  // onChange = (e) => {
+  //   console.log('radio checked', e.target.value);
+  //   this.setState({
+  //     value: e.target.value,
+  //   });
+  // }
   handleCancel = () => this.setState({ previewVisible: false })
   handlePreview = (file) => {
     this.setState({
@@ -36,10 +40,6 @@ class CaseEditModal extends Component {
     });
   }
   handleChange = ({ fileList }) => this.setState({ fileList })
-  // componentDidMount() {
-  //   // To disabled submit button at the beginning.
-  //   this.props.form.validateFields();
-  // }
   showModelHandler = (e) => {
     if (e) e.stopPropagation();
     this.setState({
@@ -56,10 +56,6 @@ class CaseEditModal extends Component {
 
   okHandler = (e) => {
     const { onOk } = this.props;
-    // if(!e){
-    //   return
-    // }
-    // e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
         onOk(values);
@@ -78,14 +74,14 @@ class CaseEditModal extends Component {
     );
     const { children } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { _id, urladdress,headline,key,caseNote,collocatImg,caseDoormodel,caseSpace,caseStyle,createAt,recommenCoeff} = this.props.case;
-    // const nameError = isFieldTouched('name') && getFieldError('name');
-    // const noteError = isFieldTouched('note') && getFieldError('note');
+    const { _id, urladdress,headline,key,caseNote,collocatImg,caseDoormodel,caseSpace,caseStyle,createAt,updateAt} = this.props.case;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
-
+    const casespaceButton = caseSpaces.map(t=><RadioButton value={t.value}>{t.value}</RadioButton>);
+    const casemodelButton = caseModels.map(v=><RadioButton value={v.value}>{v.value}</RadioButton>);
+    const casestyleButton = caseStyles.map(a=><RadioButton value={a.value}>{a.value}</RadioButton>);
     return (
       <span>
         <span onClick={this.showModelHandler}>
@@ -112,34 +108,19 @@ class CaseEditModal extends Component {
         >
           {fileList.length >= 3 ? null : uploadButton}
         </Upload>)}</FormItem>
-        <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例户型" > {getFieldDecorator('caseDoormodel', { initialValue: caseDoormodel })(<RadioGroup onChange={this.onChange} value={this.state.value}>
-              <Radio value={1}>别墅</Radio>
-              <Radio value={2}>平层</Radio>
+        <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例户型" > {getFieldDecorator('caseDoormodel', { initialValue: caseDoormodel })(<RadioGroup defaultValue="别墅" size="small">
+              {casemodelButton}
            </RadioGroup>)}
            </FormItem>
-           <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例空间" > {getFieldDecorator('caseSpace', { initialValue: caseSpace })(<RadioGroup onChange={this.onChange} value={this.state.value}>
-              <Radio value={1}>客厅</Radio>
-              <Radio value={2}>书房</Radio>
-              <Radio value={3}>卧室</Radio>
-              <Radio value={4}>餐厅</Radio>
-              <Radio value={5}>厨房</Radio>
-              <Radio value={6}>洗漱间</Radio>
-              <Radio value={7}>儿童房</Radio>
+           <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例空间" > {getFieldDecorator('caseSpace', { initialValue: caseSpace })(<RadioGroup defaultValue="客厅" size="small">
+              {casespaceButton}
            </RadioGroup>)}
            </FormItem>
-           <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例风格" > {getFieldDecorator('caseStyle', { initialValue: caseStyle })(<RadioGroup onChange={this.onChange} value={this.state.value}>
-              <Radio value={1}>现代</Radio>
-              <Radio value={2}>欧式</Radio>
-              <Radio value={3}>美式</Radio>
-              <Radio value={4}>古典</Radio>
-              <Radio value={5}>田园</Radio>
-              <Radio value={6}>混搭</Radio>
+           <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例风格" > {getFieldDecorator('caseStyle', { initialValue: caseStyle })(<RadioGroup defaultValue="现代" size="small">
+             {casestyleButton}
            </RadioGroup>)}
            </FormItem>
            <FormItem className={styles.FormItem} {...formItemLayout} label="发布时间" style={_id ? { display: 'block' } : { display: 'none' }}>    {getFieldDecorator('createAt', { initialValue: moment(new Date(createAt)).format('YYYY-MM-DD HH:mm:ss') })(
-              <Input size="small" />
-            )}</FormItem>
-           <FormItem className={styles.FormItem} {...formItemLayout} label="推荐系数" style={_id ? { display: 'block' } : { display: 'none' }}>    {getFieldDecorator('recommenCoeff', { initialValue: moment(new Date(recommenCoeff)).format('YYYY-MM-DD HH:mm:ss') })(
               <Input size="small" />
             )}</FormItem>
           </Form>
