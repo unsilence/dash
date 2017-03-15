@@ -12,7 +12,7 @@ const stypeObject = {'1':'运营输入','2':'使用SKU配图','3':'下拉选项'
 const typeObject = {'1':'关键属性','2':'销售属性','3':'其他属性'};
 
 
-function Attributes({ dispatch, list: dataSource, loading, total, page: current, categoryList }) {
+function Attributes({ dispatch, list: dataSource, loading, total, page: current, categoryMap }) {
 
   function deleteHandler(itm) {
     console.log('deleteHandler', itm)
@@ -53,7 +53,7 @@ function Attributes({ dispatch, list: dataSource, loading, total, page: current,
         return '';
       }
       let cate = (categoryList || []).filter(s => s._id === _id);
-      if (cate) {
+      if (cate.length !== 0) {
         return cate[0].name;
       }
       else {
@@ -116,7 +116,7 @@ function Attributes({ dispatch, list: dataSource, loading, total, page: current,
       key: 'operation',
       render: (text, record) => (
         <span className={styles.operation2}>
-          <AttributeModal record={{ ...record, categoryList: categoryList }} onOk={editHandler.bind(null, record._id)}>
+          <AttributeModal record={{ ...record, categoryList: Object.values((categoryMap||{})) }} onOk={editHandler.bind(null, record._id)}>
             <Icon type="edit" className={styles.icon} />
           </AttributeModal>
           <Popconfirm title={"确定要删除属性【" + record.name + "】吗？"} onConfirm={deleteHandler.bind(null, record)}>
@@ -131,7 +131,7 @@ function Attributes({ dispatch, list: dataSource, loading, total, page: current,
     <div className={styles.normal}>
       <div>
         <Row type="flex" justify="end">
-          <AttributeModal record={{ categoryList: categoryList }} onOk={editHandler.bind(null, '')}>
+          <AttributeModal record={{ categoryList: Object.values((categoryMap||{})) }} onOk={editHandler.bind(null, '')}>
             <Button icon="plus-circle-o">添加</Button>
           </AttributeModal>
         </Row>
@@ -156,13 +156,13 @@ function Attributes({ dispatch, list: dataSource, loading, total, page: current,
 
 function mapStateToProps(state) {
 
-  const { list, total, page, categoryList } = state.attributes;
+  const { list, total, page, categoryMap } = state.attributes;
   return {
     loading: state.loading.models.attributes,
     list,
     total,
     page,
-    categoryList
+    categoryMap
   };
 }
 

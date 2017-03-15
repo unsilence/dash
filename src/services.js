@@ -15,7 +15,7 @@ async function request(url, dt) {
     console.log(url, "RETRUN:", data)
     return ret;
 }
-['Category', 'Customer', 'Order', 'Country','Brand', 'Color', 'User', 'Serial','Case','Attribute'].map(cls => {
+['Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Product'].map(cls => {
     exports[cls + 'Service'] = {
         fetch({ page = 1 }) {
             return request(`/api/${cls}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 10, startPos: 10 * (page - 1) });
@@ -48,3 +48,27 @@ exports['logout'] = async () => {
     return;
 }
 // 这里在接口层面可以加本地存储
+function getMapByList(list) {
+    let tempMap = {}
+    list.map(item => {
+        tempMap[item._id.toString()] = item;
+    })
+    return tempMap
+}
+async function getCategoryMap() {
+    let categoryRequestResult = await request(`/api/Category/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 100000, startPos: 0 })
+    let categoryList = categoryRequestResult.data.data.list
+    let categoryMap = getMapByList(categoryList)
+    window.sessionStorage.brandMap = JSON.stringify(categoryMap)
+    return categoryMap
+}
+exports['getCategoryMap'] = getCategoryMap;
+
+async function getSerialMap() {
+    let serialResult = await request(`/api/Serial/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 100000, startPos: 0 })
+    let serialList = serialResult.data.data.list
+    let serialMap = getMapByList(serialList)
+    window.sessionStorage.brandMap = JSON.stringify(serialMap)
+    return serialMap;
+}
+exports['getSerialMap'] = getSerialMap;

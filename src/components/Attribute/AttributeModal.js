@@ -38,6 +38,7 @@ class AttributeModalEditModal extends Component {
     this.setState({
       visible: false,
     });
+    this.setState({ extendsOption: [] });
     this.props.form.resetFields(['name', 'categoryId', 'type', 'etype', 'stype', 'isNull', 'createAt', 'updateAt', 'size'])
   };
 
@@ -120,7 +121,7 @@ class AttributeModalEditModal extends Component {
 
   etypeOnChange = (e) => {
     let key = e.target.value;
-    this.props.form.setFieldsValue({ 'name': this.setExtendsText(key) });
+    this.props.form.setFieldsValue({ 'name': key === '0' ? '': this.setExtendsText(key) });
     switch (key) {
       case "1":
         this.setState({ extendsOption: ['长', '宽', '高', '半径'] })

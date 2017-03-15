@@ -4,7 +4,7 @@ import styles from '../item.less';
 
 const FormItem = Form.Item;
 
-class BuyEditModal extends Component {
+class CategoryEditModal extends Component {
 
   constructor(props) {
     super(props);
@@ -40,15 +40,18 @@ class BuyEditModal extends Component {
   render() {
     const { children } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { _id, name, note } = this.props.record;
-    const categories =  this.props.record.categories || [];
-
+    const { _id, name, note ,parentId} = this.props.record;
+    const categoryMap =  this.props.record.categoryMap || {};
+    let categories = [];
+    for(let key in categoryMap){
+      categories.push({key:key,value:categoryMap[key].name})
+    }
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
 
-    const options = categories.filter(v => v._id !== _id).map(v => <Select.Option key={v._id} value={v._id}>{v.name}</Select.Option>);
+    const options = categories.filter(v => v.key !== _id).map(v => <Select.Option key={v.key} value={v.key}>{v.value}</Select.Option>);
     return (
       <span>
         <span onClick={this.showModelHandler}>
@@ -62,7 +65,7 @@ class BuyEditModal extends Component {
         >
           <Form horizontal onSubmit={this.okHandler}>
             <FormItem className={styles.FormItem} {...formItemLayout} label="分类" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="父分类" > {getFieldDecorator('parentId', { initialValue: '' })(
+            <FormItem className={styles.FormItem} {...formItemLayout} label="父分类" > {getFieldDecorator('parentId', { initialValue: parentId })(
               <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>
             )}
             </FormItem>
@@ -74,4 +77,4 @@ class BuyEditModal extends Component {
   }
 }
 
-export default Form.create()(BuyEditModal);
+export default Form.create()(CategoryEditModal);

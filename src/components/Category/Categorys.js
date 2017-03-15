@@ -6,7 +6,7 @@ import styles from '../list.less';
 let PAGE_SIZE = 10
 import CategoryModal from './CategoryModal';
 
-function Categorys({ dispatch, list: dataSource, loading, total, page: current }) {
+function Categorys({ dispatch, list: dataSource, loading, total, page: current ,categoryMap}) {
 
   function deleteHandler(itm) {
     console.log('deleteHandler', itm)
@@ -27,13 +27,7 @@ function Categorys({ dispatch, list: dataSource, loading, total, page: current }
     if (_id === '' || !_id) {
       return '';
     }
-    let cate = (dataSource||[]).filter(s => s._id === _id);
-    if (cate) {
-      return cate[0].name;
-    }
-    else {
-      return ''
-    }
+    return categoryMap[_id].name ||'';
   }
 
   function editHandler(id, values) {
@@ -53,12 +47,6 @@ function Categorys({ dispatch, list: dataSource, loading, total, page: current }
 
   const columns = [
     {
-      title: 'id',
-      dataIndex: '_id',
-      key: '_id',
-      render: text => <a href="">{text}</a>,
-    },
-    {
       title: '名字',
       dataIndex: 'name',
       key: 'name',
@@ -70,11 +58,23 @@ function Categorys({ dispatch, list: dataSource, loading, total, page: current }
       render: text => <span>{getCategoryName(text)}</span>
     },
     {
+      title: '编码',
+      dataIndex: 'code',
+      key: 'code',
+      render: text => <span>{text}</span>
+    },
+    {
+      title: '子编码',
+      dataIndex: 'ccodeNum',
+      key: 'ccodeNum',
+      render: text => <span>{text}</span>
+    },
+    {
       title: 'Operation',
       key: 'operation',
       render: (text, record) => (
         <span className={styles.operation2}>
-          <CategoryModal record={{ ...record, categories: dataSource }}  onOk={editHandler.bind(null, record._id)}>
+          <CategoryModal record={{ ...record,categoryMap:categoryMap}}  onOk={editHandler.bind(null, record._id)}>
             <Icon type="edit" className={styles.icon} />
           </CategoryModal>
           <Popconfirm title={"确定要删除分类【" + record.name + "】吗？"} onConfirm={deleteHandler.bind(null, record)}>
@@ -89,7 +89,7 @@ function Categorys({ dispatch, list: dataSource, loading, total, page: current }
     <div className={styles.normal}>
       <div>
         <Row type="flex" justify="end">
-          <CategoryModal record={{categories:dataSource}} onOk={editHandler.bind(null, '')}>
+          <CategoryModal record={{categoryMap:categoryMap}} onOk={editHandler.bind(null, '')}>
             <Button icon="plus-circle-o">添加</Button>
           </CategoryModal>
         </Row>
@@ -114,12 +114,13 @@ function Categorys({ dispatch, list: dataSource, loading, total, page: current }
 
 function mapStateToProps(state) {
 
-  const { list, total, page } = state.categorys;
+  const { list, total, page ,categoryMap} = state.categorys;
   return {
     loading: state.loading.models.categorys,
     list,
     total,
     page,
+    categoryMap,
   };
 }
 

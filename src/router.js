@@ -10,11 +10,8 @@ import Colors from "./routes/Color.js";
 import Serials from "./routes/Serials";
 import Brands from "./routes/Brands.js";
 import Cases from "./routes/Cases.js";
-
-// import Buys from "./routes/Buys.js";
-
-// import Reports from "./routes/Reports.js";
 import Login from "./routes/login.js";
+import Product from "./routes/Product";
 
 function RouterConfig({ history }) {
   return (
@@ -25,7 +22,7 @@ function RouterConfig({ history }) {
       <Route path="/users" component={Users} />
       <Route path="/attributes" component={Attributes} />
       <Route path="/countrys" component={Countrys} />
-      {/*<Route path="/orders" component={Orders} />*/}
+      <Route path="/products" component={Product} />
       <Route path="/categorys" component={Categorys} />
       <Route path="/colors" component={Colors} />
       <Route path="/serials" component={Serials} />

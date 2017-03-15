@@ -6,7 +6,7 @@ import styles from '../list.less';
 let PAGE_SIZE = 10
 import ColorModal from './ColorModal';
 
-function Colors({ dispatch, list: dataSource, loading, total, page: current, serialList }) {
+function Colors({ dispatch, list: dataSource, loading, total, page: current, serialMap }) {
 
   function deleteHandler(itm) {
     console.log('deleteHandler', itm)
@@ -39,13 +39,7 @@ function Colors({ dispatch, list: dataSource, loading, total, page: current, ser
   }
 
   function getSerialName(_serId) {
-    let seria = serialList.filter(s => s._id === _serId);
-    if (seria) {
-      return seria[0].name;
-    }
-    else{
-      return ''
-    }
+    return serialMap[_serId] ? serialMap[_serId].name :'';
   }
 
   const columns = [
@@ -76,7 +70,7 @@ function Colors({ dispatch, list: dataSource, loading, total, page: current, ser
       key: 'operation',
       render: (text, record) => (
         <span className={styles.operation2}>
-          <ColorModal record={{ ...record, serialList: serialList }} onOk={editHandler.bind(null, record._id)}>
+          <ColorModal record={{ ...record, serialList: Object.values(serialMap||{}) }} onOk={editHandler.bind(null, record._id)}>
             <Icon type="edit" className={styles.icon} />
           </ColorModal>
           <Popconfirm title={"确定要删除颜色【" + record.name + "】吗？"} onConfirm={deleteHandler.bind(null, record)}>
@@ -91,7 +85,7 @@ function Colors({ dispatch, list: dataSource, loading, total, page: current, ser
     <div className={styles.normal}>
       <div>
         <Row type="flex" justify="end">
-          <ColorModal record={{ serialList: serialList }} onOk={editHandler.bind(null, '')}>
+          <ColorModal record={{ serialList: Object.values(serialMap||{}) }} onOk={editHandler.bind(null, '')}>
             <Button icon="plus-circle-o">添加</Button>
           </ColorModal>
         </Row>
@@ -116,14 +110,14 @@ function Colors({ dispatch, list: dataSource, loading, total, page: current, ser
 
 function mapStateToProps(state) {
 
-  const { list, total, page, serialList } = state.colors;
+  const { list, total, page, serialMap } = state.colors;
 
   return {
     loading: state.loading.models.colors,
     list,
     total,
     page,
-    serialList,
+    serialMap,
   };
 }
 
