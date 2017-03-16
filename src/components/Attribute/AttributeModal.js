@@ -214,8 +214,8 @@ class AttributeModalEditModal extends Component {
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="可以为空" > {getFieldDecorator('isNull', { initialValue: isNull || '1' })(
               <RadioGroup key='isNull' disabled={this.state.isNullDisabled}>
-                <Radio value={'1'}>是</Radio>
-                <Radio value={'2'}>否</Radio>
+                <Radio value={true}>是</Radio>
+                <Radio value={false}>否</Radio>
               </RadioGroup>
             )}</FormItem>
 
