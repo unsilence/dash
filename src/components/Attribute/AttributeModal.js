@@ -23,7 +23,7 @@ class AttributeModalEditModal extends Component {
       threeDisabled: false,//选择颜色、原产地、品牌时间状态
       isNullValue: '1',//默认值
       useSkuImg: false,//使用sku配图的状态
-      isNullDisabled:true,//isNull的状态 为销售属性时不能修改
+      isNullDisabled:false,//isNull的状态 为销售属性时不能修改
     };
   }
 

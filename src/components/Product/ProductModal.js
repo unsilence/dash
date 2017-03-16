@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Modal, Form, Input, Select } from 'antd';
 import styles from '../item.less';
+import { Editor } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/react-draft-wysiwyg.css';
 
 const FormItem = Form.Item;
 
@@ -65,8 +67,10 @@ class ProductEditModal extends Component {
           onCancel={this.hideModelHandler}
         >
           <Form horizontal onSubmit={this.okHandler}>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="色系名字" >    {getFieldDecorator('name',{rules:[{required: true, message: '请输入色系名字!'}],initialValue: name})(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="备注" >    {getFieldDecorator('note',{rules:[{required: true, message: '请输入备注!'}],initialValue: note})(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >    {getFieldDecorator('name',{rules:[{required: true, message: '请输入色系名字!'}],initialValue: name})(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >    {getFieldDecorator('note',{rules:[{required: true, message: '请输入备注!'}],initialValue: note})(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="商品分类" >    {getFieldDecorator('note',{rules:[{required: true, message: '请输入备注!'}],initialValue: note})(<Input size="small" />)}</FormItem>
+            <Editor />
           </Form>
         </Modal>
       </span>
