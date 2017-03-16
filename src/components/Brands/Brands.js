@@ -116,12 +116,13 @@ console.log("ta laizi nali!",dataSource)
 
 function mapStateToProps(state) {
 
-  const { list, total, page } = state.brands;
+  const { list, total, page ,categoryMap} = state.brands;
   return {
     loading: state.loading.models.brands,
     list,
     total,
     page,
+    categoryMap
   };
 }
 
