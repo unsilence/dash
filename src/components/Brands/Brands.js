@@ -6,7 +6,7 @@ import styles from '../list.less';
 let PAGE_SIZE = 10
 import BrandModal from './BrandModal';
 
-function Brands({ dispatch, list: dataSource, loading, total, page: current }) {
+function Brands({ dispatch, list: dataSource, loading, total, page: current,categoryMap }) {
 console.log("ta laizi nali!",dataSource)
   function deleteHandler(itm) {
       console.log('deleteHandler',itm)
@@ -76,7 +76,7 @@ console.log("ta laizi nali!",dataSource)
       key: 'operation',
       render: (text, record) => (
         <span className={styles.operation2}>
-          <BrandModal record={record} onOk={editHandler.bind(null, record._id)}>
+          <BrandModal record={{ ...record, categoryList: Object.values((categoryMap||{})) }} onOk={editHandler.bind(null, record._id)}>
             <Icon type="edit" className={styles.icon}/>
           </BrandModal>
           <Popconfirm title={"确定要删除品牌【"+record.name+"】吗？"} onConfirm={deleteHandler.bind(null, record)}>
@@ -91,7 +91,7 @@ console.log("ta laizi nali!",dataSource)
     <div className={styles.normal}>
       <div>
         <Row type="flex" justify="end">
-            <BrandModal record={{}} onOk={editHandler.bind(null,'')}>
+            <BrandModal record={{ categoryList: Object.values((categoryMap||{})) }} onOk={editHandler.bind(null,'')}>
                 <Button  icon="plus-circle-o">添加</Button>
             </BrandModal>
         </Row>

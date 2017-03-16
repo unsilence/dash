@@ -85,8 +85,8 @@ exports["CategoryModel"].effects.fetch = function* ({ payload: { page } }, { cal
 
 exports["BrandModel"].effects.fetch = function* ({ payload: { page } }, { call, put }) {
   const categoryMap = yield call(service["getCategoryMap"], 'Category');
-  const categories = yield call(service["BrandService"].fetch, { page });
-  const rd = { data: categories.data.data.list, total: categories.data.data.count, page: parseInt(page), categoryMap: categoryMap }
+  const brands = yield call(service["BrandService"].fetch, { page });
+  const rd = { data: brands.data.data.list, total: brands.data.data.count, page: parseInt(page), categoryMap: categoryMap }
   yield put({ type: 'save22', payload: rd });
 }
 
