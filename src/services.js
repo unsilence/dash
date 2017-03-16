@@ -15,7 +15,7 @@ async function request(url, dt) {
     console.log(url, "RETRUN:", data)
     return ret;
 }
-['Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Product','Test'].map(cls => {
+['Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Product', 'Test'].map(cls => {
     exports[cls + 'Service'] = {
         fetch({ page = 1 }) {
             return request(`/api/${cls}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 10, startPos: 10 * (page - 1) });
@@ -55,20 +55,13 @@ function getMapByList(list) {
     })
     return tempMap
 }
-async function getCategoryMap() {
-    let categoryRequestResult = await request(`/api/Category/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 100000, startPos: 0 })
-    let categoryList = categoryRequestResult.data.data.list
-    let categoryMap = getMapByList(categoryList)
-    window.sessionStorage.brandMap = JSON.stringify(categoryMap)
-    return categoryMap
-}
-exports['getCategoryMap'] = getCategoryMap;
 
-async function getSerialMap() {
-    let serialResult = await request(`/api/Serial/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 100000, startPos: 0 })
-    let serialList = serialResult.data.data.list
-    let serialMap = getMapByList(serialList)
-    window.sessionStorage.brandMap = JSON.stringify(serialMap)
-    return serialMap;
-}
-exports['getSerialMap'] = getSerialMap;
+['Color','Country','Brand','Serial','Category','Attribute'].map(v => {
+    exports[`get${v}Map`] = async function (v) {
+        let result = await request(`/api/${v}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 100000, startPos: 0 })
+        let list = result.data.data.list
+        let map = getMapByList(list)
+        window.sessionStorage.brandMap = JSON.stringify(map)
+        return map;
+    }
+});

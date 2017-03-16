@@ -9,9 +9,9 @@ let generate = (name, serviceName) => {
       total: null,
     },
     reducers: {
-      save22(state, { payload: { data: list, total, page, serialMap, categoryMap } }) {
+      save22(state, { payload: { data: list, total, page, serialMap, categoryMap, colorMap, countryMap, brandMap, attributeMap } }) {
         page = page || 1
-        return { ...state, list, total, page, serialMap, categoryMap };
+        return { ...state, list, total, page, serialMap, categoryMap, colorMap, countryMap, brandMap, attributeMap };
       },
     },
     effects: {
@@ -54,7 +54,7 @@ let generate = (name, serviceName) => {
     },
   }
 }
-['Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Product','Test'].map(cls => {
+['Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Product', 'Test'].map(cls => {
   exports[cls + 'Model'] = generate(cls.toLowerCase() + 's', cls + 'Service')
 })
 exports['login'] = function () { return service.login() }
@@ -64,21 +64,50 @@ exports['logout'] = function () { return service.logout() }
 /**-----------------------------自定义------------------------- */
 exports["ColorModel"].effects.fetch = function* ({ payload: { page } }, { call, put }) {
   const colors = yield call(service["ColorService"].fetch, { page });
-  const serialMap = yield call(service["getSerialMap"]);
+  const serialMap = yield call(service["getSerialMap"], 'Serial');
   const rd = { data: colors.data.data.list, total: colors.data.data.count, page: parseInt(page), serialMap: serialMap };
   yield put({ type: 'save22', payload: rd });
 }
 
 exports["AttributeModel"].effects.fetch = function* ({ payload: { page } }, { call, put }) {
   const attributes = yield call(service["AttributeService"].fetch, { page });
-  const categoryMap = yield call(service["getCategoryMap"]);
+  const categoryMap = yield call(service["getCategoryMap"], 'Category');
   const rd = { data: attributes.data.data.list, total: attributes.data.data.count, page: parseInt(page), categoryMap: categoryMap }
   yield put({ type: 'save22', payload: rd });
 }
 
 exports["CategoryModel"].effects.fetch = function* ({ payload: { page } }, { call, put }) {
-  const categoryMap = yield call(service["getCategoryMap"]);
+  const categoryMap = yield call(service["getCategoryMap"], 'Category');
   const categories = yield call(service["CategoryService"].fetch, { page });
   const rd = { data: categories.data.data.list, total: categories.data.data.count, page: parseInt(page), categoryMap: categoryMap }
+  yield put({ type: 'save22', payload: rd });
+}
+
+exports["BrandModel"].effects.fetch = function* ({ payload: { page } }, { call, put }) {
+  const categoryMap = yield call(service["getCategoryMap"], 'Category');
+  const categories = yield call(service["BrandService"].fetch, { page });
+  const rd = { data: categories.data.data.list, total: categories.data.data.count, page: parseInt(page), categoryMap: categoryMap }
+  yield put({ type: 'save22', payload: rd });
+}
+
+exports['ProductModel'].effects.fetch = function* ({ payload: { page } }, { call, put }) {
+  const categoryMap = yield call(service["getCategoryMap"], 'Category');
+  const serialMap = yield call(service["getSerialMap"], 'Serial');
+  const colorMap = yield call(service["getColorMap"], 'Color');
+  const countryMap = yield call(service["getCountryMap"], 'Country');
+  const brandMap = yield call(service["getBrandMap"], 'Brand');
+  const attributeMap = yield call(service["getAttributeMap"], 'Attribute');
+  const products = yield call(service["ProductService"].fetch, { page });
+  const rd = {
+    data: products.data.data.list,
+    total: products.data.data.count,
+    page: parseInt(page),
+    categoryMap: categoryMap,
+    serialMap: serialMap,
+    colorMap: colorMap,
+    countryMap: countryMap,
+    brandMap: brandMap,
+    attributeMap: attributeMap,
+  }
   yield put({ type: 'save22', payload: rd });
 }

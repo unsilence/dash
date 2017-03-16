@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, Select } from 'antd';
+import { Modal, Form, Input, Select, Cascader } from 'antd';
 import styles from '../item.less';
-import { Editor } from 'react-draft-wysiwyg';
-import 'react-draft-wysiwyg/react-draft-wysiwyg.css';
+import TagsInput from 'react-tagsinput'
+import 'react-tagsinput/react-tagsinput.css'
+import { getFormatData } from '../utils'
 
 const FormItem = Form.Item;
 
@@ -12,12 +13,44 @@ class ProductEditModal extends Component {
     super(props);
     this.state = {
       visible: false,
+      keyAttr: [],
+      sellAttr: [],
+      otherAttr: [],
     };
   }
   // componentDidMount() {
   //   // To disabled submit button at the beginning.
   //   this.props.form.validateFields();
   // }
+
+  cascaderOnChange = (value) => {
+    this.handleAttr(value);
+  }
+
+  handleAttr = (_cascader) => {
+    let cas = _cascader.toString();
+    let keyAttr = [];
+    let sellAttr = [];
+    let otherAttr = [];
+    let arr = Object.values(this.props.product.attributeMap)
+      .filter(v => {
+        return v.categoryId.toString() === cas;
+      }).forEach(v => {
+        if (v.type === '1') {
+          keyAttr.push(v);
+        } else if (v.type === '2') {
+          sellAttr.push(v);
+        } else if (v.type === '3') {
+          otherAttr.push(v);
+        }
+      })
+    this.setState({
+      keyAttr: keyAttr,
+      sellAttr: sellAttr,
+      otherAttr: otherAttr,
+    })
+  }
+
   showModelHandler = (e) => {
     if (e) e.stopPropagation();
     this.setState({
@@ -29,7 +62,7 @@ class ProductEditModal extends Component {
     this.setState({
       visible: false,
     });
-    this.props.form.resetFields(['name','note']);
+    this.props.form.resetFields(['name', 'note']);
   };
 
   okHandler = (e) => {
@@ -49,11 +82,19 @@ class ProductEditModal extends Component {
   render() {
     const { children } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { _id, name, note } = this.props.serial;
+    const { _id, name, note, key, categoryId } = this.props.product;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
+
+    let data = [];
+    (this.props.product.categoryList || []).forEach(v => data.unshift(v));
+    let cascaderOptions = getFormatData(data);
+
+    //属性处理
+    let keyOptions = [];
+
 
     return (
       <span>
@@ -61,16 +102,17 @@ class ProductEditModal extends Component {
           {children}
         </span>
         <Modal
-          title={_id ? "修改：": '新建'}
+          title={_id ? "修改：" : '新建'}
           visible={this.state.visible}
           onOk={this.okHandler}
           onCancel={this.hideModelHandler}
         >
           <Form horizontal onSubmit={this.okHandler}>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >    {getFieldDecorator('name',{rules:[{required: true, message: '请输入色系名字!'}],initialValue: name})(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >    {getFieldDecorator('note',{rules:[{required: true, message: '请输入备注!'}],initialValue: note})(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="商品分类" >    {getFieldDecorator('note',{rules:[{required: true, message: '请输入备注!'}],initialValue: note})(<Input size="small" />)}</FormItem>
-            <Editor />
+            <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >    {getFieldDecorator('key', { initialValue: key || [] })(<TagsInput value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v) }} />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="商品分类" >
+              {getFieldDecorator('categoryId', { initialValue: categoryId })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange.bind(this)} placeholder='Please select' />)}
+            </FormItem>
           </Form>
         </Modal>
       </span>
