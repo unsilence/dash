@@ -74,7 +74,7 @@ class CaseEditModal extends Component {
     );
     const { children } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { _id, urladdress,headline,key,caseNote,collocatImg,caseDoormodel,caseSpace,caseStyle,createAt,updateAt} = this.props.case;
+    const { _id, urladdress,projectName,headline,key,caseNote,collocatImg,caseDoormodel,caseSpace,caseStyle,createAt,updateAt} = this.props.case;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -96,6 +96,7 @@ class CaseEditModal extends Component {
         >
           <Form horizontal onSubmit={this.okHandler}>
             <FormItem className={styles.FormItem} {...formItemLayout} label="URL" > {getFieldDecorator('urladdress', { initialValue: urladdress })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="项目名称" > {getFieldDecorator('projectName', { initialValue: projectName })(<Input size="small" />)}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="标题" > {getFieldDecorator('headline', { initialValue: headline })(<Input size="small" />)}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" > {getFieldDecorator('key', { initialValue: key })(<Input size="small" />)}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="案例介绍" > {getFieldDecorator('caseNote', { initialValue: caseNote })(<Input size="small" />)}</FormItem>
