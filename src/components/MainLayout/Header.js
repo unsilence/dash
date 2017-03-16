@@ -14,6 +14,9 @@ function Header({ location }) {
       <Menu.Item key="/">
         <Link to="/"><Icon type="home" />首页</Link>
       </Menu.Item>
+      <Menu.Item key="tests">
+        <Link to="/tests"><Icon type="smile" />测试</Link>
+      </Menu.Item>
       <Menu.Item key="brands">
         <Link to="/brands"><Icon type="smile" />品牌</Link>
       </Menu.Item>
@@ -29,8 +32,13 @@ function Header({ location }) {
       <Menu.Item key="cases">
         <Link to="/cases"><Icon type="pay-circle" />案例</Link>
       </Menu.Item>
+<<<<<<< Updated upstream
       <Menu.Item key="/products">
         <Link to="/products"><Icon type="file" />饰品管理</Link>
+=======
+      <Menu.Item key="/orders">
+        <Link to="/orders"><Icon type="file" />订单</Link>
+>>>>>>> Stashed changes
       </Menu.Item>
       <Menu.Item key="categorys">
         <Link to="/categorys"><Icon type="rocket" />分类</Link>

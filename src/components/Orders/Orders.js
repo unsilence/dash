@@ -52,7 +52,7 @@ function Orders({ dispatch, list: dataSource, loading, total, page: current }) {
       render: text => <a href="">{text}</a>,
     },
     {
-      title: '名字',
+      title: '名称',
       dataIndex: 'name',
       key: 'name',
     },
