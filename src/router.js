@@ -10,13 +10,10 @@ import Colors from "./routes/Color.js";
 import Serials from "./routes/Serials";
 import Brands from "./routes/Brands.js";
 import Cases from "./routes/Cases.js";
-<<<<<<< Updated upstream
-=======
 import Tests from "./routes/Tests.js";
 // import Buys from "./routes/Buys.js";
 
 // import Reports from "./routes/Reports.js";
->>>>>>> Stashed changes
 import Login from "./routes/login.js";
 import Product from "./routes/Product";
 
@@ -30,11 +27,8 @@ function RouterConfig({ history }) {
       <Route path="/users" component={Users} />
       <Route path="/attributes" component={Attributes} />
       <Route path="/countrys" component={Countrys} />
-<<<<<<< Updated upstream
       <Route path="/products" component={Product} />
-=======
       <Route path="/orders" component={Orders} />
->>>>>>> Stashed changes
       <Route path="/categorys" component={Categorys} />
       <Route path="/colors" component={Colors} />
       <Route path="/serials" component={Serials} />
