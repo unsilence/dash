@@ -7,41 +7,31 @@ class TestEditModal extends Component {
   constructor(props) {
     super(props);
         this.state = {
-            // content: ""
-            form_data: {
-                text: "123",
-                editor: "<p>789</p>"
-            }
+            content: ""
         }
   }
-  // handleChange(content){
-  //       this.setState({
-  //           content: content
-  //       })
-  //   }
+  handleChange(content){
+        this.setState({
+            content: content
+        })
+    }
     getIcons(){
-        return [
+        var icons = [
             "source | undo redo | bold italic underline strikethrough fontborder emphasis | ",
             "paragraph fontfamily fontsize | superscript subscript | ",
             "forecolor backcolor | removeformat | insertorderedlist insertunorderedlist | selectall | ",
             "cleardoc  | indent outdent | justifyleft justifycenter justifyright | touppercase tolowercase | ",
             "horizontal date time  | image emotion spechars | inserttable"
         ]
+        return icons;
        
-    }
-    getDefaultUploader(){
-        return {
-            url:'/api/upload',
-            name:"file",
-            request: "url"
-        }
     }
     getQiniuUploader(){
         return {
             url:'http://upload.qiniu.com',
             type:'qiniu',
             name:"file",
-            request: "url",
+            request: "image_src",
             qiniu:{
                 app:{
                     Bucket:"liuhong1happy",
@@ -55,47 +45,33 @@ class TestEditModal extends Component {
             }
         }
     }
-    handleFormChange(e){
-        e = e || event;
-        var target = e.target || e.srcElement;
-        var value = target.value;
-        var editor = this.refs.editor.getContent();
-        var form_data = this.state.form_data;
-        form_data.text = value;
-        form_data.editor = editor;
-        this.setState({
-            form_data: form_data
-        })
-    }
+   
     handleSubmitForm(){
-        var form_data = this.state.form_data;
-        alert(form_data.editor);
+        var content = this.state.content;
+        alert(content.editor);
     }
   render() {
     var icons = this.getIcons();
         var uploader = this.getQiniuUploader();
-        // 本地上传调用
-        // var uploader = this.getDefaultUploader();
-        // 注意上传接口的返回值，应该是  {'data': {'image_src': xxx} , 'status':'success'}
         var plugins = {
             image:{
                 uploader:uploader
             }
         }
-        // var count = 100;
-        // var editors = [];
-        // for(var i=0;i<count;i++){
-        //     editors.push({
-        //         icons:icons,
-        //         plugins:plugins
-        //     })
-        // }
-        let form_data = this.state.form_data;
-   return <div>
-                <Editor ref="editor" icons={icons} plugins={plugins} value={form_data.editor}/>
-                <input type="text" value={form_data.text} onChange={this.handleFormChange.bind(this)}/>
-                <input type="submit" value="提交" onClick={this.handleSubmitForm.bind(this)} />
-               </div>
+        var count = 100;
+        var editors = [];
+        for(var i=0;i<count;i++){
+            editors.push({
+                icons:icons,
+                plugins:plugins
+            })
+        }
+   return <Editor ref="editor"
+                                icons={icons}
+                                value={this.state.content}
+                                defaultValue="<p>提示文本</p>"
+                                onChange={this.handleChange.bind(this)}
+                                plugins={plugins} />
   }
 }
 

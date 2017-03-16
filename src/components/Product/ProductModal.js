@@ -4,7 +4,6 @@ import styles from '../item.less';
 import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
 import { getFormatData } from '../utils'
-
 const FormItem = Form.Item;
 
 class ProductEditModal extends Component {
