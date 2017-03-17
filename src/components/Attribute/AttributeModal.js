@@ -164,7 +164,7 @@ class AttributeModalEditModal extends Component {
       wrapperCol: { span: 14 },
     };
 
-    let checkOptions = getFieldDecorator('size', { initialValue: size || [] })(<CheckboxGroup options={this.state.extendsOption} />);
+    let checkOptions = getFieldDecorator('size', { initialValue: ['长', '宽', '高', '半径']})(<CheckboxGroup  disabled={true} options={this.state.extendsOption} />);
     let tagsInput = <TagsInput disabled={this.state.tagsInputDisabled} value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v) }} />;
     return (
       <span>

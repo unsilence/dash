@@ -92,8 +92,15 @@ class ProductEditModal extends Component {
     let cascaderOptions = getFormatData(data);
 
     //属性处理
-    let keyOptions = [];
 
+    let keyOptions = this.state.keyAttr.map(ko => { return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} >    {getFieldDecorator(ko._id, {})(<Input size="small" />)}</FormItem> })
+    if (keyOptions.length !== 0) keyOptions.unshift(<span>关键属性</span>)
+
+    let otherOption = this.state.otherAttr.map(ko => { return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} >    {getFieldDecorator(ko._id, {})(<Input size="small" />)}</FormItem> })
+    if (otherOption.length !== 0) otherOption.unshift(<span>其他属性</span>)
+    
+    let sellOptions = this.state.sellAttr.map(ko => { return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} >    {getFieldDecorator(ko._id, {})(<Input size="small" />)}</FormItem> })
+    if (sellOptions.length !== 0) sellOptions.unshift(<span>销售属性</span>)
 
     return (
       <span>
@@ -112,6 +119,9 @@ class ProductEditModal extends Component {
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品分类" >
               {getFieldDecorator('categoryId', { initialValue: categoryId })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange.bind(this)} placeholder='Please select' />)}
             </FormItem>
+            {keyOptions}
+            {sellOptions}
+            {otherOption}
           </Form>
         </Modal>
       </span>
