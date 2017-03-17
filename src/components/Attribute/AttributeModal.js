@@ -9,7 +9,7 @@ import moment from 'moment';
 
 const FormItem = Form.Item;
 
-const extendsObject = {"0":'不继承','1':'尺寸','2':'颜色','3':'原产地','4':'品牌国别'};
+const extendsObject = {"0":'不继承','1':'尺寸','2':'颜色','3':'原产地','4':'品牌'};
 
 class AttributeModalEditModal extends Component {
 
@@ -194,7 +194,7 @@ class AttributeModalEditModal extends Component {
                 <Radio value={'1'}>尺寸</Radio>
                 <Radio value={'2'}>颜色</Radio>
                 <Radio value={'3'}>原产地</Radio>
-                <Radio value={'4'}>品牌国别</Radio>
+                <Radio value={'4'}>品牌</Radio>
               </RadioGroup>
             )}
               {checkOptions}
