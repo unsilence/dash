@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Modal, Form, Input, Select,Upload,Icon,Radio } from 'antd';
 import styles from '../item.less';
+import TagsInput from 'react-tagsinput';
+import 'react-tagsinput/react-tagsinput.css';
 import moment from 'moment';
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -15,6 +17,7 @@ class CaseEditModal extends Component {
     this.state = {
       visible: false,
       value: 1,
+      tags: [],
       previewVisible: false,
       previewImage: '',
       fileList: [{
@@ -46,14 +49,15 @@ class CaseEditModal extends Component {
       visible: true,
     });
   };
-
   hideModelHandler = () => {
     this.setState({
       visible: false,
     });
     this.props.form.resetFields(['headline','releaseTime','release_time','click_rate']);
   };
-
+  handleChangeInput(tags) {
+    this.setState({tags});
+  };
   okHandler = (e) => {
     const { onOk } = this.props;
     this.props.form.validateFields((err, values) => {
@@ -98,7 +102,9 @@ class CaseEditModal extends Component {
             <FormItem className={styles.FormItem} {...formItemLayout} label="URL" > {getFieldDecorator('urladdress', { initialValue: urladdress })(<Input size="small" />)}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="项目名称" > {getFieldDecorator('projectName', { initialValue: projectName })(<Input size="small" />)}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="标题" > {getFieldDecorator('headline', { initialValue: headline })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" > {getFieldDecorator('key', { initialValue: key })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" > 
+            {getFieldDecorator('key', { initialValue: [] })( <TagsInput value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v) }} />)}
+            </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="案例介绍" > {getFieldDecorator('caseNote', { initialValue: caseNote })(<Input size="small" />)}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="配图" > {getFieldDecorator('collocatImg', { initialValue: collocatImg })(<Upload
           action="//jsonplaceholder.typicode.com/posts/"
