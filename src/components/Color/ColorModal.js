@@ -66,8 +66,8 @@ class ColorEditModal extends Component {
           onCancel={this.hideModelHandler}
         >
           <Form horizontal onSubmit={this.okHandler}>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="名字" > {getFieldDecorator('name', { initialValue: name })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="色系" > {getFieldDecorator('seriesId', { initialValue: seriesId })(
+            <FormItem className={styles.FormItem} {...formItemLayout} label="名字" > {getFieldDecorator('name', {rules:[{required: true, message: '请输入颜色名称!'}], initialValue: name })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="色系" > {getFieldDecorator('seriesId', {rules:[{required: true, message: '请选择所属色系!'}], initialValue: seriesId })(
               <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>
             )}
             </FormItem>

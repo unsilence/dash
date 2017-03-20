@@ -99,14 +99,14 @@ class CaseEditModal extends Component {
           onCancel={this.hideModelHandler}
         >
           <Form horizontal onSubmit={this.okHandler}>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="URL" > {getFieldDecorator('urladdress', { initialValue: urladdress })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="项目名称" > {getFieldDecorator('projectName', { initialValue: projectName })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="标题" > {getFieldDecorator('headline', { initialValue: headline })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="URL" > {getFieldDecorator('urladdress', {rules:[{required: true, message: '请输入URL!'}], initialValue: urladdress })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="项目名称" > {getFieldDecorator('projectName', {rules:[{required: true, message: '请输入项目名称!'}], initialValue: projectName })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="标题" > {getFieldDecorator('headline', {rules:[{required: true, message: '请输入标题!'}], initialValue: headline })(<Input size="small" />)}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" > 
-            {getFieldDecorator('key', { initialValue: [] })( <TagsInput value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v) }} />)}
+            {getFieldDecorator('key', {rules:[{required: true, message: '请输入搜索关键字!'}], initialValue: [] })( <TagsInput value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v) }} />)}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="案例介绍" > {getFieldDecorator('caseNote', { initialValue: caseNote })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="配图" > {getFieldDecorator('collocatImg', { initialValue: collocatImg })(<Upload
+            <FormItem className={styles.FormItem} {...formItemLayout} label="案例介绍" > {getFieldDecorator('caseNote', {rules:[{required: true, message: '请输入案例介绍内容!'}], initialValue: caseNote })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="配图" > {getFieldDecorator('collocatImg', {rules:[{required: true, message: '请上传配图!'}], initialValue: collocatImg })(<Upload
           action="//jsonplaceholder.typicode.com/posts/"
           listType="picture-card"
           fileList={fileList}
@@ -115,15 +115,15 @@ class CaseEditModal extends Component {
         >
           {fileList.length >= 3 ? null : uploadButton}
         </Upload>)}</FormItem>
-        <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例户型" > {getFieldDecorator('caseDoormodel', { initialValue: caseDoormodel })(<RadioGroup defaultValue="别墅" size="small">
+        <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例户型" > {getFieldDecorator('caseDoormodel', {rules:[{required: true, message: '请选择案例户型!'}], initialValue: caseDoormodel })(<RadioGroup defaultValue="别墅" size="small">
               {casemodelButton}
            </RadioGroup>)}
            </FormItem>
-           <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例空间" > {getFieldDecorator('caseSpace', { initialValue: caseSpace })(<RadioGroup defaultValue="客厅" size="small">
+           <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例空间" > {getFieldDecorator('caseSpace', {rules:[{required: true, message: '请选择案例空间!'}], initialValue: caseSpace })(<RadioGroup defaultValue="客厅" size="small">
               {casespaceButton}
            </RadioGroup>)}
            </FormItem>
-           <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例风格" > {getFieldDecorator('caseStyle', { initialValue: caseStyle })(<RadioGroup defaultValue="现代" size="small">
+           <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例风格" > {getFieldDecorator('caseStyle', {rules:[{required: true, message: '请选择案例风格!'}], initialValue: caseStyle })(<RadioGroup defaultValue="现代" size="small">
              {casestyleButton}
            </RadioGroup>)}
            </FormItem>
