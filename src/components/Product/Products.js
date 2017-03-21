@@ -67,10 +67,10 @@ function Products({ dispatch, list: dataSource, loading, total, page: current, s
       key: 'operation',
       render: (text, product) => (
         <span className={styles.operation2}>
-          <ProductModal product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap }} onOk={editHandler.bind(null, serial._id)}>
+          <ProductModal product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap }} onOk={editHandler.bind(null, product._id)}>
             <Icon type="edit" className={styles.icon} />
           </ProductModal>
-          <Popconfirm title={"确定要删除色系【" + product.name + "】吗？"} onConfirm={deleteHandler.bind(null, serial)}>
+          <Popconfirm title={"确定要删除色系【" + product.name + "】吗？"} onConfirm={deleteHandler.bind(null, product)}>
             <Icon type="delete" className={styles.icon} />
           </Popconfirm>
         </span>
@@ -90,7 +90,7 @@ function Products({ dispatch, list: dataSource, loading, total, page: current, s
           columns={columns}
           dataSource={dataSource}
           loading={loading}
-          rowKey={serial => serial._id}
+          rowKey={product => product._id}
           pagination={false}
         />
         <Pagination
