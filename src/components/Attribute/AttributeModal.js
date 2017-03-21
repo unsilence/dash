@@ -179,7 +179,7 @@ class AttributeModalEditModal extends Component {
         >
           <Form horizontal onSubmit={this.okHandler}>
             <FormItem className={styles.FormItem} {...formItemLayout} label="所属分类" >
-              {getFieldDecorator('categoryId', { initialValue: categoryId })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange} placeholder='Please select' />)}
+              {getFieldDecorator('categoryId', {rules:[{required: true, message: '请选择所属分类!'}], initialValue: categoryId })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange} placeholder='Please select' />)}
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="属性分类" >    {getFieldDecorator('type', { initialValue: type || '3'})(
               <RadioGroup key='typeSelect' onChange={this.typeOnChange}>
@@ -199,7 +199,7 @@ class AttributeModalEditModal extends Component {
             )}
               {checkOptions}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="属性名称" >    {getFieldDecorator('name', { initialValue: name })(
+            <FormItem className={styles.FormItem} {...formItemLayout} label="属性名称" >    {getFieldDecorator('name', {rules:[{required: true, message: '请输入属性名称!'}], initialValue: name })(
               <Input size="small" disabled={this.state.disabled} />
             )}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="属性选项" >    {getFieldDecorator('stype', { initialValue: stype || '3' })(
