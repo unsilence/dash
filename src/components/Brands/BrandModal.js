@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Modal, Form, Input, Select, TreeSelect } from 'antd';
 import styles from '../item.less';
 import { getFormatData } from '../utils';
+import TagsInput from 'react-tagsinput';
+import 'react-tagsinput/react-tagsinput.css';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const SHOW_PARENT = TreeSelect.SHOW_PARENT;
@@ -18,6 +20,8 @@ class BrandEditModal extends Component {
     super(props);
     this.state = {
       visible: false,
+      disabled: false,
+      tags: [],
       value: "58c8f5cf1c74a5278ad3e404",
     };
   }
@@ -105,7 +109,8 @@ class BrandEditModal extends Component {
 				 {brandCountry}
             </Select>
              )}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >       {getFieldDecorator('key', {rules:[{required: true, message: '请输入搜索关键字!'}], initialValue: key })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >       
+            {getFieldDecorator('key', {rules:[{required: true, message: '请输入搜索关键字!'}], initialValue: [] })(<TagsInput value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v) }} />)}</FormItem>
           </Form>
         </Modal>
       </span>

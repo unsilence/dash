@@ -3,6 +3,7 @@ import { Modal, Form, Input, Select,Upload,Icon,Radio } from 'antd';
 import styles from '../item.less';
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
+import Editor from 'react-umeditor';
 import moment from 'moment';
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -18,6 +19,7 @@ class CaseEditModal extends Component {
       visible: false,
       value: 1,
       tags: [],
+      content: "",
       previewVisible: false,
       previewImage: '',
       fileList: [{
@@ -29,35 +31,31 @@ class CaseEditModal extends Component {
 
     };
   }
-  // onChange = (e) => {
-  //   console.log('radio checked', e.target.value);
-  //   this.setState({
-  //     value: e.target.value,
-  //   });
-  // }
-  handleCancel = () => this.setState({ previewVisible: false })
+ 
+  handleCancel = () => this.setState({ previewVisible: false });
   handlePreview = (file) => {
     this.setState({
       previewImage: file.url || file.thumbUrl,
       previewVisible: true,
     });
   }
-  handleChange = ({ fileList }) => this.setState({ fileList })
+  
+  handleChange = ({ fileList }) => this.setState({ fileList });
   showModelHandler = (e) => {
     if (e) e.stopPropagation();
     this.setState({
       visible: true,
     });
-  };
+  }
   hideModelHandler = () => {
     this.setState({
       visible: false,
     });
     this.props.form.resetFields(['headline','releaseTime','release_time','click_rate']);
-  };
+  }
   handleChangeInput(tags) {
     this.setState({tags});
-  };
+  }
   okHandler = (e) => {
     const { onOk } = this.props;
     this.props.form.validateFields((err, values) => {
@@ -66,8 +64,46 @@ class CaseEditModal extends Component {
         this.hideModelHandler();
       }
     });
-  };
-
+  }
+  handleAlter(content){
+        this.setState({
+            content: content
+        })
+    }
+  getIcons(){
+        var icons = [
+            "source | undo redo | bold italic underline strikethrough fontborder emphasis | ",
+            "paragraph fontfamily fontsize | superscript subscript | ",
+            "forecolor backcolor | removeformat | insertorderedlist insertunorderedlist | selectall | ",
+            "cleardoc  | indent outdent | justifyleft justifycenter justifyright | touppercase tolowercase | ",
+            "horizontal date time  | image emotion spechars | inserttable"
+        ];
+        return icons;
+       
+    }
+  getQiniuUploader(){
+        return {
+            url:'http://upload.qiniu.com',
+            type:'qiniu',
+            name:"file",
+            request: "image_src",
+            qiniu:{
+                app:{
+                    Bucket:"liuhong1happy",
+                    AK:"l9vEBNTqrz7H03S-SC0qxNWmf0K8amqP6MeYHNni",
+                    SK:"eizTTxuA0Kq1YSe2SRdOexJ-tjwGpRnzztsSrLKj"
+                },
+                domain:"http://o9sa2vijj.bkt.clouddn.com",
+                genKey:function(options){
+                    return options.file.type +"-"+ options.file.size +"-"+ options.file.lastModifiedDate.valueOf() +"-"+ new Date().valueOf()+"-"+options.file.name;
+                }
+            }
+        }
+    }
+   handleSubmitForm(){
+        var content = this.state.content;
+        alert(content.editor);
+    }
   render() {
     const { previewVisible, previewImage, fileList } = this.state;
     const uploadButton = (
@@ -86,6 +122,21 @@ class CaseEditModal extends Component {
     const casespaceButton = caseSpaces.map(t=><RadioButton value={t.value}>{t.value}</RadioButton>);
     const casemodelButton = caseModels.map(v=><RadioButton value={v.value}>{v.value}</RadioButton>);
     const casestyleButton = caseStyles.map(a=><RadioButton value={a.value}>{a.value}</RadioButton>);
+    var icons = this.getIcons();
+        var uploader = this.getQiniuUploader();
+        var plugins = {
+            image:{
+                uploader:uploader
+            }
+        }
+        var count = 100;
+        var editors = [];
+        for(var i=0;i<count;i++){
+            editors.push({
+                icons:icons,
+                plugins:plugins
+            })
+        }
     return (
       <span>
         <span onClick={this.showModelHandler}>
@@ -105,7 +156,10 @@ class CaseEditModal extends Component {
             <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" > 
             {getFieldDecorator('key', {rules:[{required: true, message: '请输入搜索关键字!'}], initialValue: [] })( <TagsInput value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v) }} />)}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="案例介绍" > {getFieldDecorator('caseNote', {rules:[{required: true, message: '请输入案例介绍内容!'}], initialValue: caseNote })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="案例介绍" > 
+            {getFieldDecorator('caseNote', {rules:[{required: true, message: '请输入案例介绍内容!'}], initialValue: caseNote })
+            (<Editor  icons={icons} value={this.state.content} defaultValue="<p>提示文本</p>" onChange={this.handleAlter.bind(this)} plugins={plugins} />)}
+            </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="配图" > {getFieldDecorator('collocatImg', {rules:[{required: true, message: '请上传配图!'}], initialValue: collocatImg })(<Upload
           action="//jsonplaceholder.typicode.com/posts/"
           listType="picture-card"
