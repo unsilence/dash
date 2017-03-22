@@ -10,7 +10,7 @@ class Tests extends React.Component {
     const { form } = this.props;
     // can use data-binding to get
     const keys = form.getFieldValue('keys');
-    console.log(keys,'-------remove')
+    console.log(keys, '-------remove')
     // We need at least one passenger
     if (keys.length === 1) {
       return;
@@ -29,7 +29,7 @@ class Tests extends React.Component {
     const keys = form.getFieldValue('keys');
     const nextKeys = keys.concat(uuid);
 
-    console.log(nextKeys,'--------nextKeys');
+    console.log(nextKeys, '--------nextKeys');
     // can use data-binding to set
     // important! notify form to detect changes
     form.setFieldsValue({
@@ -46,7 +46,7 @@ class Tests extends React.Component {
     });
   }
 
-  onChange = (v) =>{
+  onChange = (v) => {
     console.log(v.target.value);
   }
 
@@ -77,7 +77,7 @@ class Tests extends React.Component {
               message: "Please input passenger's name or delete this field.",
             }],
           })(
-            <Input placeholder="passenger name" style={{ width: '60%', marginRight: 8 }} onChange={this.onChange.bind(this)}/>
+            <Input placeholder="passenger name" style={{ width: '60%', marginRight: 8 }} onChange={this.onChange.bind(this)} />
             )}
           <Icon
             className="dynamic-delete-button"
@@ -140,7 +140,7 @@ class EditableCell extends React.Component {
   }
   shouldComponentUpdate(nextProps, nextState) {
     return nextProps.editable !== this.state.editable ||
-           nextState.value !== this.state.value;
+      nextState.value !== this.state.value;
   }
   handleChange(e) {
     const value = e.target.value;
@@ -172,25 +172,26 @@ class EditableTable extends React.Component {
   constructor(props) {
     super(props);
     this.columns = [{
-      title: 'name',
-      dataIndex: 'name',
+      "title": "图案",
+      "dataIndex": "tuan",
       width: '25%',
-      render: (text, record, index) => this.renderColumns(this.state.data, index, 'name', text),
+      render: (text, record, index) => this.renderColumns(this.state.data, index, 'jiage', text),
     }, {
-      title: 'age',
-      dataIndex: 'age',
+      "title": "尺寸",
+      "dataIndex": "chicun",
       width: '15%',
-      render: (text, record, index) => this.renderColumns(this.state.data, index, 'age', text),
+      render: (text, record, index) => this.renderColumns(this.state.data, index, 'jiage', text),
     }, {
-      title: 'address',
-      dataIndex: 'address',
+      "title": "价格",
+      "dataIndex": "jiage",
       width: '40%',
-      render: (text, record, index) => this.renderColumns(this.state.data, index, 'address', text),
+      render: (text, record, index) => this.renderColumns(this.state.data, index, 'jiage', text),
     }, {
       title: 'operation',
       dataIndex: 'operation',
       render: (text, record, index) => {
-        const { editable } = this.state.data[index].name;
+        console.log(this.state.data[index], index, '----------------')
+        const { editable } = this.state.data[index].jiage;
         return (
           <div className="editable-row-operations">
             {
@@ -212,18 +213,12 @@ class EditableTable extends React.Component {
     }];
     this.state = {
       data: [{
-        key: '0',
-        name: {
-          editable: false,
-          value: 'Edward King 0',
-        },
-        age: {
-          editable: false,
-          value: '32',
-        },
-        address: {
-          value: 'London, Park Lane no. 0',
-        },
+        "key": 0,
+        "tuan": { "value": "ddd", "editable": false },
+        "chicun": { "value": "ffffff", "editable": false },
+        "jiage": { "value": "", "editable": false },
+        "shuliang": { "value": "", "editable": false },
+        "chanpinxinghao": { "value": "", "editable": false }
       }],
     };
   }
@@ -284,4 +279,4 @@ class EditableTable extends React.Component {
 }
 
 
-export default connect(mapStateToProps)(Form.create()(Tests));
+export default connect(mapStateToProps)(EditableTable)//Form.create()(Tests));
