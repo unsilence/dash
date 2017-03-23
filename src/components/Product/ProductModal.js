@@ -117,8 +117,10 @@ class ProductEditModal extends Component {
 
   okHandler = (e) => {
     const { onOk } = this.props;
+    this.state.tableFormatData;
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        console.log(this.state.tableFormatData, '--------------this.state.tableFormatData');
         onOk(values);
         this.hideModelHandler();
       }
@@ -218,39 +220,30 @@ class ProductEditModal extends Component {
       });
       data.push(obj);
     })
-    this.setState({ tableFormatData: data, columnsDatas: columnsDatas })
-    
-    // this.setState({ tableFormatData: this.checkArray(this.state.tableFormatData,data), columnsDatas: columnsDatas })
+    this.setState({ tableFormatData: this.checkArray(this.state.tableFormatData, data), columnsDatas: columnsDatas })
   }
 
+  /**数据检索拷贝 价格数量产品型号 */
   checkArray = (data, nextData) => {
-    for (let item of nextData) {
-      let exist = false;
+    for (let next = 0; next < nextData.length; next++) {
+      let outer = nextData[next];
       for (let index = 0; index < data.length; index++) {
-        if (data[index].uniqueId === item.uniqueId) {
-          exist = true;
-          break;
+        let inner = data[index];
+        if (inner.uniqueId === outer.uniqueId) {
+          for (let item in outer) {
+            if (outer[item].comType === '1' || outer[item].comType === '2') {
+              outer[item].value = inner[item].value;
+            }
+          }
         }
       }
-      if (!exist) data.push(item);
     }
-
-    let ret = [];
-    data.forEach(v => {
-      nextData.forEach(k => {
-        if (v.uniqueId === k.uniqueId) {
-          ret.push(v);
-        }
-      })
-    })
-
-    return ret;
+    return nextData;
   }
 
 
   createAttrOption = (getFieldDecorator, getFieldValue, formItemLayout) => {
     //属性处理
-
     let keyOptions = this.state.keyAttr.map(ko => { return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko._id} >    {getFieldDecorator(ko._id, {})(<Input size="small" />)}</FormItem> })
     if (keyOptions.length !== 0) keyOptions.unshift(<span key='keyword'>关键属性</span>)
 
