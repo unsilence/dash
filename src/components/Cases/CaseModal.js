@@ -40,7 +40,15 @@ class CaseEditModal extends Component {
     });
   }
   
-  handleChange = ({ fileList }) => this.setState({ fileList });
+  handleChange = ({ fileList }) => this.setState({ fileList })
+  updatePic = (info)=>{
+      if (info.file.status === 'done') {
+          console.log('info',info)
+          let newMd5 = info.file.response.md5list[0]
+          console.log('new md5',newMd5)
+          getBase64(info.file.originFileObj, imageUrl => this.setState({ imageUrl:newMd5}));
+      }
+  }
   showModelHandler = (e) => {
     if (e) e.stopPropagation();
     this.setState({
@@ -58,6 +66,8 @@ class CaseEditModal extends Component {
   }
   okHandler = (e) => {
     const { onOk } = this.props;
+    let item = Object.assign({},this.props.record);
+
     this.props.form.validateFields((err, values) => {
       if (!err) {
         onOk(values);
@@ -160,15 +170,12 @@ class CaseEditModal extends Component {
             {getFieldDecorator('caseNote', {rules:[{required: true, message: '请输入案例介绍内容!'}], initialValue: caseNote })
             (<Editor  icons={icons} value={this.state.content} defaultValue="<p>提示文本</p>" onChange={this.handleAlter.bind(this)} plugins={plugins} />)}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="配图" > {getFieldDecorator('collocatImg', {rules:[{required: true, message: '请上传配图!'}], initialValue: collocatImg })(<Upload
-          action="//jsonplaceholder.typicode.com/posts/"
-          listType="picture-card"
-          fileList={fileList}
-          onPreview={this.handlePreview}
-          onChange={this.handleChange}
-        >
-          {fileList.length >= 3 ? null : uploadButton}
-        </Upload>)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="配图" > {getFieldDecorator('collocatImg', {rules:[{required: true, message: '请上传配图!'}], initialValue: collocatImg })
+            (<Upload action='/api/file/upload' listType="picture-card" fileList={fileList} onPreview={this.handlePreview} onChange={this.handleChange}>
+              {fileList.length >= 3 ? null : uploadButton}
+             <img style={{width:"50px",heigth:"50px"}} src={'/api/file/'+previewImage}/>
+          </Upload>)}
+        </FormItem>
         <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例户型" > {getFieldDecorator('caseDoormodel', {rules:[{required: true, message: '请选择案例户型!'}], initialValue: caseDoormodel })(<RadioGroup defaultValue="别墅" size="small">
               {casemodelButton}
            </RadioGroup>)}

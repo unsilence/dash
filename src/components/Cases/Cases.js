@@ -78,6 +78,11 @@ function Cases({ dispatch, list: dataSource, loading, total, page: current }) {
       render: text => <span>{moment(new Date(text)).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
+      title: '配图',
+      dataIndex: 'collocatImg',
+      key: 'collocatImg',
+    },
+    {
       title: '操作',
       key: 'operation',
       render: (text, cases) => (
