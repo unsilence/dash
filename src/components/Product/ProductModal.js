@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { Modal, Form, Input, Select, Cascader, Icon, Button } from 'antd';
 import styles from '../item.less';
-import TagsInput from 'react-tagsinput'
-import 'react-tagsinput/react-tagsinput.css'
-import { getFormatData } from '../utils'
+import TagsInput from './TagsInput';
+import 'react-tagsinput/react-tagsinput.css';
+import { getFormatData, getColorSerialFormatData } from '../utils';
+import NumericInput from './NumericInput';
+import SizeInput from './SizeInput';
 const FormItem = Form.Item;
 var pinyin = require("pinyin");
 
@@ -20,7 +22,8 @@ class ProductEditModal extends Component {
       otherAttr: [],
       tableData: {},
       tableFormatData: [],
-      columnsDatas: []
+      columnsDatas: [],
+      key:[]
     };
   }
   componentDidMount() {
@@ -92,13 +95,16 @@ class ProductEditModal extends Component {
     })
   }
 
-
   sellChange = (e) => {
     const tableData = this.props.form.getFieldsValue();
     this.getTableFormatData(tableData);
     this.setState({
       tableData: tableData
     })
+  }
+
+  componentWillUpdate(){
+
   }
 
   showModelHandler = (e) => {
@@ -157,14 +163,14 @@ class ProductEditModal extends Component {
         >
           <Form horizontal onSubmit={this.okHandler} key={"alkdkdkdk"}>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" />)}</FormItem>
-            {/*<FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >    {getFieldDecorator('key', { initialValue: key || [] })(<TagsInput value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v) }} />)}</FormItem>*/}
+            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >    {getFieldDecorator('key',{})(<TagsInput  {...{ 'onlyUnique': true }} onChange={v => { console.log(v);this.props.form.setFieldsValue({key:v}) }} />)}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品分类" >
               {getFieldDecorator('categoryId', { initialValue: categoryId })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange.bind(this)} placeholder='Please select' />)}
             </FormItem>
             {keyOptions}
             {otherOption}
             {sellOptions}
-            {this.createTable()}
+            {sellOptions.length > 0 ? this.createTable() : ''}
           </Form>
         </Modal>
       </span>
@@ -175,6 +181,7 @@ class ProductEditModal extends Component {
     return <EditableTable data={this.state.tableFormatData || []} columnsDatas={this.state.columnsDatas} getTableData={this.getTableData.bind(this)} />
   }
 
+  /**获得格式化好的表数据 */
   getTableFormatData = (tableData) => {
     let filterData = Object.keys(tableData)
       .filter(k => { return k.indexOf('_') !== -1 })
@@ -206,7 +213,11 @@ class ProductEditModal extends Component {
           uniques.push(c.sellId);
           obj[c.dataIndex] = { value: c.selfValue, editable: false, sellId: c.sellId, dataIndex: c.dataIndex, comType: '0' }
         });
+      } else {
+        uniques.push(v.sellId);
+        obj[v.dataIndex] = { value: v.selfValue ? JSON.stringify(v.selfValue) : '', editable: false, sellId: v.sellId, dataIndex: v.dataIndex, comType: '0' }
       }
+      //保持uniqueId 排序一致
       uniques.sort();
       obj['uniqueId'] = uniques.join('');
 
@@ -216,7 +227,6 @@ class ProductEditModal extends Component {
           heteronym: false
         }).join('');
         obj[dataIndex] = index < 2 ? { value: '', editable: false, comType: '1' } : { value: '', editable: false, comType: '2' }
-
       });
       data.push(obj);
     })
@@ -241,45 +251,159 @@ class ProductEditModal extends Component {
     return nextData;
   }
 
+  getSellHandle = (ko, keys) => {
+    return (ko.type === "2" ?
+      <div>
+        <Icon
+          className="dynamic-delete-button"
+          type="minus-circle-o"
+          disabled={keys.length === 1}
+          onClick={() => this.removeSellComponent(k)}
+          key='1'
+        />
+        <Icon type="plus-circle-o" onClick={this.addSellComponent.bind(this, ko)} key='2' />
+      </div>
+      : '')
+  }
+  // const extendsObject = {"0":'不继承','1':'尺寸','2':'颜色','3':'原产地','4':'品牌'};
+  //const stypeObject = {'1':'运营输入','2':'使用SKU配图','3':'下拉选项'};
+  getComponentByType(ko, formItemLayout, getFieldDecorator, keys) {
+    let options;
+    let coms;
+    if (ko.etype === '0') {
+      if (ko.stype === '3') {//下拉选项
+        options = ko.svalue.map(v => { return <Select.Option key={v} value={v}>{v}</Select.Option> });
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId} >
+          {getFieldDecorator(ko._id, {})(ko.type === '2' ? <Select size="small" onChange={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
+          {
+            this.getSellHandle(ko, keys)
+          }
+        </FormItem>
+      }
+      else if (ko.stype === '1') {//运营输入
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId} >
+          {getFieldDecorator(ko._id, {})(ko.type === '2' ? <Input size="small" onChange={this.sellChange.bind(this)} /> : <Input size="small" />)}
+          {
+            this.getSellHandle(ko, keys)
+          }
+        </FormItem>
+      }
+      else if (ko.stype === '2') {
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId} >
+          {getFieldDecorator(ko._id, {})(<span>使用SKU配图</span>)}
+          {
+            this.getSellHandle(ko, keys)
+          }
+        </FormItem>
+      }
+    } else {
+      if (ko.name === '尺寸') {//这个比较麻烦
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId} >
+          {getFieldDecorator(ko.sellId || ko._id, {
+            validateTrigger: ['onChange'],
+            rules: [{ validator: this.checkSize }]
+          })(<SizeInput key='sizecom' onBlur={this.sellChange.bind(this)} />)}
+          {
+            this.getSellHandle(ko, keys)
+          }
+        </FormItem>
+      }
+      else if (ko.name === '颜色') {//从颜色表中获取
+        options = getColorSerialFormatData(Object.values(this.props.product.serialMap), Object.values(this.props.product.colorMap));
+        // coms = ko.type === '2' ? <Cascader options={options} onChange={this.sellChange.bind(this)} placeholder='选择颜色' /> : <Cascader options={options} placeholder='Please select' />
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId} >
+          {getFieldDecorator(ko.sellId || ko._id, {})(ko.type === '2' ? <Cascader options={options} onBlur={this.sellChange.bind(this)} placeholder='选择颜色' /> : <Cascader options={options} placeholder='Please select' />)}
+          {
+            this.getSellHandle(ko, keys)
+          }
+        </FormItem>
+      }
+      else if (ko.name === '原产地') { //从国家表中读取
+        options = Object.values(this.props.product.countryMap).map(v => { return <Select.Option key={v._id} value={v._id}>{v.name}</Select.Option> });
+
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId} >
+          {getFieldDecorator(ko.sellId || ko._id, {
+            validateTrigger: ['onChange', 'onBlur'],
+            trigger: 'onChange',
+          })(ko.type === '2' ? <Select size="small" onBlur={this.sellChange.bind(this)}  {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
+          {
+            this.getSellHandle(ko, keys)
+          }
+        </FormItem>
+      }
+      else if (ko.name === '品牌') { //取值范围，在品牌当前分类对应的品牌中获取
+        options = Object.values(this.props.product.brandMap).map(v => { return <Select.Option key={v._id} value={v._id}>{v.name}</Select.Option> });
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId} >
+          {getFieldDecorator(ko.sellId || ko._id, {})(ko.type === '2' ? <Select size="small" onBlur={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
+          {
+            this.getSellHandle(ko, keys)
+          }
+        </FormItem>
+      }
+    }
+  }
+
+  checkSize = (rule, value, callback) => {
+    if (value && ((value.chang && value.chang > 0) || (value.kuan && value.kuan > 0)|| (value.gao && value.gao > 0) || (value.banjing && value.banjing > 0))) {
+      callback();
+      return;
+    }
+    callback('长、宽、高、半径最少填写一个!');
+  }
+  /**
+   * 颜色级联显示
+   */
+  cascaderColorOnChange = (v) => {
+    console.log(v, '---------------cascaderColorOnChange---------');
+  }
+
+  handleSizeChange = (v) => {
+    console.log(v, '--------------------handleSizeChange------------------')
+  }
 
   createAttrOption = (getFieldDecorator, getFieldValue, formItemLayout) => {
     //属性处理
-    let keyOptions = this.state.keyAttr.map(ko => { return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko._id} >    {getFieldDecorator(ko._id, {})(<Input size="small" />)}</FormItem> })
-    if (keyOptions.length !== 0) keyOptions.unshift(<span key='keyword'>关键属性</span>)
+    let keyOptions = this.state.keyAttr.map(ko => {
+      return this.getComponentByType(ko, formItemLayout, getFieldDecorator);
+    })
+    if (keyOptions.length !== 0) keyOptions.unshift(<span key='keyword'>关键属性</span>);
 
-    let otherOption = this.state.otherAttr.map(ko => { return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko._id}>    {getFieldDecorator(ko._id, {})(<Input size="small" />)}</FormItem> })
+    let otherOption = this.state.otherAttr.map(ko => {
+      return this.getComponentByType(ko, formItemLayout, getFieldDecorator);
+    })
     if (otherOption.length !== 0) otherOption.unshift(<span key='otherword'>其他属性</span>)
 
     getFieldDecorator('keys', { initialValue: [] });
     let keys = getFieldValue('keys').sort(keysrt('_id', true));
     let sellOptions = keys.map((k, index) => {
-      return (
+      return this.getComponentByType(k, formItemLayout, getFieldDecorator, keys);
+      /*return (
         <FormItem
-          {...formItemLayout}
-          label={k.name}
-          required={false}
-          key={k.sellId}
-        >
-          {getFieldDecorator(`${k.sellId}`, {
-            validateTrigger: ['onChange', 'onBlur'],
-            trigger: 'onChange',
-            rules: [{
-              required: true,
-              whitespace: true,
-              message: "fuck .",
-            }],
-          })(
-            <Input placeholder="passenger name" style={{ width: '60%', marginRight: 8 }} onBlur={this.sellChange.bind(this)} />
-            )}
-          <Icon
-            className="dynamic-delete-button"
-            type="minus-circle-o"
-            disabled={keys.length === 1}
-            onClick={() => this.removeSellComponent(k)}
-          />
-          <Icon type="plus-circle-o" onClick={this.addSellComponent.bind(this, k)} />
-        </FormItem>
-      );
+            {...formItemLayout}
+            label={k.name}
+            required={false}
+            key={k.sellId}
+          >
+            {getFieldDecorator(`${k.sellId}`, {
+              validateTrigger: ['onChange', 'onBlur'],
+              trigger: 'onChange',
+              rules: [{
+                required: true,
+                whitespace: true,
+                message: "fuck ......",
+              }],
+            })(
+              <Input placeholder="passenger name" style={{ width: '60%', marginRight: 8 }} onBlur={this.sellChange.bind(this)} />
+              )}
+            <Icon
+              className="dynamic-delete-button"
+              type="minus-circle-o"
+              disabled={keys.length === 1}
+              onClick={() => this.removeSellComponent(k)}
+            />
+            <Icon type="plus-circle-o" onClick={this.addSellComponent.bind(this, k)} />
+          </FormItem>
+          );*/
     });
 
     if (sellOptions.length !== 0) {
@@ -297,6 +421,10 @@ function keysrt(key, desc) {
 
 export default Form.create()(ProductEditModal);
 
+/**
+ * 获取组合数据
+ * @param {} doubleArrays
+ */
 function doExchange(doubleArrays) {
   var len = doubleArrays.length
   if (len >= 2) {

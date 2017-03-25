@@ -111,3 +111,16 @@ exports['ProductModel'].effects.fetch = function* ({ payload: { page } }, { call
   }
   yield put({ type: 'save22', payload: rd });
 }
+
+exports['ProductModel'].effects.add = function* ({ payload: { id, values } }, { call, put, select }) {
+  console.log('patch', { id })
+  let objc = [];
+  values.qtext = 'fuck........'
+  objc.push(Object.assign({qtext:'11111;s'},values));
+  objc.push(Object.assign({qtext:'22222;s'},values));
+  objc.push(Object.assign({qtext:'33333;s'},values));
+  objc.push(Object.assign({qtext:'4444;s'},values));
+  yield call(service['insertProductData'],'Product', objc);
+  const page = yield select(state => state['products'].page);
+  // yield put({ type: 'fetch', payload: { page } });
+}

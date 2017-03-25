@@ -11,7 +11,6 @@ class EditableCell extends React.Component {
         comType: this.props.comType,
     }
     componentWillReceiveProps(nextProps) {
-        console.log(this.props.getTableData, '---------------------')
         this.setState({
             value: nextProps.value,
             editable: nextProps.editable || false,
@@ -41,12 +40,25 @@ class EditableCell extends React.Component {
         this.setState({ value });
     }
     render() {
-        const { value, editable, comType } = this.state;
+        const {  editable, comType } = this.state;
         let getFieldDecorator = this.props.getFieldDecorator
         let option;
+        let value =this.state.value;
+        if(!value)
+        {
+            value = ''
+        }
+        else{
+            if(Array.isArray(value))
+            {
+                value = value.toString();
+            }else if(typeof value === 'object'){
+                value = JSON.stringify(value)
+            }
+        }
         if (comType === '0') {
             option = <div className="editable-row-text">
-                {value&&value.toString() || ''}
+                {value}
             </div>
         }
         else if (comType === '1') {
@@ -59,7 +71,7 @@ class EditableCell extends React.Component {
                 </div>)
                 :
                 (<div className="editable-row-text">
-                    {value&&value.toString() || ''}
+                    {value}
                 </div>)
         }
         else if (comType === '2') {
@@ -72,7 +84,7 @@ class EditableCell extends React.Component {
                 </div>)
                 :
                 (<div className="editable-row-text">
-                    {value&&value.toString() || ''}
+                    {value}
                 </div>)
         }
 

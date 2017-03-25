@@ -42,8 +42,8 @@ function Products({ dispatch, list: dataSource, loading, total, page: current, s
   const columns = [
     {
       title: 'SPU编号',
-      dataIndex: '_id',
-      key: '_id',
+      dataIndex: 'productNum',
+      key: 'productNum',
       render: text => <a href="">{text}</a>,
     },
     {
@@ -67,7 +67,7 @@ function Products({ dispatch, list: dataSource, loading, total, page: current, s
       key: 'operation',
       render: (text, product) => (
         <span className={styles.operation2}>
-          <ProductModal product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap }} onOk={editHandler.bind(null, product._id)}>
+          <ProductModal product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap,brandMap:brandMap }} onOk={editHandler.bind(null, product._id)}>
             <Icon type="edit" className={styles.icon} />
           </ProductModal>
           <Popconfirm title={"确定要删除色系【" + product.name + "】吗？"} onConfirm={deleteHandler.bind(null, product)}>
@@ -82,7 +82,7 @@ function Products({ dispatch, list: dataSource, loading, total, page: current, s
     <div className={styles.normal}>
       <div>
         <Row type="flex" justify="end">
-          <ProductModal product={{ categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap }} onOk={editHandler.bind(null, '')}>
+          <ProductModal product={{ categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap ,brandMap:brandMap}} onOk={editHandler.bind(null, '')}>
             <Button icon="plus-circle-o">添加</Button>
           </ProductModal>
         </Row>

@@ -56,12 +56,27 @@ function getMapByList(list) {
     return tempMap
 }
 
-['Color','Country','Brand','Serial','Category','Attribute'].map(v => {
+['Color', 'Country', 'Brand', 'Serial', 'Category', 'Attribute'].map(v => {
     exports[`get${v}Map`] = async function (v) {
         let result = await request(`/api/${v}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 100000, startPos: 0 })
         let list = result.data.data.list
         let map = getMapByList(list)
         window.sessionStorage.brandMap = JSON.stringify(map)
         return map;
+    }
+});
+
+
+['Product'].map(v => {
+    exports[`insert${v}Data`] = async function (v, datas) {
+        if (Array.isArray(datas)) {
+            let data = []
+            return await datas.map(item => {return  request(`/api/${v}/addItem?token=${localStorage.token}`, { item })});
+        }
+        else {
+            let item = datas;
+            return request(`/api/${v}/addItem?token=${localStorage.token}`, { item });
+        }
+
     }
 });
