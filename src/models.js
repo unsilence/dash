@@ -113,14 +113,11 @@ exports['ProductModel'].effects.fetch = function* ({ payload: { page } }, { call
 }
 
 exports['ProductModel'].effects.add = function* ({ payload: { id, values } }, { call, put, select }) {
-  console.log('patch', { id })
-  let objc = [];
-  values.qtext = 'fuck........'
-  objc.push(Object.assign({qtext:'11111;s'},values));
-  objc.push(Object.assign({qtext:'22222;s'},values));
-  objc.push(Object.assign({qtext:'33333;s'},values));
-  objc.push(Object.assign({qtext:'4444;s'},values));
-  yield call(service['insertProductData'],'Product', objc);
+  console.log('patch', { id },values)
+  let spu = yield call(service['insertProductData'],'Product', values);
+
+  console.log(spu,'----------------------spu-----------------');
+
   const page = yield select(state => state['products'].page);
-  // yield put({ type: 'fetch', payload: { page } });
+  yield put({ type: 'fetch', payload: { page } });
 }

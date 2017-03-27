@@ -6,6 +6,7 @@ import styles from '../list.less';
 let PAGE_SIZE = 10
 import ProductModal from './ProductModal';
 import moment from 'moment';
+import {getCategoryName,getProductNum} from '../utils'
 
 function Products({ dispatch, list: dataSource, loading, total, page: current, serialMap, categoryMap, brandMap, colorMap, countryMap,attributeMap }) {
 
@@ -38,13 +39,12 @@ function Products({ dispatch, list: dataSource, loading, total, page: current, s
     }
 
   }
-
   const columns = [
     {
       title: 'SPU编号',
       dataIndex: 'productNum',
       key: 'productNum',
-      render: text => <a href="">{text}</a>,
+      render: (text,product) => <span>{getProductNum(product.categoryId,categoryMap)+''+product.productNum}</span>,
     },
     {
       title: '名字',
@@ -53,8 +53,9 @@ function Products({ dispatch, list: dataSource, loading, total, page: current, s
     },
     {
       title: '分类',
-      dataIndex: 'note',
-      key: 'note',
+      dataIndex: 'categoryId',
+      key: 'categoryId',
+      render: text => <span>{getCategoryName(text,categoryMap)}</span>,
     },
     {
       title: '创建日期',
@@ -70,7 +71,7 @@ function Products({ dispatch, list: dataSource, loading, total, page: current, s
           <ProductModal product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap,brandMap:brandMap }} onOk={editHandler.bind(null, product._id)}>
             <Icon type="edit" className={styles.icon} />
           </ProductModal>
-          <Popconfirm title={"确定要删除色系【" + product.name + "】吗？"} onConfirm={deleteHandler.bind(null, product)}>
+          <Popconfirm title={"确定要删除Spu【" + product.name + "】吗？"} onConfirm={deleteHandler.bind(null, product)}>
             <Icon type="delete" className={styles.icon} />
           </Popconfirm>
         </span>

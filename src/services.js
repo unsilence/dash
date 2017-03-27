@@ -71,11 +71,15 @@ function getMapByList(list) {
     exports[`insert${v}Data`] = async function (v, datas) {
         if (Array.isArray(datas)) {
             let data = []
-            return await datas.map(item => {return  request(`/api/${v}/addItem?token=${localStorage.token}`, { item })});
+            for(let item of datas){
+                let resPos = await request(`/api/${v}/addItem?token=${localStorage.token}`, { item })
+                data.push(resPos);
+            }
+            return data;
         }
         else {
             let item = datas;
-            return request(`/api/${v}/addItem?token=${localStorage.token}`, { item });
+            return await request(`/api/${v}/addItem?token=${localStorage.token}`, { item });
         }
 
     }

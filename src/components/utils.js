@@ -55,3 +55,44 @@ function getColorSerialFormatData(serials, colors) {
   return rst;
 }
 exports['getColorSerialFormatData'] = getColorSerialFormatData;
+
+
+
+function getCategoryName(_ids, categoryMap) {
+  let cids = _ids || []
+
+  let cstr = cids.map(v => loop(v)).join('/');
+  function loop(_id) {
+    if (_id === '' || !_id) {
+      return '';
+    }
+    return categoryMap[_id] ? categoryMap[_id].name : ''
+  }
+  return cstr;
+}
+
+exports['getCategoryName'] = getCategoryName;
+
+
+function getProductNum(_ids, categoryMap) {
+  let cids = _ids || []
+  let cstr = cids.map(v => loop(v)).join('');
+  function loop(_id) {
+    let cd = '';
+    if (_id === '' || !_id) {
+      return cd;
+    }
+    if (categoryMap[_id]) {
+      if (categoryMap[_id].code === '') {
+        cd = categoryMap[_id].ccodeNum;
+      }
+      else {
+        cd = categoryMap[_id].code;
+      }
+    }
+    return cd;
+  }
+  return cstr;
+}
+
+exports['getProductNum'] = getProductNum;
