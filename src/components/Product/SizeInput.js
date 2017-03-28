@@ -7,7 +7,7 @@ export default class SizeInput extends React.Component {
         super(props);
         const value = this.props.value || {};
         this.state = {
-            number: value.chang,
+            chang: value.chang,
             kuan: value.kuan,
             gao: value.gao,
             banjing: value.banjing,

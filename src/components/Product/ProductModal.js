@@ -11,6 +11,8 @@ var pinyin = require("pinyin");
 
 import EditableTable from './EditableTable';
 let uuid = 0;
+let keysValue = {};
+
 class ProductEditModal extends Component {
 
   constructor(props) {
@@ -34,31 +36,15 @@ class ProductEditModal extends Component {
   }
   componentDidMount() {
     if (this.props.product.categoryId) {
-      this.cascaderOnChange(this.props.product.categoryId);
+      this.cascaderOnChange(this.props.product.categoryId, 1);
+      this.sellChange('');
+      this.forceUpdate();
     }
     console.log('-----------componentDidMount');
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log('componentWillReceiveProps---------')
-
-  }
-  shouldComponentUpdate(nextProps, nextState) {
-    console.log('shouldComponentUpdate---------')
-    return true;
-  }
-  componentWillUpdate(nextProps, nextState) {
-    console.log('componentWillUpdate---------')
-
-  }
-  componentDidUpdate(prevProps, prevState) {
-    console.log('componentDidUpdate---------')
-  }
-  componentWillUnmount() {
-    console.log('componentWillUnmount---------')
-  }
-  cascaderOnChange = (value) => {
-    this.handleAttr(value);
+  cascaderOnChange = (value, fromWhere) => {
+    this.handleAttr(value, fromWhere);
   }
 
   /**
@@ -92,7 +78,7 @@ class ProductEditModal extends Component {
     });
   }
 
-  handleAttr = (_cascader) => {
+  handleAttr = (_cascader, fromWhere) => {
     let cas = _cascader.toString();
     let keyAttr = [];
     let sellAttr = [];
@@ -110,6 +96,10 @@ class ProductEditModal extends Component {
           otherAttr.push(v);
         }
       })
+    if (fromWhere === 1)//从修改过来的
+    {
+      sellAttr = this.getSellKeys(sellAttr, this.props.product.attributes);
+    }
     this.props.form.setFieldsValue({ keys: sellAttr })
     this.setState({
       keyAttr: keyAttr,
@@ -120,23 +110,76 @@ class ProductEditModal extends Component {
     })
   }
 
+  //获取多少个keys
+  getSellKeys = (sellAttr, attributes) => {
+    let ret = [];
+    keysValue = [];
+    for (let item of attributes) {
+      for (let sell of sellAttr) {
+        if (item.attributeID === sell._id) {
+          let tempValue;
+          let sellObj;
+          if (item.value.indexOf('@......@') !== -1) {
+            let values = item.value.split('@......@')
+            values.forEach(v => {
+              tempValue = v;
+              if (item.dtype !== 'string') {
+                tempValue = JSON.parse(v);
+              }
+
+              sellObj = Object.assign({ dtype: item.dtype }, sell);
+              sellObj.sellId = sell._id + '_' + (uuid++);
+              sellObj['selfValue'] = tempValue;
+              ret.push(sellObj);
+              keysValue.push(sellObj);
+            })
+          } else {
+            tempValue = item.value;
+            if (item.dtype !== 'string') {
+              tempValue = JSON.parse(item.value);
+            }
+            let sellObj = Object.assign({ dtype: item.dtype }, sell);
+            sellObj.sellId = sell._id + '_' + (uuid++)
+            sellObj['selfValue'] = tempValue;
+            ret.push(sellObj);
+            keysValue.push(sellObj);
+          }
+        }
+      }
+    }
+    return ret;
+  }
+
   sellChange = (e) => {
     const tableData = this.props.form.getFieldsValue();
-    this.getTableFormatData(tableData);
+    let data = this.getTableFormatData(tableData);
     this.setState({
+      tableFormatData:data,
       tableData: tableData
     })
   }
 
-  getInitialValue = (_id) => {
+  getInitialValue = (ko, type) => {
     let value = '';
     if (this.props.product && this.props.product.attributes && this.props.product.attributes.length !== 0) {
-      
-      for (let item of this.props.product.attributes) { 
-        if(item.attributeID === _id)
-        {
-          value = item.value==='undefined' ? '':item.value;
-          break;
+      let fromWhere;
+      let _id = ko.sellId ? ko.sellId : ko._id;
+      if (type === 'sell' && ko.sellId) {
+        fromWhere = keysValue;
+        for (let item of fromWhere) {
+          if (item.sellId === _id) {
+            value = item.selfValue === 'undefined' ? '' : item.selfValue;
+            break;
+          }
+        }
+      }
+      else {
+        fromWhere = this.props.product.attributes;
+        for (let item of fromWhere) {
+          if (item.attributeID === _id) {
+            value = item.value === 'undefined' ? '' : item.value;
+            break;
+          }
         }
       }
     }
@@ -172,15 +215,32 @@ class ProductEditModal extends Component {
     for (let [key, value] of Object.entries(values)) {
       if (key.length > 23) {
         if (key.indexOf("_") === -1) {
-          values.attributes ? values.attributes.push({ 'attributeID': key, 'value': value }) : values.attributes = [{ 'attributeID': key, 'value': value }]
+          let dtype = 'string';
+          if (Array.isArray(value)) {
+            dtype = 'array';
+            value = JSON.stringify(value);
+          } else if (typeof value === 'object') {
+            dtype = 'object';
+            value = JSON.stringify(value);
+          }
+          values.attributes ? values.attributes.push({ 'attributeID': key, 'value': value, 'dtype': dtype }) : values.attributes = [{ 'attributeID': key, 'value': value, 'dtype': dtype }]
         }
         else {
           let tempId = key.split('_')[0];
           let attObj = this.selectAttribute(tempId, values);
           if (attObj) {
-            attObj.value += '@......@' + value;
+            let tempValue = attObj.dtype === 'string' ? value : JSON.stringify(value);
+            attObj.value += '@......@' + tempValue;
           } else {
-            values.attributes ? values.attributes.push({ 'attributeID': tempId, 'value': value }) : values.attributes = [{ 'attributeID': tempId, 'value': value }]
+            let dtype = 'string';
+            if (Array.isArray(value)) {
+              dtype = 'array';
+              value = JSON.stringify(value);
+            } else if (typeof value === 'object') {
+              dtype = 'object';
+              value = JSON.stringify(value);
+            }
+            values.attributes ? values.attributes.push({ 'attributeID': tempId, 'value': value, 'dtype': dtype }) : values.attributes = [{ 'attributeID': tempId, 'value': value, 'dtype': dtype }]
           }
         }
       }
@@ -208,7 +268,6 @@ class ProductEditModal extends Component {
     const { children } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
     const { _id, name, note, key, categoryId } = this.props.product;
-    console.log(categoryId, '--------------categoryId------')
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -246,6 +305,8 @@ class ProductEditModal extends Component {
   }
 
   createTable = () => {
+
+    console.log(this.state.tableFormatData,'-----table Data----',this.state.columnsDatas)
     return <EditableTable data={this.state.tableFormatData || []} columnsDatas={this.state.columnsDatas} getTableData={this.getTableData.bind(this)} />
   }
 
@@ -254,11 +315,15 @@ class ProductEditModal extends Component {
     let filterData = Object.keys(tableData)
       .filter(k => { return k.indexOf('_') !== -1 })
       .map(v => { return { key: v, value: tableData[v] } });
-
+      let replace = true;
+    if (filterData.length === 0 && Array.isArray(keysValue))
+    {
+      replace = false;
+    }
     let keyObject = {};
     let columnsDatas = tableData.keys || [];
     columnsDatas.forEach(v => {
-      v['selfValue'] = tableData[v.sellId];
+      replace && (v['selfValue'] = tableData[v.sellId]);
       v['dataIndex'] = pinyin(v.name, {
         style: pinyin.STYLE_NORMAL, // 设置拼音风格
         heteronym: false
@@ -298,7 +363,9 @@ class ProductEditModal extends Component {
       });
       data.push(obj);
     })
+
     this.setState({ tableFormatData: this.checkArray(this.state.tableFormatData, data), columnsDatas: columnsDatas })
+    return data;
   }
 
   /**数据检索拷贝 价格数量产品型号 */
@@ -341,24 +408,24 @@ class ProductEditModal extends Component {
     if (ko.etype === '0') {
       if (ko.stype === '3') {//下拉选项
         options = ko.svalue.map(v => { return <Select.Option key={v} value={v}>{v}</Select.Option> });
-        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId} >
-          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko._id) })(ko.type === '2' ? <Select size="small" onChange={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko._id} >
+          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(ko.type === '2' ? <Select size="small" onChange={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
           {
             this.getSellHandle(ko, keys)
           }
         </FormItem>
       }
       else if (ko.stype === '1') {//运营输入
-        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId} >
-          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko._id) })(ko.type === '2' ? <Input size="small" onChange={this.sellChange.bind(this)} /> : <Input size="small" />)}
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko._id} >
+          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(ko.type === '2' ? <Input size="small" onChange={this.sellChange.bind(this)} /> : <Input size="small" />)}
           {
             this.getSellHandle(ko, keys)
           }
         </FormItem>
       }
       else if (ko.stype === '2') {
-        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId} >
-          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko._id) })(<span>使用SKU配图</span>)}
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko._id} >
+          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(<span>使用SKU配图</span>)}
           {
             this.getSellHandle(ko, keys)
           }
@@ -366,9 +433,9 @@ class ProductEditModal extends Component {
       }
     } else {
       if (ko.name === '尺寸') {//这个比较麻烦
-        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId} >
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId || ko._id} >
           {getFieldDecorator(ko.sellId || ko._id, {
-            initialValue: this.getInitialValue(ko._id),
+            initialValue: this.getInitialValue(ko, 'sell'),
             validateTrigger: ['onChange'],
             rules: [{ validator: this.checkSize }]
           })(<SizeInput key='sizecom' onBlur={this.sellChange.bind(this)} />)}
@@ -380,8 +447,8 @@ class ProductEditModal extends Component {
       else if (ko.name === '颜色') {//从颜色表中获取
         options = getColorSerialFormatData(Object.values(this.props.product.serialMap), Object.values(this.props.product.colorMap));
         // coms = ko.type === '2' ? <Cascader options={options} onChange={this.sellChange.bind(this)} placeholder='选择颜色' /> : <Cascader options={options} placeholder='Please select' />
-        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId} >
-          {getFieldDecorator(ko.sellId || ko._id, { initialValue: this.getInitialValue(ko._id) ==='' ?[]:this.getInitialValue(ko._id) })(ko.type === '2' ? <Cascader options={options} expandTrigger="hover" onChange={this.sellChange.bind(this)} placeholder='选择颜色' /> : <Cascader options={options} placeholder='Please select' />)}
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId || ko._id} >
+          {getFieldDecorator(ko.sellId || ko._id, { initialValue: this.getInitialValue(ko, 'sell') })(ko.type === '2' ? <Cascader options={options} expandTrigger="hover" onChange={this.sellChange.bind(this)} placeholder='选择颜色' /> : <Cascader options={options} placeholder='Please select' />)}
           {
             this.getSellHandle(ko, keys)
           }
@@ -390,9 +457,9 @@ class ProductEditModal extends Component {
       else if (ko.name === '原产地') { //从国家表中读取
         options = Object.values(this.props.product.countryMap).map(v => { return <Select.Option key={v._id} value={v._id}>{v.name}</Select.Option> });
 
-        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId} >
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId || ko._id} >
           {getFieldDecorator(ko.sellId || ko._id, {
-            initialValue: this.getInitialValue(ko._id),
+            initialValue: this.getInitialValue(ko, 'sell'),
             validateTrigger: ['onChange', 'onBlur'],
             trigger: 'onChange',
           })(ko.type === '2' ? <Select size="small" onBlur={this.sellChange.bind(this)}  {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
@@ -403,8 +470,8 @@ class ProductEditModal extends Component {
       }
       else if (ko.name === '品牌') { //取值范围，在品牌当前分类对应的品牌中获取
         options = Object.values(this.props.product.brandMap).map(v => { return <Select.Option key={v._id} value={v._id}>{v.name}</Select.Option> });
-        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId} >
-          {getFieldDecorator(ko.sellId || ko._id, { initialValue: this.getInitialValue(ko._id) })(ko.type === '2' ? <Select size="small" onBlur={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId || ko._id} >
+          {getFieldDecorator(ko.sellId || ko._id, { initialValue: this.getInitialValue(ko, 'sell') })(ko.type === '2' ? <Select size="small" onBlur={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
           {
             this.getSellHandle(ko, keys)
           }
@@ -444,36 +511,9 @@ class ProductEditModal extends Component {
     if (otherOption.length !== 0) otherOption.unshift(<span key='otherword'>其他属性</span>)
 
     getFieldDecorator('keys', { initialValue: [] });
-    let keys = getFieldValue('keys').sort(keysrt('_id', true));
+    let keys = getFieldValue('keys') ? getFieldValue('keys').sort(keysrt('_id', true)) : [];
     let sellOptions = keys.map((k, index) => {
       return this.getComponentByType(k, formItemLayout, getFieldDecorator, keys);
-      /*return (
-        <FormItem
-            {...formItemLayout}
-            label={k.name}
-            required={false}
-            key={k.sellId}
-          >
-            {getFieldDecorator(`${k.sellId}`, {
-              validateTrigger: ['onChange', 'onBlur'],
-              trigger: 'onChange',
-              rules: [{
-                required: true,
-                whitespace: true,
-                message: "fuck ......",
-              }],
-            })(
-              <Input placeholder="passenger name" style={{ width: '60%', marginRight: 8 }} onBlur={this.sellChange.bind(this)} />
-              )}
-            <Icon
-              className="dynamic-delete-button"
-              type="minus-circle-o"
-              disabled={keys.length === 1}
-              onClick={() => this.removeSellComponent(k)}
-            />
-            <Icon type="plus-circle-o" onClick={this.addSellComponent.bind(this, k)} />
-          </FormItem>
-          );*/
     });
 
     if (sellOptions.length !== 0) {
