@@ -9,9 +9,6 @@ import SizeInput from './SizeInput';
 const FormItem = Form.Item;
 var pinyin = require("pinyin");
 
-import EditableTable from './EditableTable';
-// let uuid = 0;
-
 class SkuEditModal extends Component {
 
   constructor(props) {
@@ -30,13 +27,6 @@ class SkuEditModal extends Component {
       categoryId: [],
       product: {}
     };
-  }
-
-  componentWillMount() {
-    console.log(this.props.product, '-----------componentWillMount');
-  }
-  componentDidMount() {
-    console.log('-----------componentDidMount');
   }
 
   showModelHandler = (e) => {

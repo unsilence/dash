@@ -75,7 +75,7 @@ function Stock({ dispatch, list: dataSource, loading, total, page: current, seri
       render: (text, product) => (
         <span className={styles.operation2}>
           <StockModal product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap,brandMap:brandMap }} onOk={editHandler.bind(null, product._id)}>
-            <Icon type="编辑" className={styles.icon} />
+            <Icon type="edit" className={styles.icon} />
           </StockModal>
         </span>
       ),

@@ -6,9 +6,9 @@ import styles from '../list.less';
 let PAGE_SIZE = 10
 import SkuModal from './SkuModal';
 import moment from 'moment';
-import {getCategoryName,getProductNum} from '../utils'
+import { getCategoryName, getProductNum } from '../utils'
 
-function Sku({ dispatch, list: dataSource, loading, total, page: current, serialMap, categoryMap, brandMap, colorMap, countryMap,attributeMap }) {
+function Sku({ dispatch, list: dataSource, loading, total, page: current, serialMap, categoryMap, brandMap, colorMap, countryMap, attributeMap }) {
 
   function deleteHandler(itm) {
     console.log('deleteHandler', itm)
@@ -44,7 +44,7 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
       title: 'SKU编号',
       dataIndex: 'skuNum',
       key: 'skuNum',
-      render: (text,product) => <span>{text}</span>,
+      render: (text, product) => <span>{text}</span>,
     },
     {
       title: '名字',
@@ -85,26 +85,29 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
       title: '操作',
       key: 'operation',
       render: (text, product) => (
-        <span className={styles.operation2}>
-          <SkuModal product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap,brandMap:brandMap }} onOk={editHandler.bind(null, product._id)}>
-            <Icon type="编辑" className={styles.icon} />
+        <span className={styles.operation2} >
+          <Popconfirm title={"推荐"} key='asdf'>
+            <Button type="primary" style={{marginRight:"10px"}}>推荐</Button>
+          </Popconfirm>
+
+          <Popconfirm title={"推荐至"} key='asdf111'>
+            <Button type="primary" style={{marginRight:"10px"}}>推荐至</Button>
+          </Popconfirm>
+
+          <SkuModal product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap, brandMap: brandMap }} onOk={editHandler.bind(null, product._id)}>
+            <Button type="primary">编辑</Button>
           </SkuModal>
-          <Popconfirm title={"推荐"}>
-            <Icon type="推荐" className={styles.icon} />
-          </Popconfirm>
-          <Popconfirm title={"推荐至"} >
-            <Icon type="推送至" className={styles.icon} />
-          </Popconfirm>
+          
         </span>
       )
-    },
+    }
   ];
 
   return (
     <div className={styles.normal}>
       <div>
         <Row type="flex" justify="end">
-          <SkuModal product={{ categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap ,brandMap:brandMap}} onOk={editHandler.bind(null, '')}>
+          <SkuModal product={{ categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap, brandMap: brandMap }} onOk={editHandler.bind(null, '')}>
             <Button icon="plus-circle-o">添加</Button>
           </SkuModal>
         </Row>
@@ -112,7 +115,7 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
           columns={columns}
           dataSource={dataSource}
           loading={loading}
-          rowKey={product => product._id}
+          rowKey={sku => sku._id}
           pagination={false}
         />
         <Pagination
