@@ -14,6 +14,15 @@ function Header({ location }) {
       <Menu.Item key="/">
         <Link to="/"><Icon type="home" />首页</Link>
       </Menu.Item>
+      <Menu.Item key='spu'>
+        <Link to="/spus"><Icon type="file" />Spu管理</Link>
+      </Menu.Item>
+      <Menu.Item key="sku">
+        <Link to="/skus"><Icon type="file" />Sku管理</Link>
+      </Menu.Item>
+      <Menu.Item key="stock">
+        <Link to="/stocks"><Icon type="file" />商品管理</Link>
+      </Menu.Item>
       <Menu.Item key="tests">
         <Link to="/tests"><Icon type="smile" />测试</Link>
       </Menu.Item>
@@ -32,9 +41,7 @@ function Header({ location }) {
       <Menu.Item key="cases">
         <Link to="/cases"><Icon type="pay-circle" />案例</Link>
       </Menu.Item>
-      <Menu.Item key="/products">
-        <Link to="/products"><Icon type="file" />饰品管理</Link>
-      </Menu.Item>
+
       <Menu.Item key="/orders">
         <Link to="/orders"><Icon type="file" />订单</Link>
       </Menu.Item>

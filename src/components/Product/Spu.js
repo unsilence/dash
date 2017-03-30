@@ -4,23 +4,23 @@ import { Table, Pagination, Popconfirm, Row, Col, Button, Icon } from 'antd';
 import { routerRedux } from 'dva/router';
 import styles from '../list.less';
 let PAGE_SIZE = 10
-import ProductModal from './ProductModal';
+import SpuModal from './SpuModal';
 import moment from 'moment';
 import {getCategoryName,getProductNum} from '../utils'
 
-function Products({ dispatch, list: dataSource, loading, total, page: current, serialMap, categoryMap, brandMap, colorMap, countryMap,attributeMap }) {
+function Spu({ dispatch, list: dataSource, loading, total, page: current, serialMap, categoryMap, brandMap, colorMap, countryMap,attributeMap }) {
 
   function deleteHandler(itm) {
     console.log('deleteHandler', itm)
     dispatch({
-      type: 'products/remove',
+      type: 'spus/remove',
       payload: { id: itm._id },
     });
   }
 
   function pageChangeHandler(page) {
     dispatch(routerRedux.push({
-      pathname: '/products',
+      pathname: '/spus',
       query: { page },
     }));
   }
@@ -28,12 +28,12 @@ function Products({ dispatch, list: dataSource, loading, total, page: current, s
   function editHandler(id, values) {
     if (id) {
       dispatch({
-        type: 'products/patch',
+        type: 'spus/patch',
         payload: { id, values },
       });
     } else {
       dispatch({
-        type: 'products/add',
+        type: 'spus/add',
         payload: { id, values },
       });
     }
@@ -68,9 +68,9 @@ function Products({ dispatch, list: dataSource, loading, total, page: current, s
       key: 'operation',
       render: (text, product) => (
         <span className={styles.operation2}>
-          <ProductModal product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap,brandMap:brandMap }} onOk={editHandler.bind(null, product._id)}>
+          <SpuModal product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap,brandMap:brandMap }} onOk={editHandler.bind(null, product._id)}>
             <Icon type="edit" className={styles.icon} />
-          </ProductModal>
+          </SpuModal>
           <Popconfirm title={"确定要删除Spu【" + product.name + "】吗？"} onConfirm={deleteHandler.bind(null, product)}>
             <Icon type="delete" className={styles.icon} />
           </Popconfirm>
@@ -83,9 +83,9 @@ function Products({ dispatch, list: dataSource, loading, total, page: current, s
     <div className={styles.normal}>
       <div>
         <Row type="flex" justify="end">
-          <ProductModal product={{ categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap ,brandMap:brandMap}} onOk={editHandler.bind(null, '')}>
+          <SpuModal product={{ categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap ,brandMap:brandMap}} onOk={editHandler.bind(null, '')}>
             <Button icon="plus-circle-o">添加</Button>
-          </ProductModal>
+          </SpuModal>
         </Row>
         <Table
           columns={columns}
@@ -107,9 +107,9 @@ function Products({ dispatch, list: dataSource, loading, total, page: current, s
 }
 
 function mapStateToProps(state) {
-  const { list, total, page, serialMap, categoryMap, brandMap, colorMap, countryMap, attributeMap } = state.products;
+  const { list, total, page, serialMap, categoryMap, brandMap, colorMap, countryMap, attributeMap } = state.spus;
   return {
-    loading: state.loading.models.products,
+    loading: state.loading.models.spus,
     list,
     total,
     page,
@@ -122,4 +122,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(Products);
+export default connect(mapStateToProps)(Spu);

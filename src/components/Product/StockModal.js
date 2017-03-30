@@ -10,13 +10,14 @@ const FormItem = Form.Item;
 var pinyin = require("pinyin");
 
 import EditableTable from './EditableTable';
-let uuid = 0;
-let keysValue = {};
+// let uuid = 0;
 
-class ProductEditModal extends Component {
+class StockEditModal extends Component {
 
   constructor(props) {
     super(props);
+    this.uuid = 0;
+    this.keysValue = {};
     this.state = {
       visible: false,
       keyAttr: [],
@@ -52,7 +53,7 @@ class ProductEditModal extends Component {
    */
   addSellComponent = (com) => {
     let temp = Object.assign({}, com);
-    temp.sellId = temp._id + "_" + (uuid++);
+    temp.sellId = temp._id + "_" + (this.uuid++);
     const { form } = this.props;
     const keys = form.getFieldValue('keys');
     const nextKeys = keys.concat(temp);
@@ -90,7 +91,7 @@ class ProductEditModal extends Component {
         if (v.type === '1') {
           keyAttr.push(v);
         } else if (v.type === '2') {
-          v.sellId = v._id + "_" + (uuid++);
+          v.sellId = v._id + "_" + (this.uuid++);
           sellAttr.push(v);
         } else if (v.type === '3') {
           otherAttr.push(v);
@@ -113,7 +114,7 @@ class ProductEditModal extends Component {
   //获取多少个keys
   getSellKeys = (sellAttr, attributes) => {
     let ret = [];
-    keysValue = [];
+    this.keysValue = [];
     for (let item of attributes) {
       for (let sell of sellAttr) {
         if (item.attributeID === sell._id) {
@@ -128,10 +129,10 @@ class ProductEditModal extends Component {
               }
 
               sellObj = Object.assign({ dtype: item.dtype }, sell);
-              sellObj.sellId = sell._id + '_' + (uuid++);
+              sellObj.sellId = sell._id + '_' + (this.uuid++);
               sellObj['selfValue'] = tempValue;
               ret.push(sellObj);
-              keysValue.push(sellObj);
+              this.keysValue.push(sellObj);
             })
           } else {
             tempValue = item.value;
@@ -139,10 +140,10 @@ class ProductEditModal extends Component {
               tempValue = JSON.parse(item.value);
             }
             let sellObj = Object.assign({ dtype: item.dtype }, sell);
-            sellObj.sellId = sell._id + '_' + (uuid++)
+            sellObj.sellId = sell._id + '_' + (this.uuid++)
             sellObj['selfValue'] = tempValue;
             ret.push(sellObj);
-            keysValue.push(sellObj);
+            this.keysValue.push(sellObj);
           }
         }
       }
@@ -165,7 +166,7 @@ class ProductEditModal extends Component {
       let fromWhere;
       let _id = ko.sellId ? ko.sellId : ko._id;
       if (type === 'sell' && ko.sellId) {
-        fromWhere = keysValue;
+        fromWhere = this.keysValue;
         for (let item of fromWhere) {
           if (item.sellId === _id) {
             value = item.selfValue === 'undefined' ? '' : item.selfValue;
@@ -305,9 +306,7 @@ class ProductEditModal extends Component {
   }
 
   createTable = () => {
-
-    console.log(this.state.tableFormatData,'-----table Data----',this.state.columnsDatas)
-    return <EditableTable data={this.state.tableFormatData || []} columnsDatas={this.state.columnsDatas} getTableData={this.getTableData.bind(this)} />
+    return <EditableTable key='editableTalbe' data={this.state.tableFormatData} columnsDatas={this.state.columnsDatas} getTableData={this.getTableData.bind(this)} />
   }
 
   /**获得格式化好的表数据 */
@@ -316,7 +315,7 @@ class ProductEditModal extends Component {
       .filter(k => { return k.indexOf('_') !== -1 })
       .map(v => { return { key: v, value: tableData[v] } });
       let replace = true;
-    if (filterData.length === 0 && Array.isArray(keysValue))
+    if (filterData.length === 0 && Array.isArray(this.keysValue))
     {
       replace = false;
     }
@@ -393,7 +392,7 @@ class ProductEditModal extends Component {
           className="dynamic-delete-button"
           type="minus-circle-o"
           disabled={keys.length === 1}
-          onClick={() => this.removeSellComponent(k)}
+          onClick={() => this.removeSellComponent(ko)}
           key='1'
         />
         <Icon type="plus-circle-o" onClick={this.addSellComponent.bind(this, ko)} key='2' />
@@ -529,7 +528,7 @@ function keysrt(key, desc) {
   }
 }
 
-export default Form.create()(ProductEditModal);
+export default Form.create()(StockEditModal);
 
 /**
  * 获取组合数据

@@ -54,7 +54,7 @@ let generate = (name, serviceName) => {
     },
   }
 }
-['Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Product', 'Test'].map(cls => {
+['Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
   exports[cls + 'Model'] = generate(cls.toLowerCase() + 's', cls + 'Service')
 })
 exports['login'] = function () { return service.login() }
@@ -90,14 +90,14 @@ exports["BrandModel"].effects.fetch = function* ({ payload: { page } }, { call, 
   yield put({ type: 'save22', payload: rd });
 }
 
-exports['ProductModel'].effects.fetch = function* ({ payload: { page } }, { call, put }) {
+exports['SpuModel'].effects.fetch = function* ({ payload: { page } }, { call, put }) {
   const categoryMap = yield call(service["getCategoryMap"], 'Category');
   const serialMap = yield call(service["getSerialMap"], 'Serial');
   const colorMap = yield call(service["getColorMap"], 'Color');
   const countryMap = yield call(service["getCountryMap"], 'Country');
   const brandMap = yield call(service["getBrandMap"], 'Brand');
   const attributeMap = yield call(service["getAttributeMap"], 'Attribute');
-  const products = yield call(service["ProductService"].fetch, { page });
+  const products = yield call(service["SpuService"].fetch, { page });
   const rd = {
     data: products.data.data.list,
     total: products.data.data.count,
@@ -112,12 +112,40 @@ exports['ProductModel'].effects.fetch = function* ({ payload: { page } }, { call
   yield put({ type: 'save22', payload: rd });
 }
 
-exports['ProductModel'].effects.add = function* ({ payload: { id, values } }, { call, put, select }) {
-  console.log('patch', { id },values)
-  let spu = yield call(service['insertProductData'],'Product', values);
+exports['SpuModel'].effects.add = function* ({ payload: { id, values } }, { call, put, select }) {
+  console.log('patch', { id }, values, service)
+  let spu = yield call(service['insertSpuData'], 'Spu', values);
+  let skus = values.skus;
 
-  console.log(spu,'----------------------spu-----------------');
+  skus.forEach((sku, index) => {
+    sku.name = spu.data.data.item.name;
+    sku.spuId = spu.data.data.item._id;
+    sku.skuNum = pad(index + 1, 2);
+  })
+  let skusRet = yield call(service['insertSkuData'], 'Sku', skus);
+  let stocks = [];
 
-  const page = yield select(state => state['products'].page);
+  skusRet.map(sku => { return sku.data.data.item })
+  .map(v => { return { name: v.name, skuId: v._id, tempNum: v.count } })
+  .forEach(item => {
+    for(let i = 0;i < item.tempNum;i ++){
+      item.stockNum = pad((i+1),3);
+      stocks.push(item);
+    }
+  });
+
+  yield call(service['insertStockData'], 'Stock', stocks);
+
+  //生成skus
+  console.log(spu, '----------------------spu-----------------', skusRet);
+
+
+  const page = yield select(state => state['spus'].page);
   yield put({ type: 'fetch', payload: { page } });
 }
+
+export var pad = function (tbl) {
+  return function (num, n) {
+    return (0 >= (n = n - num.toString().length)) ? num : (tbl[n] || (tbl[n] = Array(n + 1).join(0))) + num;
+  }
+}([]); 

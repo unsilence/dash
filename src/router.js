@@ -11,11 +11,10 @@ import Serials from "./routes/Serials";
 import Brands from "./routes/Brands.js";
 import Cases from "./routes/Cases.js";
 import Tests from "./routes/Tests.js";
-// import Buys from "./routes/Buys.js";
-
-// import Reports from "./routes/Reports.js";
 import Login from "./routes/login.js";
-import Product from "./routes/Product";
+import Spu from "./routes/Spu";
+import Sku from "./routes/Sku";
+import Stock from "./routes/Stock";
 
 function RouterConfig({ history }) {
   return (
@@ -27,7 +26,9 @@ function RouterConfig({ history }) {
       <Route path="/users" component={Users} />
       <Route path="/attributes" component={Attributes} />
       <Route path="/countrys" component={Countrys} />
-      <Route path="/products" component={Product} />
+      <Route path="/spus" component={Spu} />
+      <Route path="/skus" component={Sku} />
+      <Route path="/stocks" component={Stock} />
       <Route path="/orders" component={Orders} />
       <Route path="/categorys" component={Categorys} />
       <Route path="/colors" component={Colors} />

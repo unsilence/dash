@@ -36,23 +36,21 @@ class EditableCell extends React.Component {
             nextProps.value !== this.state.value;
     }
     handleChange(v) {
-        let value = v.target ? v.target.value :v;
+        let value = v.target ? v.target.value : v;
         this.setState({ value });
     }
     render() {
-        const {  editable, comType } = this.state;
+        const { editable, comType } = this.state;
         let getFieldDecorator = this.props.getFieldDecorator
         let option;
-        let value =this.state.value;
-        if(!value)
-        {
+        let value = this.state.value;
+        if (!value) {
             value = ''
         }
-        else{
-            if(Array.isArray(value))
-            {
+        else {
+            if (Array.isArray(value)) {
                 value = value.toString();
-            }else if(typeof value === 'object'){
+            } else if (typeof value === 'object') {
                 value = JSON.stringify(value)
             }
         }
@@ -101,9 +99,10 @@ class EditableCell extends React.Component {
 export default class EditableTable extends React.Component {
     constructor(props) {
         super(props);
-        this.columns = [];
+        this.columns =  this.createColumns(this.props.columnsDatas) ||[];
         this.state = {
-            data: []
+            data: this.props.data,
+            columns :this.columns
         };
     }
 
@@ -114,8 +113,8 @@ export default class EditableTable extends React.Component {
             data: nextProps.data,
             columns: columns
         })
-
     }
+
     createColumns(columnsDatas) {
         let columnObject = {};
         columnsDatas.forEach(v => {
@@ -219,6 +218,8 @@ export default class EditableTable extends React.Component {
             });
         });
     }
+
+
     render() {
         const { data } = this.state;
 
