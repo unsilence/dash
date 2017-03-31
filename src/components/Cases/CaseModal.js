@@ -28,7 +28,7 @@ class CaseEditModal extends Component {
       value: 1,
       tags: [],
       content: "",
-      imageUrl:props.case.collocatImg
+      imageUrl:props.case.collocatImg,
       
     };
   }
@@ -64,7 +64,7 @@ class CaseEditModal extends Component {
     
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        item.collocatImg = collocatImg;
+        values.collocatImg = collocatImg;
         onOk(values);
         this.hideModelHandler();
       }
