@@ -81,6 +81,7 @@ function Cases({ dispatch, list: dataSource, loading, total, page: current }) {
       title: '配图',
       dataIndex: 'collocatImg',
       key: 'collocatImg',
+      render: text =><img style={{width:"50px",heigth:"50px"}} src={'/api/file/'+text}/>,
     },
     {
       title: '操作',

@@ -11,36 +11,29 @@ const RadioButton = Radio.Button;
 const caseModels = [{key:"1",value:"别墅"},{key:"2",value:"平层"}];
 const caseSpaces = [{key:"1",value:"客厅"},{key:"2",value:"书房"},{key:"3",value:"卧室"},{key:"4",value:"餐厅"},{key:"5",value:"厨房"},{key:"6",value:"洗漱间"},{key:"7",value:"儿童房"}];
 const caseStyles = [{key:"1",value:"现代"},{key:"2",value:"欧式"},{key:"3",value:"美式"},{key:"4",value:"古典"},{key:"5",value:"田园"},{key:"6",value:"混搭"}];
+function getBase64(img, callback) {
+  const reader = new FileReader();
+  reader.addEventListener('load', () => callback(reader.result));
+  reader.readAsDataURL(img);
+}
+
 class CaseEditModal extends Component {
 
   constructor(props) {
     super(props);
+       
+
     this.state = {
       visible: false,
       value: 1,
       tags: [],
       content: "",
-      previewVisible: false,
-      previewImage: '',
-      fileList: [{
-      uid: -1,
-      name: 'xxx.png',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    }], 
-
+      imageUrl:props.case.collocatImg,
+      
     };
   }
  
   handleCancel = () => this.setState({ previewVisible: false });
-  handlePreview = (file) => {
-    this.setState({
-      previewImage: file.url || file.thumbUrl,
-      previewVisible: true,
-    });
-  }
-  
-  handleChange = ({ fileList }) => this.setState({ fileList })
   updatePic = (info)=>{
       if (info.file.status === 'done') {
           console.log('info',info)
@@ -66,10 +59,12 @@ class CaseEditModal extends Component {
   }
   okHandler = (e) => {
     const { onOk } = this.props;
+    let collocatImg = this.state.imageUrl;
     let item = Object.assign({},this.props.record);
-
+    
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        values.collocatImg = collocatImg;
         onOk(values);
         this.hideModelHandler();
       }
@@ -129,6 +124,7 @@ class CaseEditModal extends Component {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
+    const imageUrl = this.state.imageUrl;
     const casespaceButton = caseSpaces.map(t=><RadioButton value={t.value}>{t.value}</RadioButton>);
     const casemodelButton = caseModels.map(v=><RadioButton value={v.value}>{v.value}</RadioButton>);
     const casestyleButton = caseStyles.map(a=><RadioButton value={a.value}>{a.value}</RadioButton>);
@@ -170,11 +166,12 @@ class CaseEditModal extends Component {
             {getFieldDecorator('caseNote', {rules:[{required: true, message: '请输入案例介绍内容!'}], initialValue: caseNote })
             (<Editor  icons={icons} value={this.state.content} defaultValue="<p>提示文本</p>" onChange={this.handleAlter.bind(this)} plugins={plugins} />)}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="配图" > {getFieldDecorator('collocatImg', {rules:[{required: true, message: '请上传配图!'}], initialValue: collocatImg })
-            (<Upload action='/api/file/upload' listType="picture-card" fileList={fileList} onPreview={this.handlePreview} onChange={this.handleChange}>
-              {fileList.length >= 3 ? null : uploadButton}
-             <img style={{width:"50px",heigth:"50px"}} src={'/api/file/'+previewImage}/>
-          </Upload>)}
+            <FormItem className={styles.FormItem} {...formItemLayout} label="配图" > 
+            {getFieldDecorator('collocatImg', {rules:[{required: true, message: '请上传配图!'}], initialValue: collocatImg })
+            (<Upload multiple={true} action='/api/file/upload' onChange={this.updatePic}>
+                <img style={{width:"50px",heigth:"50px"}} src={'/api/file/'+this.state.imageUrl}/>
+            </Upload>
+          )}
         </FormItem>
         <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例户型" > {getFieldDecorator('caseDoormodel', {rules:[{required: true, message: '请选择案例户型!'}], initialValue: caseDoormodel })(<RadioGroup defaultValue="别墅" size="small">
               {casemodelButton}
