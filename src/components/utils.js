@@ -75,7 +75,7 @@ exports['getCategoryName'] = getCategoryName;
 
 
 function getProductNum(_ids, categoryMap) {
-  let cids = _ids || []
+  let cids = _ids || [];
   let cstr = cids.map(v => loop(v)).join('');
   function loop(_id) {
     let cd = '';

@@ -3,7 +3,7 @@ import { Modal, Form, Input, Select, Cascader, Icon, Button } from 'antd';
 import styles from '../item.less';
 import TagsInput from './TagsInput';
 import 'react-tagsinput/react-tagsinput.css';
-import { getFormatData, getColorSerialFormatData } from '../utils';
+import { getFormatData, getColorSerialFormatData ,getCategoryName,getProductNum} from '../utils';
 import NumericInput from './NumericInput';
 import SizeInput from './SizeInput';
 const FormItem = Form.Item;
@@ -12,7 +12,7 @@ var pinyin = require("pinyin");
 import EditableTable from './EditableTable';
 // let uuid = 0;
 
-class SpuEditModal extends Component {
+class SpuToSkuModal extends Component {
 
   constructor(props) {
     super(props);
@@ -301,7 +301,7 @@ class SpuEditModal extends Component {
   render() {
     const { children } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { _id, name, note, key, categoryId } = this.props.product;
+    const { _id, name, note, key, categoryId ,productNum} = this.props.product;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -323,14 +323,8 @@ class SpuEditModal extends Component {
           onCancel={this.hideModelHandler}
         >
           <Form horizontal onSubmit={this.okHandler} key={"alkdkdkdk"}>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >    {getFieldDecorator('key', { initialValue: key })(<TagsInput  {...{ 'onlyUnique': true }} onChange={v => { console.log(v); this.props.form.setFieldsValue({ key: v }) }} />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="商品分类" >
-              {getFieldDecorator('categoryId', { initialValue: categoryId })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange.bind(this)} expandTrigger="hover" placeholder='Please select' />)}
-            </FormItem>
-            {keyOptions}
-            {otherOption}
-            {sellOptions}
+            <FormItem className={styles.FormItem} {...formItemLayout} label="SPU编号" >    {getFieldDecorator('name', { initialValue: getProductNum(categoryId,this.props.product.categoryMap) })(<Input size="small" disabled={true}/>)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" disabled={true}/>)}</FormItem>
             {sellOptions.length > 0 ? this.createTable() : ''}
           </Form>
         </Modal>
@@ -339,8 +333,6 @@ class SpuEditModal extends Component {
   }
 
   createTable = () => {
-
-    console.log(this.state.tableFormatData, '-----table Data----', this.state.columnsDatas)
     return <EditableTable key='editableTalbe' data={this.state.tableFormatData} columnsDatas={this.state.columnsDatas} getTableData={this.getTableData.bind(this)} />
   }
 
@@ -552,7 +544,7 @@ function keysrt(key, desc) {
   }
 }
 
-export default Form.create()(SpuEditModal);
+export default Form.create()(SpuToSkuModal);
 
 /**
  * 获取组合数据

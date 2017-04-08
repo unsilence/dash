@@ -2,11 +2,12 @@ import React from 'react';
 import { connect } from 'dva';
 import { Table, Pagination, Popconfirm, Row, Col, Button, Icon } from 'antd';
 import { routerRedux } from 'dva/router';
-import styles from '../list.less';
-let PAGE_SIZE = 10
 import StockModal from './StockModal';
 import moment from 'moment';
 import {getCategoryName,getProductNum} from '../utils'
+import styles from '../list.less';
+let PAGE_SIZE = 10
+
 
 function Stock({ dispatch, list: dataSource, loading, total, page: current, serialMap, categoryMap, brandMap, colorMap, countryMap,attributeMap }) {
 

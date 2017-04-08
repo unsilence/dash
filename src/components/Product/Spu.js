@@ -5,6 +5,7 @@ import { routerRedux } from 'dva/router';
 import styles from '../list.less';
 let PAGE_SIZE = 10
 import SpuModal from './SpuModal';
+import SpuToSkuModal from './SpuToSkuModal'
 import moment from 'moment';
 import {getCategoryName,getProductNum} from '../utils'
 
@@ -44,7 +45,7 @@ function Spu({ dispatch, list: dataSource, loading, total, page: current, serial
       title: 'SPU编号',
       dataIndex: 'productNum',
       key: 'productNum',
-      render: (text,product) => <span>{getProductNum(product.categoryId,categoryMap)+''+product.productNum}</span>,
+      render: (text,product) => <span>{getProductNum(product.categoryId,categoryMap)}</span>,
     },
     {
       title: '名字',
@@ -71,6 +72,9 @@ function Spu({ dispatch, list: dataSource, loading, total, page: current, serial
           <SpuModal product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap,brandMap:brandMap }} onOk={editHandler.bind(null, product._id)}>
             <Icon type="edit" className={styles.icon} />
           </SpuModal>
+          <SpuToSkuModal product={{ ...product, categoryMap: categoryMap, serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap,brandMap:brandMap }} onOk={editHandler.bind(null, product._id)}>
+            <Icon type="edit" className={styles.icon} />
+          </SpuToSkuModal>
           <Popconfirm title={"确定要删除Spu【" + product.name + "】吗？"} onConfirm={deleteHandler.bind(null, product)}>
             <Icon type="delete" className={styles.icon} />
           </Popconfirm>
