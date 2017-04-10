@@ -44,7 +44,7 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
       title: 'SKU编号',
       dataIndex: 'skuNum',
       key: 'skuNum',
-      render: (text, product) => <span>{text}</span>,
+      render: (text,product) => <span>{getProductNum(product.spu.categoryId,categoryMap)+product.spu.productNum+text}</span>,
     },
     {
       title: '名字',
@@ -87,15 +87,15 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
       render: (text, product) => (
         <span className={styles.operation2} >
           <Popconfirm title={"推荐"} key='asdf'>
-            <Button type="primary" style={{marginRight:"10px"}}>推荐</Button>
+            <Icon type="export" style={{marginRight:"10px"}}>推荐</Icon>
           </Popconfirm>
 
           <Popconfirm title={"推荐至"} key='asdf111'>
-            <Button type="primary" style={{marginRight:"10px"}}>推荐至</Button>
+            <Icon type="export" style={{marginRight:"10px"}}>推荐至</Icon>
           </Popconfirm>
 
           <SkuModal product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap, brandMap: brandMap }} onOk={editHandler.bind(null, product._id)}>
-            <Button type="primary">编辑</Button>
+            <Icon type="edit">编辑</Icon>
           </SkuModal>
           
         </span>

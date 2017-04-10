@@ -32,9 +32,14 @@ async function request(url, dt) {
     }
 });
 
+/**根据spuid 获得skus */
 exports['getSkuBySpuIdService'] = async (opt)=> {
-    console.log(opt,'--------------getSkuBySpuIdService--------------')
     return request(`/api/Sku/fetch?token=${localStorage.token}`, opt);
+}
+
+/**根据id 获取spu */
+exports['getSpuByIdService'] = async (opt)=> {
+    return request(`/api/Spu/fetch?token=${localStorage.token}`, opt);
 }
 
 exports['checkAccount'] = async () => {

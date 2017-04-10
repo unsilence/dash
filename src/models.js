@@ -160,7 +160,6 @@ exports['SpuModel'].effects.add = function* ({ payload: { id, values } }, { call
 exports['SkuModel'].effects.add = function* ({ payload: { product, values } }, { call, put, select }) {
   console.log('patch', { product }, values, service)
   let skus = values.skus;
-
   skus.forEach((sku, index) => {
     sku.name = product.name;
     sku.spuId = product._id;
@@ -186,6 +185,44 @@ exports['SkuModel'].effects.add = function* ({ payload: { product, values } }, {
   yield put({ type: 'fetch', payload: { page } });
 }
 
+
+exports['SkuModel'].effects.fetch = function* ({ payload: { page } }, { call, put }) {
+  const categoryMap = yield call(service["getCategoryMap"], 'Category');
+  const serialMap = yield call(service["getSerialMap"], 'Serial');
+  const colorMap = yield call(service["getColorMap"], 'Color');
+  const countryMap = yield call(service["getCountryMap"], 'Country');
+  const brandMap = yield call(service["getBrandMap"], 'Brand');
+  const attributeMap = yield call(service["getAttributeMap"], 'Attribute');
+  const skus = yield call(service["SkuService"].fetch, { page });
+
+  const pids = skus.data.data.list.map(p => {
+    return p.spuId;
+  });
+
+  const spus = yield call(service['getSpuByIdService'],{"_id":{"$in":pids}})
+
+  skus.data.data.list.forEach(p => {
+    spus.data.data.list.forEach(s => {
+      if(p.spuId === s._id)
+      {
+        p.spu = s;
+      }
+    })
+  })
+
+  const rd = {
+    data: skus.data.data.list,
+    total: skus.data.data.count,
+    page: parseInt(page),
+    categoryMap: categoryMap,
+    serialMap: serialMap,
+    colorMap: colorMap,
+    countryMap: countryMap,
+    brandMap: brandMap,
+    attributeMap: attributeMap,
+  }
+  yield put({ type: 'save22', payload: rd });
+}
 
 export var pad = function (tbl) {
   return function (num, n) {

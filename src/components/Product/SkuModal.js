@@ -49,7 +49,6 @@ class SkuEditModal extends Component {
         this.images.push({ name: f.name, uid: f.uid, url: '/api/file/' + f.response.md5list[0] ,status:f.status,md5:f.response.md5list[0]});
       }
     })
-    console.log(this.images,'------image------')
     this.setState({ fileList })
   }
 
