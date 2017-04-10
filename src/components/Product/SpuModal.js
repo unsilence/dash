@@ -208,7 +208,7 @@ class SpuEditModal extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log(this.state.tableFormatData, '--------------this.state.tableFormatData');
-        values.skus = this.formatSkusData(this.state.tableFormatData);
+        values.skus = [];//this.formatSkusData(this.state.tableFormatData);
         this.formatAttributesData(values);
         onOk(values);
         this.hideModelHandler();
@@ -331,7 +331,7 @@ class SpuEditModal extends Component {
             {keyOptions}
             {otherOption}
             {sellOptions}
-            {sellOptions.length > 0 ? this.createTable() : ''}
+            {/*{sellOptions.length > 0 ? this.createTable() : ''}*/}
           </Form>
         </Modal>
       </span>
@@ -341,7 +341,7 @@ class SpuEditModal extends Component {
   createTable = () => {
 
     console.log(this.state.tableFormatData, '-----table Data----', this.state.columnsDatas)
-    return <EditableTable key='editableTalbe' data={this.state.tableFormatData} columnsDatas={this.state.columnsDatas} getTableData={this.getTableData.bind(this)} />
+    return <EditableTable key='editableTalbe' {...this.props} data={this.state.tableFormatData} columnsDatas={this.state.columnsDatas} getTableData={this.getTableData.bind(this)} />
   }
 
   /**获得格式化好的表数据 */

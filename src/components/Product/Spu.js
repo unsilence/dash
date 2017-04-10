@@ -38,8 +38,17 @@ function Spu({ dispatch, list: dataSource, loading, total, page: current, serial
         payload: { id, values },
       });
     }
-
   }
+
+   function spuToSkuHandler(product, values) {
+      dispatch({
+        type: 'skus/add',
+        payload: { product, values },
+      });
+  }
+
+
+  
   const columns = [
     {
       title: 'SPU编号',
@@ -70,13 +79,13 @@ function Spu({ dispatch, list: dataSource, loading, total, page: current, serial
       render: (text, product) => (
         <span className={styles.operation2}>
           <SpuModal product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap,brandMap:brandMap }} onOk={editHandler.bind(null, product._id)}>
-            <Icon type="edit" className={styles.icon} />
+            <Button type="primary" style={{marginRight:"10px"}}>编辑SPU</Button>
           </SpuModal>
-          <SpuToSkuModal product={{ ...product, categoryMap: categoryMap, serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap,brandMap:brandMap }} onOk={editHandler.bind(null, product._id)}>
-            <Icon type="edit" className={styles.icon} />
+          <SpuToSkuModal product={{ ...product, categoryMap: categoryMap, serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap,brandMap:brandMap }} onOk={spuToSkuHandler.bind(this)}>
+            <Button type="primary" style={{marginRight:"10px"}}>SKU操作</Button>
           </SpuToSkuModal>
           <Popconfirm title={"确定要删除Spu【" + product.name + "】吗？"} onConfirm={deleteHandler.bind(null, product)}>
-            <Icon type="delete" className={styles.icon} />
+            <Button type="primary" style={{marginRight:"10px"}}>删除</Button>
           </Popconfirm>
         </span>
       ),

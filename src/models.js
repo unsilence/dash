@@ -98,6 +98,22 @@ exports['SpuModel'].effects.fetch = function* ({ payload: { page } }, { call, pu
   const brandMap = yield call(service["getBrandMap"], 'Brand');
   const attributeMap = yield call(service["getAttributeMap"], 'Attribute');
   const products = yield call(service["SpuService"].fetch, { page });
+
+  const pids = products.data.data.list.map(p => {
+    return p._id;
+  });
+
+  const skus = yield call(service['getSkuBySpuIdService'],{"spuId":{"$in":pids}})
+
+  products.data.data.list.forEach(p => {
+    skus.data.data.list.forEach(s => {
+      if(s.spuId === p._id)
+      {
+        p.doneSkus ? p.doneSkus.push(s) : p.doneSkus = [s];
+      }
+    })
+  })
+
   const rd = {
     data: products.data.data.list,
     total: products.data.data.count,
@@ -137,12 +153,39 @@ exports['SpuModel'].effects.add = function* ({ payload: { id, values } }, { call
   yield call(service['insertStockData'], 'Stock', stocks);
 
   //生成skus
-  console.log(spu, '----------------------spu-----------------', skusRet);
-
-
   const page = yield select(state => state['spus'].page);
   yield put({ type: 'fetch', payload: { page } });
 }
+
+exports['SkuModel'].effects.add = function* ({ payload: { product, values } }, { call, put, select }) {
+  console.log('patch', { product }, values, service)
+  let skus = values.skus;
+
+  skus.forEach((sku, index) => {
+    sku.name = product.name;
+    sku.spuId = product._id;
+    sku.skuNum = pad(index + 1, 2);
+  })
+  let skusRet = yield call(service['insertSkuData'], 'Sku', skus);
+  let stocks = [];
+
+  skusRet.map(sku => { return sku.data.data.item })
+  .map(v => { return { name: v.name, skuId: v._id, tempNum: v.count } })
+  .forEach(item => {
+    for(let i = 0;i < item.tempNum;i ++){
+      let obj = Object.assign({},item);
+      obj.stockNum = pad((i+1),3);
+      stocks.push(obj);
+    }
+  });
+
+  yield call(service['insertStockData'], 'Stock', stocks);
+
+  //生成skus
+  const page = yield select(state => state['spus'].page);
+  yield put({ type: 'fetch', payload: { page } });
+}
+
 
 export var pad = function (tbl) {
   return function (num, n) {

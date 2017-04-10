@@ -30,7 +30,13 @@ async function request(url, dt) {
             return request(`/api/${cls}/deleteById?token=${localStorage.token}`, { id });
         }
     }
-})
+});
+
+exports['getSkuBySpuIdService'] = async (opt)=> {
+    console.log(opt,'--------------getSkuBySpuIdService--------------')
+    return request(`/api/Sku/fetch?token=${localStorage.token}`, opt);
+}
+
 exports['checkAccount'] = async () => {
     console.log('check', localStorage)
     var rt = await request(`/api/auth/account?token=${localStorage.token}`, {})

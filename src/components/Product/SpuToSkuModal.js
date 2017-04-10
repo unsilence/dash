@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, Select, Cascader, Icon, Button } from 'antd';
+import { Modal, Form, Input, Select, Cascader, Icon, Button, Upload } from 'antd';
 import styles from '../item.less';
 import TagsInput from './TagsInput';
 import 'react-tagsinput/react-tagsinput.css';
-import { getFormatData, getColorSerialFormatData ,getCategoryName,getProductNum} from '../utils';
+import { getFormatData, getColorSerialFormatData, getCategoryName, getProductNum } from '../utils';
 import NumericInput from './NumericInput';
 import SizeInput from './SizeInput';
 const FormItem = Form.Item;
@@ -18,6 +18,7 @@ class SpuToSkuModal extends Component {
     super(props);
     this.uuid = 0;
     this.keysValue = {};
+    this.images = [];
     this.state = {
       visible: false,
       keyAttr: [],
@@ -31,6 +32,9 @@ class SpuToSkuModal extends Component {
       product: {}
     };
   }
+
+
+  
 
   componentWillMount() {
     console.log(this.props.product, '-----------componentWillMount');
@@ -47,7 +51,6 @@ class SpuToSkuModal extends Component {
   cascaderOnChange = (value, fromWhere) => {
     this.handleAttr(value, fromWhere);
   }
-
   /**
    * 添加一个销售组件
    */
@@ -205,12 +208,12 @@ class SpuToSkuModal extends Component {
 
   okHandler = (e) => {
     const { onOk } = this.props;
+    console.log(this.props.product,'00000000');
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log(this.state.tableFormatData, '--------------this.state.tableFormatData');
         values.skus = this.formatSkusData(this.state.tableFormatData);
         this.formatAttributesData(values);
-        onOk(values);
+        onOk(this.props.product,values);
         this.hideModelHandler();
       }
     });
@@ -301,11 +304,12 @@ class SpuToSkuModal extends Component {
   render() {
     const { children } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { _id, name, note, key, categoryId ,productNum} = this.props.product;
+    const { _id, name, note, key, categoryId, productNum } = this.props.product;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
+
     let data = [];
     (this.props.product.categoryList || []).forEach(v => data.unshift(v));
     let cascaderOptions = getFormatData(data);
@@ -323,8 +327,8 @@ class SpuToSkuModal extends Component {
           onCancel={this.hideModelHandler}
         >
           <Form horizontal onSubmit={this.okHandler} key={"alkdkdkdk"}>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="SPU编号" >    {getFieldDecorator('name', { initialValue: getProductNum(categoryId,this.props.product.categoryMap) })(<Input size="small" disabled={true}/>)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" disabled={true}/>)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="SPU编号" >    {getFieldDecorator('name', { initialValue: getProductNum(categoryId, this.props.product.categoryMap) })(<Input size="small" disabled={true} />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" disabled={true} />)}</FormItem>
             {sellOptions.length > 0 ? this.createTable() : ''}
           </Form>
         </Modal>
@@ -332,8 +336,9 @@ class SpuToSkuModal extends Component {
     );
   }
 
+
   createTable = () => {
-    return <EditableTable key='editableTalbe' data={this.state.tableFormatData} columnsDatas={this.state.columnsDatas} getTableData={this.getTableData.bind(this)} />
+    return <EditableTable key='editableTalbe' {...this.props} data={this.state.tableFormatData} columnsDatas={this.state.columnsDatas} getTableData={this.getTableData.bind(this)} />
   }
 
   /**获得格式化好的表数据 */

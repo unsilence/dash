@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, Select, Cascader, Icon, Button } from 'antd';
+import { Modal, Form, Input, Select, Cascader, Icon, Button, Upload } from 'antd';
 import styles from '../item.less';
 import TagsInput from './TagsInput';
 import 'react-tagsinput/react-tagsinput.css';
@@ -25,8 +25,32 @@ class SkuEditModal extends Component {
       columnsDatas: [],
       key: [],
       categoryId: [],
-      product: {}
+      product: {},
+      previewVisible: false,
+      previewImage: '',
+      fileList: [],
     };
+  }
+  handleImgCancel = () => this.setState({ previewVisible: false })
+
+  handleImgPreview = (file) => {
+    this.setState({
+      previewImage: file.url || file.thumbUrl,
+      previewVisible: true,
+    });
+  }
+
+  handleImgChange = ({ fileList }) => {
+    console.log(fileList);
+    this.images = [];
+    fileList.forEach(f => {
+      console.log(f.name, '222222', f.status)
+      if (f.status === 'done') {
+        this.images.push({ name: f.name, uid: f.uid, url: '/api/file/' + f.response.md5list[0] ,status:f.status,md5:f.response.md5list[0]});
+      }
+    })
+    console.log(this.images,'------image------')
+    this.setState({ fileList })
   }
 
   showModelHandler = (e) => {
@@ -43,25 +67,34 @@ class SkuEditModal extends Component {
     this.props.form.resetFields(['name', 'note']);
   };
 
+
   okHandler = (e) => {
     const { onOk } = this.props;
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        values.images = this.images;
         onOk(values);
         this.hideModelHandler();
       }
     });
   };
 
-  
+
   render() {
     const { children } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { _id, name, note, key, categoryId } = this.props.product;
+    const { _id, name, note, key, categoryId, images } = this.props.product;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
+    const { previewVisible, previewImage, fileList } = this.state;
+    const uploadButton = (
+      <div>
+        <Icon type="plus" />
+        <div className="ant-upload-text">Upload</div>
+      </div>
+    );
 
     return (
       <span>
@@ -76,12 +109,26 @@ class SkuEditModal extends Component {
         >
           <Form horizontal onSubmit={this.okHandler} key={"alkdkdkdk"}>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="图片" >
+              {getFieldDecorator('images', { initialValue: images, valuePropName: 'fileList' })(<div className="clearfix">
+                <Upload
+                  action="/api/file/upload"
+                  listType="picture-card"
+                  onPreview={this.handleImgPreview}
+                  onChange={this.handleImgChange}
+                >
+                  {fileList.length >= 3 ? null : uploadButton}
+                </Upload>
+                <Modal visible={previewVisible} footer={null} onCancel={this.handleImgCancel}>
+                  <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                </Modal>
+              </div>)}
+            </FormItem>
           </Form>
         </Modal>
       </span>
     );
   }
-
 }
 export default Form.create()(SkuEditModal);
 

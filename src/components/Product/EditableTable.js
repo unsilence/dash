@@ -102,7 +102,9 @@ export default class EditableTable extends React.Component {
         this.columns =  this.createColumns(this.props.columnsDatas) ||[];
         this.state = {
             data: this.props.data,
-            columns :this.columns
+            columns :this.columns,
+            serialMap:this.props.product.serialMap,
+            colorMap:this.props.product.colorMap,
         };
     }
 
@@ -221,16 +223,27 @@ export default class EditableTable extends React.Component {
 
 
     render() {
-        const { data } = this.state;
-
+        const { data ,colorMap,serialMap} = this.state;
         const dataSource = data.map((item) => {
             const obj = {};
             Object.keys(item).forEach((key) => {
-                obj[key] = key === 'key' ? item[key] : item[key].value;
+                if(key === 'yanse')
+                {
+                    let yanse = item[key].value;
+                    if(Array.isArray(item[key].value) && item[key].value.length > 1)
+                    {
+                        console.log(item[key].value,serialMap[item[key].value[0]], colorMap[item[key].value[1]])
+                       yanse = serialMap[item[key].value[0]].name +'/'+ colorMap[item[key].value[1]].name;
+                    }
+                    obj[key] = key === 'key' ? item[key] : yanse;
+                }else {
+                    obj[key] = key === 'key' ? item[key] : item[key].value;
+                }
+                
             });
             return obj;
         });
         const columns = this.state.columns;
-        return <Table bordered dataSource={dataSource} columns={columns} />;
+        return <Table {...this.props} bordered dataSource={dataSource} columns={columns} />;
     }
 }
