@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Modal, Form, Input, Select, Upload, Icon, Radio } from 'antd';
 import styles from '../item.less';
-import TagsInput from 'react-tagsinput';
+import TagsInput from '../Product/TagsInput';
 import 'react-tagsinput/react-tagsinput.css';
 import Editor from 'react-umeditor';
 import moment from 'moment';
@@ -28,11 +28,11 @@ class CaseEditModal extends Component {
       value: 1,
       tags: [],
       content: "",
-      
+
       imageUrl: props.case.collocatImg,
       previewVisible: false,
       previewImage: '',
-      fileList: [],
+      fileList: this.props.case.images || [],
     };
   }
 
@@ -50,7 +50,12 @@ class CaseEditModal extends Component {
     this.images = [];
     fileList.forEach(f => {
       if (f.status === 'done') {
-        this.images.push({ name: f.name, uid: f.uid, url: '/api/file/' + f.response.md5list[0], status: f.status, md5: f.response.md5list[0] });
+        if (f.url) {
+          this.images.push(f);
+        }
+        else {
+          this.images.push({ name: f.name, uid: f.uid, url: '/api/file/' + f.response.md5list[0], status: f.status, md5: f.response.md5list[0] });
+        }
       }
     })
     this.setState({ fileList })
@@ -190,19 +195,18 @@ class CaseEditModal extends Component {
                 (<Editor icons={icons} value={this.state.content} defaultValue="<p>提示文本</p>" onChange={this.handleAlter.bind(this)} plugins={plugins} />)}
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="配图" >
-              {getFieldDecorator('images', { initialValue: images, valuePropName: 'fileList', rules: [{ required: true, message: '请上传配图!' }]})(<div className="clearfix">
-                <Upload
-                  action="/api/file/upload"
-                  listType="picture-card"
-                  onPreview={this.handleImgPreview}
-                  onChange={this.handleImgChange}
-                >
-                  {fileList.length >= 2 ? null : uploadButton}
-                </Upload>
-                <Modal visible={previewVisible} footer={null} onCancel={this.handleImgCancel}>
-                  <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                </Modal>
-              </div>)}
+              <Upload
+                action="/api/file/upload"
+                listType="picture-card"
+                fileList={fileList}
+                onPreview={this.handleImgPreview}
+                onChange={this.handleImgChange}
+              >
+                {(fileList || []).length >= 3 ? null : uploadButton}
+              </Upload>
+              <Modal visible={previewVisible} footer={null} onCancel={this.handleImgCancel}>
+                <img alt="example" style={{ width: '100%' }} src={previewImage} />
+              </Modal>
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例户型" > {getFieldDecorator('caseDoormodel', { rules: [{ required: true, message: '请选择案例户型!' }], initialValue: caseDoormodel })(<RadioGroup defaultValue="别墅" size="small">
               {casemodelButton}
