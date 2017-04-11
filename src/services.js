@@ -80,7 +80,6 @@ function getMapByList(list) {
 
 ['Spu', 'Sku', 'Stock'].map(v => {
     exports[`insert${v}Data`] = async function (v, datas) {
-        console.log('-------', datas);
         if (Array.isArray(datas)) {
             let data = []
             for (let item of datas) {
@@ -93,6 +92,5 @@ function getMapByList(list) {
             let item = datas;
             return await request(`/api/${v}/addItem?token=${localStorage.token}`, { item });
         }
-
     }
 });

@@ -103,12 +103,11 @@ exports['SpuModel'].effects.fetch = function* ({ payload: { page } }, { call, pu
     return p._id;
   });
 
-  const skus = yield call(service['getSkuBySpuIdService'],{"spuId":{"$in":pids}})
+  const skus = yield call(service['getSkuBySpuIdService'], { "spuId": { "$in": pids } })
 
   products.data.data.list.forEach(p => {
     skus.data.data.list.forEach(s => {
-      if(s.spuId === p._id)
-      {
+      if (s.spuId === p._id) {
         p.doneSkus ? p.doneSkus.push(s) : p.doneSkus = [s];
       }
     })
@@ -142,13 +141,13 @@ exports['SpuModel'].effects.add = function* ({ payload: { id, values } }, { call
   let stocks = [];
 
   skusRet.map(sku => { return sku.data.data.item })
-  .map(v => { return { name: v.name, skuId: v._id, tempNum: v.count } })
-  .forEach(item => {
-    for(let i = 0;i < item.tempNum;i ++){
-      item.stockNum = pad((i+1),3);
-      stocks.push(item);
-    }
-  });
+    .map(v => { return { name: v.name, skuId: v._id, tempNum: v.count } })
+    .forEach(item => {
+      for (let i = 0; i < item.tempNum; i++) {
+        item.stockNum = pad((i + 1), 3);
+        stocks.push(item);
+      }
+    });
 
   yield call(service['insertStockData'], 'Stock', stocks);
 
@@ -159,6 +158,8 @@ exports['SpuModel'].effects.add = function* ({ payload: { id, values } }, { call
 
 exports['SkuModel'].effects.add = function* ({ payload: { product, values } }, { call, put, select }) {
   console.log('patch', { product }, values, service)
+  // 这里还需要一步操作，判断当前value 中是否已经生成过，如果生成过如何处理。
+  //todo....
   let skus = values.skus;
   skus.forEach((sku, index) => {
     sku.name = product.name;
@@ -169,14 +170,14 @@ exports['SkuModel'].effects.add = function* ({ payload: { product, values } }, {
   let stocks = [];
 
   skusRet.map(sku => { return sku.data.data.item })
-  .map(v => { return { name: v.name, skuId: v._id, tempNum: v.count } })
-  .forEach(item => {
-    for(let i = 0;i < item.tempNum;i ++){
-      let obj = Object.assign({},item);
-      obj.stockNum = pad((i+1),3);
-      stocks.push(obj);
-    }
-  });
+    .map(v => { return { name: v.name, skuId: v._id, tempNum: v.count } })
+    .forEach(item => {
+      for (let i = 0; i < item.tempNum; i++) {
+        let obj = Object.assign({}, item);
+        obj.stockNum = pad((i + 1), 3);
+        stocks.push(obj);
+      }
+    });
 
   yield call(service['insertStockData'], 'Stock', stocks);
 
@@ -199,12 +200,11 @@ exports['SkuModel'].effects.fetch = function* ({ payload: { page } }, { call, pu
     return p.spuId;
   });
 
-  const spus = yield call(service['getSpuByIdService'],{"_id":{"$in":pids}})
+  const spus = yield call(service['getSpuByIdService'], { "_id": { "$in": pids } })
 
   skus.data.data.list.forEach(p => {
     spus.data.data.list.forEach(s => {
-      if(p.spuId === s._id)
-      {
+      if (p.spuId === s._id) {
         p.spu = s;
       }
     })

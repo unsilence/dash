@@ -31,7 +31,6 @@ class StockEditModal extends Component {
       product: {}
     };
   }
-
   componentWillMount() {
     console.log(this.props.product, '-----------componentWillMount');
   }
@@ -41,7 +40,6 @@ class StockEditModal extends Component {
       this.sellChange('');
       this.forceUpdate();
     }
-    console.log('-----------componentDidMount');
   }
 
   cascaderOnChange = (value, fromWhere) => {

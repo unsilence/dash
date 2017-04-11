@@ -34,7 +34,7 @@ class SpuToSkuModal extends Component {
   }
 
 
-  
+
 
   componentWillMount() {
     console.log(this.props.product, '-----------componentWillMount');
@@ -208,12 +208,12 @@ class SpuToSkuModal extends Component {
 
   okHandler = (e) => {
     const { onOk } = this.props;
-    console.log(this.props.product,'00000000');
+    console.log(this.props.product, '00000000');
     this.props.form.validateFields((err, values) => {
       if (!err) {
         values.skus = this.formatSkusData(this.state.tableFormatData);
         this.formatAttributesData(values);
-        onOk(this.props.product,values);
+        onOk(this.props.product, values);
         this.hideModelHandler();
       }
     });
@@ -304,7 +304,7 @@ class SpuToSkuModal extends Component {
   render() {
     const { children } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { _id, name, note, key, categoryId, productNum } = this.props.product;
+    const { _id, name, note, key, categoryId, productNum, doneSkus } = this.props.product;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -321,13 +321,13 @@ class SpuToSkuModal extends Component {
           {children}
         </span>
         <Modal
-          title={_id ? "修改：" : '新建'}
+          title={'编辑生成SKU'}
           visible={this.state.visible}
           onOk={this.okHandler}
           onCancel={this.hideModelHandler}
         >
           <Form horizontal onSubmit={this.okHandler} key={"alkdkdkdk"}>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="SPU编号" >    {getFieldDecorator('name', { initialValue: getProductNum(categoryId, this.props.product.categoryMap) })(<Input size="small" disabled={true} />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="SPU编号" >    {getFieldDecorator('name', { initialValue: getProductNum(categoryId, this.props.product.categoryMap) + this.props.product.productNum })(<Input size="small" disabled={true} />)}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" disabled={true} />)}</FormItem>
             {sellOptions.length > 0 ? this.createTable() : ''}
           </Form>
@@ -389,15 +389,49 @@ class SpuToSkuModal extends Component {
           style: pinyin.STYLE_NORMAL, // 设置拼音风格
           heteronym: false
         }).join('');
-        obj[dataIndex] = index < 2 ? { value: '', editable: false, comType: '1' } : { value: '', editable: false, comType: '2' }
+        obj[dataIndex] = index < 2 ? { value: '', editable: true, comType: '1' } : { value: '', editable: true, comType: '2' }
       });
       data.push(obj);
     })
+
+    data = this.addSkuCountPriceAndImodel(data);
+    console.log(data, '---------getTableFormatData---------')
 
     this.setState({ tableFormatData: this.checkArray(this.state.tableFormatData, data), columnsDatas: columnsDatas })
     return data;
   }
 
+  addSkuCountPriceAndImodel = (data) => {
+    let doneSkus = this.props.product.doneSkus || [];
+    data.forEach(v => {
+      var obj = new Object();
+      let sellIds = [];
+      Object.keys(v).forEach(k => {
+        if (v[k].hasOwnProperty('sellId')) {
+          if(typeof v[k].value === 'object'){
+            sellIds.push(JSON.stringify(v[k].value));
+          }
+          else{
+            sellIds.push(v[k].value);
+          }
+        }
+      })
+      let sellStr = sellIds.sort().join('');
+
+      doneSkus.forEach(sku => {
+        let attributes = sku.attributes || [];
+        let attStr = attributes.map(att => { return att.value }).sort().join('');
+        console.log(sellStr,' ----waicheng-------'+attStr)
+        if (sellStr === attStr) {
+          v.jiage.value = sku.price;
+          v.shuliang.value = sku.count;
+          v.chanpinxinghao = sku.imodel;
+        }
+      })
+
+    })
+    return data;
+  }
   /**数据检索拷贝 价格数量产品型号 */
   checkArray = (data, nextData) => {
     for (let next = 0; next < nextData.length; next++) {

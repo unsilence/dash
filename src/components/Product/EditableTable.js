@@ -9,6 +9,7 @@ class EditableCell extends React.Component {
         value: this.props.value,
         editable: this.props.editable || false,
         comType: this.props.comType,
+        index:this.props.index
     }
     componentWillReceiveProps(nextProps) {
         this.setState({
@@ -33,11 +34,12 @@ class EditableCell extends React.Component {
     }
     shouldComponentUpdate(nextProps, nextState) {
         return nextProps.editable !== this.state.editable ||
-            nextProps.value !== this.state.value;
+            nextState.value !== this.state.value;
     }
     handleChange(v) {
         let value = v.target ? v.target.value : v;
-        this.setState({ value });
+        this.setState({ 'value': value });
+        this.props.onChange(value);
     }
     render() {
         const { editable, comType } = this.state;
@@ -85,7 +87,7 @@ class EditableCell extends React.Component {
                     {value}
                 </div>)
         }
-
+        // console.log(option, '-----', value)
         return (
             <div>
                 {option}
@@ -99,12 +101,12 @@ class EditableCell extends React.Component {
 export default class EditableTable extends React.Component {
     constructor(props) {
         super(props);
-        this.columns =  this.createColumns(this.props.columnsDatas) ||[];
+        this.columns = this.createColumns(this.props.columnsDatas) || [];
         this.state = {
             data: this.props.data,
-            columns :this.columns,
-            serialMap:this.props.product.serialMap,
-            colorMap:this.props.product.colorMap,
+            columns: this.columns,
+            serialMap: this.props.product.serialMap,
+            colorMap: this.props.product.colorMap,
         };
     }
 
@@ -157,14 +159,14 @@ export default class EditableTable extends React.Component {
                         {
                             editable ?
                                 <span>
-                                    <a onClick={() => this.editDone(index, 'save')}>Save</a>
-                                    <Popconfirm title="Sure to cancel?" onConfirm={() => this.editDone(index, 'cancel')}>
+                                    <a onClick={() => this.editDone(index, 'save')}>未产</a>
+                                    {/*<Popconfirm title="Sure to cancel?" onConfirm={() => this.editDone(index, 'cancel')}>
                                         <a>Cancel</a>
-                                    </Popconfirm>
+                                    </Popconfirm>*/}
                                 </span>
                                 :
                                 <span>
-                                    <a onClick={() => this.edit(index)}>Edit</a>
+                                    <a onClick={() => this.edit(index)}>添加</a>
                                 </span>
                         }
                     </div>
@@ -184,6 +186,7 @@ export default class EditableTable extends React.Component {
             editable={editable}
             value={text}
             key={index}
+            index={index}
             comType={comType}
             onChange={value => this.handleChange(key, index, value)}
             status={status}
@@ -223,23 +226,21 @@ export default class EditableTable extends React.Component {
 
 
     render() {
-        const { data ,colorMap,serialMap} = this.state;
+        const { data, colorMap, serialMap } = this.state;
         const dataSource = data.map((item) => {
             const obj = {};
             Object.keys(item).forEach((key) => {
-                if(key === 'yanse')
-                {
+                if (key === 'yanse') {
                     let yanse = item[key].value;
-                    if(Array.isArray(item[key].value) && item[key].value.length > 1)
-                    {
-                        console.log(item[key].value,serialMap[item[key].value[0]], colorMap[item[key].value[1]])
-                       yanse = serialMap[item[key].value[0]].name +'/'+ colorMap[item[key].value[1]].name;
+                    if (Array.isArray(item[key].value) && item[key].value.length > 1) {
+                        // console.log(item[key].value, serialMap[item[key].value[0]], colorMap[item[key].value[1]])
+                        yanse = serialMap[item[key].value[0]].name + '/' + colorMap[item[key].value[1]].name;
                     }
                     obj[key] = key === 'key' ? item[key] : yanse;
-                }else {
+                } else {
                     obj[key] = key === 'key' ? item[key] : item[key].value;
                 }
-                
+
             });
             return obj;
         });

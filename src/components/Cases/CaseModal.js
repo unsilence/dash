@@ -61,15 +61,6 @@ class CaseEditModal extends Component {
     this.setState({ fileList })
   }
 
-  // handleCancel = () => this.setState({ previewVisible: false });
-  // updatePic = (info)=>{
-  //     if (info.file.status === 'done') {
-  //         console.log('info',info)
-  //         let newMd5 = info.file.response.md5list[0]
-  //         console.log('new md5',newMd5)
-  //         getBase64(info.file.originFileObj, imageUrl => this.setState({ imageUrl:newMd5}));
-  //     }
-  // }
   showModelHandler = (e) => {
     if (e) e.stopPropagation();
     this.setState({
