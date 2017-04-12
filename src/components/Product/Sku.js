@@ -44,7 +44,7 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
       title: 'SKU编号',
       dataIndex: 'skuNum',
       key: 'skuNum',
-      render: (text,product) => <span>{getProductNum(product.spu.categoryId,categoryMap)+product.spu.productNum+text}</span>,
+      render: (text,product) => <span>{getProductNum(product.categoryId,categoryMap)+product.spu.productNum+text}</span>,
     },
     {
       title: '名字',

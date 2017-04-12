@@ -33,14 +33,10 @@ async function request(url, dt) {
 });
 
 /**根据spuid 获得skus */
-exports['getSkuBySpuIdService'] = async (opt)=> {
-    return request(`/api/Sku/fetch?token=${localStorage.token}`, opt);
+exports['getDataService'] = async (v,opt)=> {
+    return request(`/api/${v}/fetch?token=${localStorage.token}`, {filter:opt});
 }
 
-/**根据id 获取spu */
-exports['getSpuByIdService'] = async (opt)=> {
-    return request(`/api/Spu/fetch?token=${localStorage.token}`, opt);
-}
 
 exports['checkAccount'] = async () => {
     console.log('check', localStorage)

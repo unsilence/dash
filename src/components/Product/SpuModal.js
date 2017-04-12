@@ -6,11 +6,10 @@ import 'react-tagsinput/react-tagsinput.css';
 import { getFormatData, getColorSerialFormatData } from '../utils';
 import NumericInput from './NumericInput';
 import SizeInput from './SizeInput';
+import {doExchange,keysrt} from '../utils'
 const FormItem = Form.Item;
 var pinyin = require("pinyin");
-
 import EditableTable from './EditableTable';
-// let uuid = 0;
 
 class SpuEditModal extends Component {
 
@@ -546,39 +545,5 @@ class SpuEditModal extends Component {
   }
 }
 
-function keysrt(key, desc) {
-  return function (a, b) {
-    return desc ? ~~(a[key] < b[key]) : ~~(a[key] > b[key]);
-  }
-}
-
 export default Form.create()(SpuEditModal);
 
-/**
- * 获取组合数据
- * @param {} doubleArrays
- */
-function doExchange(doubleArrays) {
-  var len = doubleArrays.length
-  if (len >= 2) {
-    var len1 = doubleArrays[0].length
-    var len2 = doubleArrays[1].length
-    var newlen = len1 * len2
-    var temp = new Array(newlen);
-    var index = 0
-    for (var i = 0; i < len1; i++) {
-      for (var j = 0; j < len2; j++) {
-        temp[index] ? temp[index].push(doubleArrays[0][i], doubleArrays[1][j]) : temp[index] = [doubleArrays[0][i], doubleArrays[1][j]]
-        index++
-      }
-    }
-    var newArray = new Array(len - 1)
-    for (var i = 2; i < len; i++) {
-      newArray[i - 1] = doubleArrays[i]
-    }
-    newArray[0] = temp
-    return doExchange(newArray)
-  } else {
-    return doubleArrays[0]
-  }
-}

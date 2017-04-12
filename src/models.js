@@ -1,7 +1,6 @@
 import * as service from './services';
 
 let generate = (name, serviceName) => {
-  console.log(name, serviceName, '-----------------generate')
   return {
     namespace: name,
     state: {
@@ -103,7 +102,7 @@ exports['SpuModel'].effects.fetch = function* ({ payload: { page } }, { call, pu
     return p._id;
   });
 
-  const skus = yield call(service['getSkuBySpuIdService'], { "spuId": { "$in": pids } })
+  const skus = yield call(service['getDataService'], 'Sku', { "spuId": { "$in": pids } })
 
   products.data.data.list.forEach(p => {
     skus.data.data.list.forEach(s => {
@@ -158,15 +157,57 @@ exports['SpuModel'].effects.add = function* ({ payload: { id, values } }, { call
 
 exports['SkuModel'].effects.add = function* ({ payload: { product, values } }, { call, put, select }) {
   console.log('patch', { product }, values, service)
+
+  // 判断 是更新，还是 新添加 
+  let skus = values.skus;
+
   // 这里还需要一步操作，判断当前value 中是否已经生成过，如果生成过如何处理。
   //todo....
-  let skus = values.skus;
-  skus.forEach((sku, index) => {
+  // 1、获取包含productId的所有SKU ，获取sku 对应的单品 做一下判断
+
+  // 2、判断有当前skus是否包含 values.skus 中的数据
+
+  let existSkus = yield call(service['getDataService'], 'Sku', { "spuId": product._id });
+
+  let list = existSkus.data.data.list;
+
+  //判断状态
+  let existIds = list.map(v => { return v._id });
+  let existStocks = yield call(service['getDataService'], 'Stock', { 'skuId': { "$in": existIds } });
+
+  let modifySkus = [];
+  let addSkus = [];
+  skus.forEach(s => {
+    let attIdsStr = s.attributes.map(a => { return a.attributeID }).sort().join('');
+    let exist = false;
+    list.forEach(l => {
+      let lattIdsStr = l.attributes.map(a => { return a.attributeID }).sort().join('');
+      if (attIdsStr === lattIdsStr) {
+        modifySkus.push(l);
+        //设置其他属性。。。。。
+        Object.keys(s).forEach(k => {
+          if (k !== 'attributes')
+            l[k] = s[k];
+        })
+        modifySkus.push(l);
+        exist = true;
+      }
+    });
+    !exist && addSkus.push(s);
+  });
+
+  console.log(modifySkus, addSkus, '-------');
+
+
+
+  addSkus.filter(m => { return m.count !== 0 && m.count !== '' }).forEach((sku, index) => {
     sku.name = product.name;
     sku.spuId = product._id;
-    sku.skuNum = pad(index + 1, 2);
+    sku.categoryId = product.categoryId;
+    sku.skuNum = pad(modifySkus.length + index + 1, 2);
   })
-  let skusRet = yield call(service['insertSkuData'], 'Sku', skus);
+
+  let skusRet = yield call(service['insertSkuData'], 'Sku', addSkus);
   let stocks = [];
 
   skusRet.map(sku => { return sku.data.data.item })
@@ -195,14 +236,16 @@ exports['SkuModel'].effects.fetch = function* ({ payload: { page } }, { call, pu
   const brandMap = yield call(service["getBrandMap"], 'Brand');
   const attributeMap = yield call(service["getAttributeMap"], 'Attribute');
   const skus = yield call(service["SkuService"].fetch, { page });
-
-  const pids = skus.data.data.list.map(p => {
-    return p.spuId;
+  let skuList = skus.data.data.list;
+  let setIds = new Set();
+  skuList.forEach(p => {
+    setIds.add(p.spuId);
   });
+  const pids = Array.from(setIds);
 
-  const spus = yield call(service['getSpuByIdService'], { "_id": { "$in": pids } })
+  const spus = yield call(service['getDataService'], 'Spu', { "_id": { "$in": pids } })
 
-  skus.data.data.list.forEach(p => {
+  skuList.forEach(p => {
     spus.data.data.list.forEach(s => {
       if (p.spuId === s._id) {
         p.spu = s;
@@ -211,7 +254,7 @@ exports['SkuModel'].effects.fetch = function* ({ payload: { page } }, { call, pu
   })
 
   const rd = {
-    data: skus.data.data.list,
+    data: skuList,
     total: skus.data.data.count,
     page: parseInt(page),
     categoryMap: categoryMap,
