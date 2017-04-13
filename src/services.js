@@ -86,7 +86,45 @@ function getMapByList(list) {
         }
         else {
             let item = datas;
-            return await request(`/api/${v}/addItem?token=${localStorage.token}`, { item });
+            return [await request(`/api/${v}/addItem?token=${localStorage.token}`, { item })];
+        }
+    }
+});
+
+[ 'Sku', 'Stock'].map(v => {
+    exports[`update${v}Data`] = async function (v, datas) {
+        if (Array.isArray(datas)) {
+            let data = []
+            for (let item of datas) {
+                let id = item._id;
+                let resPos = await request(`/api/${v}/updateById?token=${localStorage.token}`, { id, item });
+                data.push(resPos);
+            }
+            return data;
+        }
+        else {
+            let item = datas;
+            let id = item._id;
+            return [await request(`/api/${v}/updateById?token=${localStorage.token}`, { id, item })];
+        }
+    }
+});
+
+[ 'Sku', 'Stock'].map(v => {
+    exports[`delete${v}Data`] = async function (v, datas) {
+        if (Array.isArray(datas)) {
+            let data = []
+            for (let item of datas) {
+                let id = item._id;
+                let resPos = await request(`/api/${v}/deleteById?token=${localStorage.token}`, { id });
+                data.push(resPos);
+            }
+            return data;
+        }
+        else {
+            let item = datas;
+            let id = item._id;
+            return [await request(`/api/${v}/deleteById?token=${localStorage.token}`, { id })];
         }
     }
 });

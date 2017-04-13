@@ -155,7 +155,7 @@ exports['SpuModel'].effects.add = function* ({ payload: { id, values } }, { call
   yield put({ type: 'fetch', payload: { page } });
 }
 
-exports['SkuModel'].effects.add = function* ({ payload: { product, values } }, { call, put, select }) {
+exports['SkuModel'].effects.add = function* ({ payload: { product, values, message } }, { call, put, select }) {
   console.log('patch', { product }, values, service)
 
   // 判断 是更新，还是 新添加 
@@ -173,17 +173,19 @@ exports['SkuModel'].effects.add = function* ({ payload: { product, values } }, {
 
   //判断状态
   let existIds = list.map(v => { return v._id });
-  let existStocks = yield call(service['getDataService'], 'Stock', { 'skuId': { "$in": existIds } });
+  let existStocks = yield call(service['getDataService'], 'Stock', { 'skuId': { "$in": existIds } });//今后还需要加条件 
 
   let modifySkus = [];
   let addSkus = [];
+  let stocks = [] // 添加到服务器端的数据
+  let reduceStock = [];
   skus.forEach(s => {
-    let attIdsStr = s.attributes.map(a => { return a.attributeID }).sort().join('');
+    let attIdsStr = s.attributes.map(a => { return a.attributeID + a.value }).sort().join('');
     let exist = false;
     list.forEach(l => {
-      let lattIdsStr = l.attributes.map(a => { return a.attributeID }).sort().join('');
+      let lattIdsStr = l.attributes.map(a => { return a.attributeID + a.value }).sort().join('');
       if (attIdsStr === lattIdsStr) {
-        modifySkus.push(l);
+        // modifySkus.push(l);
         //设置其他属性。。。。。
         Object.keys(s).forEach(k => {
           if (k !== 'attributes')
@@ -196,20 +198,45 @@ exports['SkuModel'].effects.add = function* ({ payload: { product, values } }, {
     !exist && addSkus.push(s);
   });
 
-  console.log(modifySkus, addSkus, '-------');
 
+
+  let modifySkusRet = yield call(service['updateSkuData'], 'Sku', modifySkus);
+  modifySkus.length && message.success(`开始更新Sku${modifySkus.length}条`);
+
+  let tempRetData = modifySkusRet.map(msk => { return msk.data.data.item });
+
+  tempRetData.forEach(sku => {
+    let tempStocks = existStocks.data.data.list.filter(v => { return v.skuId === sku._id });
+    let optionNum = sku.count - tempStocks.length
+    if (optionNum > 0)//添加
+    {
+      //删除 sku.count - tempStocks.length 个数据
+      for (let i = 0; i < optionNum; i++) {
+        stocks.push({ name: sku.name, skuId: sku._id, stockNum: pad((i + sku.count), 3) });
+      }
+    }
+    else if (optionNum < 0) {//需要删除
+      for (let i = 0; i < Math.abs(optionNum); i++) {
+        reduceStock.push(tempStocks[i]);
+      }
+    }
+  })
+
+  let deleteData = yield call(service['deleteStockData'], 'Stock', reduceStock);
+  deleteData.length && message.success(`删除Stock${deleteData.length}条`);
 
 
   let filterToData = addSkus.filter(m => { return !Number.isNaN(m.count) && m.count !== 0 && m.count !== '' })
   filterToData.forEach((sku, index) => {
-      sku.name = product.name;
-      sku.spuId = product._id;
-      sku.distinctWords = (sku.distinctWords && sku.distinctWords.indexOf(product._id) !== -1) ? sku.distinctWords : sku.distinctWords + sku.spuId;
-      sku.categoryId = product.categoryId;
-      sku.skuNum = pad(modifySkus.length + index + 1, 2);
-    })
+    sku.name = product.name;
+    sku.spuId = product._id;
+    sku.distinctWords = (sku.distinctWords && sku.distinctWords.indexOf(product._id) !== -1) ? sku.distinctWords : sku.distinctWords + sku.spuId;
+    sku.categoryId = product.categoryId;
+    sku.skuNum = pad(modifySkus.length + index + 1, 2);
+  })
   let skusRet = yield call(service['insertSkuData'], 'Sku', filterToData);
-  let stocks = [];
+
+  skusRet.length && message.success(`插入Sku${skusRet.length}条`);
 
   skusRet.map(sku => { return sku.data.data.item })
     .map(v => { return { name: v.name, skuId: v._id, tempNum: v.count } })
@@ -221,8 +248,8 @@ exports['SkuModel'].effects.add = function* ({ payload: { product, values } }, {
       }
     });
 
-  yield call(service['insertStockData'], 'Stock', stocks);
-
+  let retStock = yield call(service['insertStockData'], 'Stock', stocks);
+  retStock.length && message.success(`插入Stock${retStock.length}条`);
   //生成skus
   const page = yield select(state => state['spus'].page);
   yield put({ type: 'fetch', payload: { page } });

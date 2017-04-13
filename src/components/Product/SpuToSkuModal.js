@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, Select, Cascader, Icon, Button, Upload } from 'antd';
+import { Modal, Form, Input, Select, Cascader, Icon,message, Button, Upload } from 'antd';
 import styles from '../item.less';
 import TagsInput from './TagsInput';
 import 'react-tagsinput/react-tagsinput.css';
@@ -214,7 +214,7 @@ class SpuToSkuModal extends Component {
       if (!err) {
         values.skus = this.formatSkusData(this.state.tableFormatData);
         this.formatAttributesData(values);
-        onOk(this.props.product, values);
+        onOk(this.props.product, values,message);
         this.hideModelHandler();
       }
     });

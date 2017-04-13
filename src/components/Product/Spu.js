@@ -40,10 +40,10 @@ function Spu({ dispatch, list: dataSource, loading, total, page: current, serial
     }
   }
 
-   function spuToSkuHandler(product, values) {
+   function spuToSkuHandler(product, values,message) {
       dispatch({
         type: 'skus/add',
-        payload: { product, values },
+        payload: { product, values ,message},
       });
   }
 
