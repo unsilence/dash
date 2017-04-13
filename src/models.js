@@ -200,14 +200,15 @@ exports['SkuModel'].effects.add = function* ({ payload: { product, values } }, {
 
 
 
-  addSkus.filter(m => { return m.count !== 0 && m.count !== '' }).forEach((sku, index) => {
-    sku.name = product.name;
-    sku.spuId = product._id;
-    sku.categoryId = product.categoryId;
-    sku.skuNum = pad(modifySkus.length + index + 1, 2);
-  })
-
-  let skusRet = yield call(service['insertSkuData'], 'Sku', addSkus);
+  let filterToData = addSkus.filter(m => { return !Number.isNaN(m.count) && m.count !== 0 && m.count !== '' })
+  filterToData.forEach((sku, index) => {
+      sku.name = product.name;
+      sku.spuId = product._id;
+      sku.distinctWords = (sku.distinctWords && sku.distinctWords.indexOf(product._id) !== -1) ? sku.distinctWords : sku.distinctWords + sku.spuId;
+      sku.categoryId = product.categoryId;
+      sku.skuNum = pad(modifySkus.length + index + 1, 2);
+    })
+  let skusRet = yield call(service['insertSkuData'], 'Sku', filterToData);
   let stocks = [];
 
   skusRet.map(sku => { return sku.data.data.item })

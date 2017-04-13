@@ -153,7 +153,7 @@ class AttributeModalEditModal extends Component {
   render() {
     const { children } = this.props;
     const { getFieldDecorator, setFieldsValue } = this.props.form;
-    const { _id, name, categoryId, type, etype, stype, isNull, svalue, createAt, updateAt, size } = this.props.record;
+    const { _id, name, categoryId, type, etype, stype, isNull, svalue, createAt, updateAt, size,rank,isShow} = this.props.record;
     let data = [];
 
     (this.props.record.categoryList || []).forEach(v => data.unshift(v));
@@ -218,7 +218,15 @@ class AttributeModalEditModal extends Component {
                 <Radio value={false}>否</Radio>
               </RadioGroup>
             )}</FormItem>
-
+            <FormItem className={styles.FormItem} {...formItemLayout} label="前台显示" > {getFieldDecorator('isShow', { initialValue: isShow || false })(
+              <RadioGroup key='isNull' disabled={this.state.isNullDisabled}>
+                <Radio value={true}>是</Radio>
+                <Radio value={false}>否</Radio>
+              </RadioGroup>
+            )}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="前台显示顺序" > {getFieldDecorator('rank', { initialValue: rank || '1' })(
+               <Input size="small"  />
+            )}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="创建时间" style={_id ? { display: 'block' } : { display: 'none' }}>    {getFieldDecorator('createAt', { initialValue: moment(new Date(createAt)).format('YYYY-MM-DD HH:mm:ss') })(
               <Input size="small" />
             )}</FormItem>
