@@ -53,7 +53,9 @@ let generate = (name, serviceName) => {
     },
   }
 }
-['Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
+
+
+['Recommend','Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
   exports[cls + 'Model'] = generate(cls.toLowerCase() + 's', cls + 'Service')
 })
 exports['login'] = function () { return service.login() }
@@ -198,8 +200,6 @@ exports['SkuModel'].effects.add = function* ({ payload: { product, values, messa
     !exist && addSkus.push(s);
   });
 
-
-
   let modifySkusRet = yield call(service['updateSkuData'], 'Sku', modifySkus);
   modifySkus.length && message.success(`开始更新Sku${modifySkus.length}条`);
 
@@ -224,7 +224,6 @@ exports['SkuModel'].effects.add = function* ({ payload: { product, values, messa
 
   let deleteData = yield call(service['deleteStockData'], 'Stock', reduceStock);
   deleteData.length && message.success(`删除Stock${deleteData.length}条`);
-
 
   let filterToData = addSkus.filter(m => { return !Number.isNaN(m.count) && m.count !== 0 && m.count !== '' })
   filterToData.forEach((sku, index) => {
