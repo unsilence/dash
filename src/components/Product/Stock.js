@@ -87,9 +87,9 @@ function Stock({ dispatch, list: dataSource, loading, total, page: current, seri
     <div className={styles.normal}>
       <div>
         <Row type="flex" justify="end">
-          <StockModal product={{ categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap ,brandMap:brandMap}} onOk={editHandler.bind(null, '')}>
+          {/*<StockModal product={{ categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap ,brandMap:brandMap}} onOk={editHandler.bind(null, '')}>
             <Button icon="plus-circle-o">添加</Button>
-          </StockModal>
+          </StockModal>*/}
         </Row>
         <Table
           columns={columns}

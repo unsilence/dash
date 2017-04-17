@@ -106,11 +106,11 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
   return (
     <div className={styles.normal}>
       <div>
-        <Row type="flex" justify="end">
+        {/*<Row type="flex" justify="end">
           <SkuModal product={{ categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap, brandMap: brandMap }} onOk={editHandler.bind(null, '')}>
             <Button icon="plus-circle-o">添加</Button>
           </SkuModal>
-        </Row>
+        </Row>*/}
         <Table
           columns={columns}
           dataSource={dataSource}
