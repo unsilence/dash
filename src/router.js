@@ -16,13 +16,14 @@ import Recommend from './routes/Recommends';
 import Spu from "./routes/Spu";
 import Sku from "./routes/Sku";
 import Stock from "./routes/Stock";
-import Banner from "./routes/Banners.js";
+import * as Banner  from "./routes/Banners.js";
 
 function RouterConfig({ history }) {
   return (
     <Router history={history}>
       <Route path="/" component={IndexPage} />
-      <Route path="/banners" component={Banner} />
+      <Route path="/banners" component={Banner.banners} />
+      <Route path="/banners/histrybanner" component={Banner.HistryBanner} />
       <Route path="/brands" component={Brands} />
       <Route path="/cases" component={Cases} />
       <Route path="/tests" component={Tests} />

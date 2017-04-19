@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Table, Pagination, Popconfirm ,Row,Col,Button,Icon} from 'antd';
+import { Table, Pagination, Popconfirm ,Row,Col,Button,Icon,Input} from 'antd';
 import { routerRedux } from 'dva/router';
 import styles from '../list.less';
 let PAGE_SIZE = 10
@@ -40,20 +40,29 @@ function Recommends({ dispatch, list: dataSource, loading, total, page: current 
 
   const columns = [
     {
-      title: 'id',
-      dataIndex: '_id',
-      key: '_id',
-      render: text => <a href="">{text}</a>,
+      title: '序号',
+      dataIndex: '',
+      key: '',
     },
     {
-      title: '名字',
-      dataIndex: 'name',
-      key: 'name',
+      title: '标题',
+      dataIndex: '',
+      key: '',
     },
     {
-      title: '备注',
-      dataIndex: 'note',
-      key: 'note',
+      title: '发布时间',
+      dataIndex: '',
+      key: '',
+    },
+    {
+      title: '发布时长',
+      dataIndex: '',
+      key: '',
+    },
+    {
+      title: '点击量',
+      dataIndex: '',
+      key: '',
     },
     {
       title: '操作',
@@ -74,10 +83,15 @@ function Recommends({ dispatch, list: dataSource, loading, total, page: current 
   return (
     <div className={styles.normal}>
       <div>
-        <Row type="flex" justify="end">
-            <RecommendModal serial={{}} onOk={editHandler.bind(null,'')}>
-                <Button  icon="plus-circle-o">添加</Button>
-            </RecommendModal>
+        <Row type="flex" justify="space-between" gutter={16}>
+            <Col span={16}>
+              <Input />
+            </Col>
+            <Col span={8}>
+              <Button style={{marginRight : "16px"}}>历史推荐</Button>
+              <Button style={{marginRight : "16px"}}>操作日志</Button>
+              <Button>添加推荐</Button>
+            </Col>
         </Row>
         <Table
           columns={columns}

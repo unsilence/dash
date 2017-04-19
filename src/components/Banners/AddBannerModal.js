@@ -98,8 +98,6 @@ class BannerAddModal extends Component {
               {getFieldDecorator('url', {initialValue:url,
                 rules: [{
                   type: 'url', message: '请输入正确URL地址!',
-                }, {
-                  required: true, message: '请输入URL地址!',
                 }],
               })(
                 <Input type="url" placeholder="请输入URL地址" className={styles.FormInput} />
@@ -109,14 +107,12 @@ class BannerAddModal extends Component {
               {getFieldDecorator('title', {initialValue:title,
                 rules: [{
                   type: 'string', message: '请输入正确标题地址!',
-                }, {
-                  required: true, message: '请输入标题地址!',
                 }],
               })(
                 <Input type="text" placeholder="请输入标题" className={styles.FormInput} />
                 )}
             </FormItem>
-              <FormItem className={styles.FormItem} {...formItemLayout} label="图片(点击更换)" >
+              <FormItem className={styles.FormItem} {...formItemLayout} label="图片" >
                 <Upload multiple={true} action='/api/file/upload' showUploadList={false} listType="picture-card" onChange={this.handleChange}>
                     {
                       imageUrl?
