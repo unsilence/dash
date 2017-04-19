@@ -55,12 +55,29 @@ let generate = (name, serviceName) => {
 }
 
 
-['Recommend','Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
+['Banner','Recommend','Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
   exports[cls + 'Model'] = generate(cls.toLowerCase() + 's', cls + 'Service')
 })
 exports['login'] = function () { return service.login() }
 exports['checkAccount'] = function () { return service.checkAccount() }
 exports['logout'] = function () { return service.logout() }
+
+exports["BannerModel"].effects.fetch = function* ({ payload: { page } }, { call, put }) {
+  // const categoryMap = yield call(service["getCategoryMap"], 'Category');
+  // const categories = yield call(service["CategoryService"].fetch, { page });
+  // const rd = { data: categories.data.data.list, total: categories.data.data.count, page: parseInt(page), categoryMap: categoryMap }
+  // yield put({ type: 'save22', payload: rd });
+    console.log('-------------------------',service);
+  console.log('-------------------------');
+
+    const banners = yield call(service["RecommendService"].fetch, { page });
+  console.log(banners,'00000000000000000000000000000000');
+
+  
+  const rd = { data: banners.data.data.list, total: banners.data.data.count, page: parseInt(page)}
+  yield put({ type: 'save22', payload: rd });
+
+}
 
 /**-----------------------------自定义------------------------- */
 exports["ColorModel"].effects.fetch = function* ({ payload: { page } }, { call, put }) {
