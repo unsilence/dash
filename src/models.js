@@ -65,6 +65,12 @@ exports['logout'] = function () { return service.logout() }
 /**-----------------------------自定义------------------------- */
 exports["ColorModel"].effects.fetch = function* ({ payload: { page } }, { call, put }) {
   const colors = yield call(service["ColorService"].fetch, { page });
+  let cids = new Set();
+  colors.data.data.list.forEach(c => {cids.add(c.serialId)});
+
+  cids = Array.from(cids);
+
+  // const serialMap = yield call(service['getDataService'], 'Serial', { "_id": { "$in": cids } })
   const serialMap = yield call(service["getSerialMap"], 'Serial');
   const rd = { data: colors.data.data.list, total: colors.data.data.count, page: parseInt(page), serialMap: serialMap };
   yield put({ type: 'save22', payload: rd });

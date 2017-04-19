@@ -9,7 +9,6 @@ import * as models from './models'
 try{
 
     (async function() {
-
       let rt = await models.checkAccount()
       let opt = {history:browserHistory}
       if(rt.data.status !== 'success'){
