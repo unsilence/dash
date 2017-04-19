@@ -1,68 +1,22 @@
 import * as service from './services';
-
-let generate = (name, serviceName) => {
-  return {
-    namespace: name,
-    state: {
-      list: [],
-      total: null,
-    },
-    reducers: {
-      save22(state, { payload: { data: list, total, page, serialMap, categoryMap, colorMap, countryMap, brandMap, attributeMap } }) {
-        page = page || 1
-        return { ...state, list, total, page, serialMap, categoryMap, colorMap, countryMap, brandMap, attributeMap };
-      },
-    },
-    effects: {
-      *fetch({ payload: { page } }, { call, put }) {
-        const d = yield call(service[serviceName].fetch, { page });
-        const rd = { data: d.data.data.list, total: d.data.data.count, page: parseInt(page) }
-        yield put({ type: 'save22', payload: rd });
-      },
-      *remove({ payload: { id } }, { call, put, select }) {
-        console.log('remove', { id })
-        yield call(service[serviceName].remove, id);
-        const page = yield select(state => state[name].page);
-        yield put({ type: 'fetch', payload: { page } });
-      },
-      *patch({ payload: { id, values } }, { call, put, select }) {
-        console.log('patch', { id })
-        yield call(service[serviceName].update, id, values);
-        const page = yield select(state => state[name].page);
-        yield put({ type: 'fetch', payload: { page } });
-      },
-      *add({ payload: { id, values } }, { call, put, select }) {
-        console.log('patch', { id })
-        yield call(service[serviceName].insert, values);
-        const page = yield select(state => state[name].page);
-        yield put({ type: 'fetch', payload: { page } });
-      }
-    },
-    subscriptions: {
-      setup({ dispatch, history }) {
-        return history.listen(({ pathname, query }) => {
-          if (pathname === '/' + name) {
-            if (localStorage.token.length > 10) {
-              dispatch({ type: 'fetch', payload: query });
-            } else {
-              history.push('/login')
-            }
-          }
-        });
-      },
-    },
-  }
-}
+import {generate,pad} from './models/utils';
+import {addSpuOption} from './models/Spu';
+import {addSkuOption} from './models/Sku';
+import {addBannerOption} from './models/Banner';
 
 
 ['Banner', 'Recommend', 'Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
-  exports[cls + 'Model'] = generate(cls.toLowerCase() + 's', cls + 'Service')
-})
+  exports[cls + 'Model'] = generate(cls.toLowerCase() + 's', cls + 'Service');
+});
+
+addSpuOption(exports['SpuModel']);
+addSkuOption(exports['SkuModel']);
+addBannerOption(exports['BannerModel']);
+
+
 exports['login'] = function () { return service.login() }
 exports['checkAccount'] = function () { return service.checkAccount() }
 exports['logout'] = function () { return service.logout() }
-
-
 
 
 /**-----------------------------自定义------------------------- */
@@ -100,244 +54,208 @@ exports["BrandModel"].effects.fetch = function* ({ payload: { page } }, { call, 
   yield put({ type: 'save22', payload: rd });
 }
 
-exports['SpuModel'].effects.fetch = function* ({ payload: { page } }, { call, put }) {
-  const categoryMap = yield call(service["getCategoryMap"], 'Category');
-  const serialMap = yield call(service["getSerialMap"], 'Serial');
-  const colorMap = yield call(service["getColorMap"], 'Color');
-  const countryMap = yield call(service["getCountryMap"], 'Country');
-  const brandMap = yield call(service["getBrandMap"], 'Brand');
-  const attributeMap = yield call(service["getAttributeMap"], 'Attribute');
-  const products = yield call(service["SpuService"].fetch, { page });
+// exports['SpuModel'].effects.fetch = function* ({ payload: { page } }, { call, put }) {
+//   const categoryMap = yield call(service["getCategoryMap"], 'Category');
+//   const serialMap = yield call(service["getSerialMap"], 'Serial');
+//   const colorMap = yield call(service["getColorMap"], 'Color');
+//   const countryMap = yield call(service["getCountryMap"], 'Country');
+//   const brandMap = yield call(service["getBrandMap"], 'Brand');
+//   const attributeMap = yield call(service["getAttributeMap"], 'Attribute');
+//   const products = yield call(service["SpuService"].fetch, { page });
 
-  const pids = products.data.data.list.map(p => {
-    return p._id;
-  });
+//   const pids = products.data.data.list.map(p => {
+//     return p._id;
+//   });
 
-  const skus = yield call(service['getDataService'], 'Sku', { "spuId": { "$in": pids } })
+//   const skus = yield call(service['getDataService'], 'Sku', { "spuId": { "$in": pids } })
 
-  products.data.data.list.forEach(p => {
-    skus.data.data.list.forEach(s => {
-      if (s.spuId === p._id) {
-        p.doneSkus ? p.doneSkus.push(s) : p.doneSkus = [s];
-      }
-    })
-  })
+//   products.data.data.list.forEach(p => {
+//     skus.data.data.list.forEach(s => {
+//       if (s.spuId === p._id) {
+//         p.doneSkus ? p.doneSkus.push(s) : p.doneSkus = [s];
+//       }
+//     })
+//   })
 
-  const rd = {
-    data: products.data.data.list,
-    total: products.data.data.count,
-    page: parseInt(page),
-    categoryMap: categoryMap,
-    serialMap: serialMap,
-    colorMap: colorMap,
-    countryMap: countryMap,
-    brandMap: brandMap,
-    attributeMap: attributeMap,
-  }
-  yield put({ type: 'save22', payload: rd });
-}
+//   const rd = {
+//     data: products.data.data.list,
+//     total: products.data.data.count,
+//     page: parseInt(page),
+//     categoryMap: categoryMap,
+//     serialMap: serialMap,
+//     colorMap: colorMap,
+//     countryMap: countryMap,
+//     brandMap: brandMap,
+//     attributeMap: attributeMap,
+//   }
+//   yield put({ type: 'save22', payload: rd });
+// }
 
-exports['SpuModel'].effects.add = function* ({ payload: { id, values } }, { call, put, select }) {
-  console.log('patch', { id }, values, service)
-  let spu = yield call(service['insertSpuData'], 'Spu', values);
-  let skus = values.skus;
+// exports['SpuModel'].effects.add = function* ({ payload: { id, values } }, { call, put, select }) {
+//   console.log('patch', { id }, values, service)
+//   let spu = yield call(service['insertSpuData'], 'Spu', values);
+//   let skus = values.skus;
 
-  skus.forEach((sku, index) => {
-    sku.name = spu.data.data.item.name;
-    sku.spuId = spu.data.data.item._id;
-    sku.skuNum = pad(index + 1, 2);
-  })
-  let skusRet = yield call(service['insertSkuData'], 'Sku', skus);
-  let stocks = [];
+//   skus.forEach((sku, index) => {
+//     sku.name = spu.data.data.item.name;
+//     sku.spuId = spu.data.data.item._id;
+//     sku.skuNum = pad(index + 1, 2);
+//   })
+//   let skusRet = yield call(service['insertSkuData'], 'Sku', skus);
+//   let stocks = [];
 
-  skusRet.map(sku => { return sku.data.data.item })
-    .map(v => { return { name: v.name, skuId: v._id, tempNum: v.count } })
-    .forEach(item => {
-      for (let i = 0; i < item.tempNum; i++) {
-        item.stockNum = pad((i + 1), 3);
-        stocks.push(item);
-      }
-    });
+//   skusRet.map(sku => { return sku.data.data.item })
+//     .map(v => { return { name: v.name, skuId: v._id, tempNum: v.count } })
+//     .forEach(item => {
+//       for (let i = 0; i < item.tempNum; i++) {
+//         item.stockNum = pad((i + 1), 3);
+//         stocks.push(item);
+//       }
+//     });
 
-  yield call(service['insertStockData'], 'Stock', stocks);
+//   yield call(service['insertStockData'], 'Stock', stocks);
 
-  //生成skus
-  const page = yield select(state => state['spus'].page);
-  yield put({ type: 'fetch', payload: { page } });
-}
+//   //生成skus
+//   const page = yield select(state => state['spus'].page);
+//   yield put({ type: 'fetch', payload: { page } });
+// }
 
-exports['SkuModel'].effects.add = function* ({ payload: { product, values, message } }, { call, put, select }) {
-  console.log('patch', { product }, values, service)
+// exports['SkuModel'].effects.add = function* ({ payload: { product, values, message } }, { call, put, select }) {
+//   console.log('patch', { product }, values, service)
 
-  // 判断 是更新，还是 新添加 
-  let skus = values.skus;
+//   // 判断 是更新，还是 新添加 
+//   let skus = values.skus;
 
-  // 这里还需要一步操作，判断当前value 中是否已经生成过，如果生成过如何处理。
-  //todo....
-  // 1、获取包含productId的所有SKU ，获取sku 对应的单品 做一下判断
+//   // 这里还需要一步操作，判断当前value 中是否已经生成过，如果生成过如何处理。
+//   //todo....
+//   // 1、获取包含productId的所有SKU ，获取sku 对应的单品 做一下判断
 
-  // 2、判断有当前skus是否包含 values.skus 中的数据
+//   // 2、判断有当前skus是否包含 values.skus 中的数据
 
-  let existSkus = yield call(service['getDataService'], 'Sku', { "spuId": product._id });
+//   let existSkus = yield call(service['getDataService'], 'Sku', { "spuId": product._id });
 
-  let list = existSkus.data.data.list;
+//   let list = existSkus.data.data.list;
 
-  //判断状态
-  let existIds = list.map(v => { return v._id });
-  let existStocks = yield call(service['getDataService'], 'Stock', { 'skuId': { "$in": existIds } });//今后还需要加条件 
+//   //判断状态
+//   let existIds = list.map(v => { return v._id });
+//   let existStocks = yield call(service['getDataService'], 'Stock', { 'skuId': { "$in": existIds } });//今后还需要加条件 
 
-  let modifySkus = [];
-  let addSkus = [];
-  let stocks = [] // 添加到服务器端的数据
-  let reduceStock = [];
-  skus.forEach(s => {
-    let attIdsStr = s.attributes.map(a => { return a.attributeID + a.value }).sort().join('');
-    let exist = false;
-    list.forEach(l => {
-      let lattIdsStr = l.attributes.map(a => { return a.attributeID + a.value }).sort().join('');
-      if (attIdsStr === lattIdsStr) {
-        // modifySkus.push(l);
-        //设置其他属性。。。。。
-        Object.keys(s).forEach(k => {
-          if (k !== 'attributes')
-            l[k] = s[k];
-        })
-        modifySkus.push(l);
-        exist = true;
-      }
-    });
-    !exist && addSkus.push(s);
-  });
+//   let modifySkus = [];
+//   let addSkus = [];
+//   let stocks = [] // 添加到服务器端的数据
+//   let reduceStock = [];
+//   skus.forEach(s => {
+//     let attIdsStr = s.attributes.map(a => { return a.attributeID + a.value }).sort().join('');
+//     let exist = false;
+//     list.forEach(l => {
+//       let lattIdsStr = l.attributes.map(a => { return a.attributeID + a.value }).sort().join('');
+//       if (attIdsStr === lattIdsStr) {
+//         // modifySkus.push(l);
+//         //设置其他属性。。。。。
+//         Object.keys(s).forEach(k => {
+//           if (k !== 'attributes')
+//             l[k] = s[k];
+//         })
+//         modifySkus.push(l);
+//         exist = true;
+//       }
+//     });
+//     !exist && addSkus.push(s);
+//   });
 
-  let modifySkusRet = yield call(service['updateSkuData'], 'Sku', modifySkus);
-  modifySkus.length && message.success(`开始更新Sku${modifySkus.length}条`);
+//   let modifySkusRet = yield call(service['updateSkuData'], 'Sku', modifySkus);
+//   modifySkus.length && message.success(`开始更新Sku${modifySkus.length}条`);
 
-  let tempRetData = modifySkusRet.map(msk => { return msk.data.data.item });
+//   let tempRetData = modifySkusRet.map(msk => { return msk.data.data.item });
 
-  tempRetData.forEach(sku => {
-    let tempStocks = existStocks.data.data.list.filter(v => { return v.skuId === sku._id });
-    let optionNum = sku.count - tempStocks.length
-    if (optionNum > 0)//添加
-    {
-      //删除 sku.count - tempStocks.length 个数据
-      for (let i = 0; i < optionNum; i++) {
-        stocks.push({ name: sku.name, skuId: sku._id, stockNum: pad((i + sku.count), 3) });
-      }
-    }
-    else if (optionNum < 0) {//需要删除
-      for (let i = 0; i < Math.abs(optionNum); i++) {
-        reduceStock.push(tempStocks[i]);
-      }
-    }
-  })
+//   tempRetData.forEach(sku => {
+//     let tempStocks = existStocks.data.data.list.filter(v => { return v.skuId === sku._id });
+//     let optionNum = sku.count - tempStocks.length
+//     if (optionNum > 0)//添加
+//     {
+//       //删除 sku.count - tempStocks.length 个数据
+//       for (let i = 0; i < optionNum; i++) {
+//         stocks.push({ name: sku.name, skuId: sku._id, stockNum: pad((i + sku.count), 3) });
+//       }
+//     }
+//     else if (optionNum < 0) {//需要删除
+//       for (let i = 0; i < Math.abs(optionNum); i++) {
+//         reduceStock.push(tempStocks[i]);
+//       }
+//     }
+//   })
 
-  let deleteData = yield call(service['deleteStockData'], 'Stock', reduceStock);
-  deleteData.length && message.success(`删除Stock${deleteData.length}条`);
+//   let deleteData = yield call(service['deleteStockData'], 'Stock', reduceStock);
+//   deleteData.length && message.success(`删除Stock${deleteData.length}条`);
 
-  let filterToData = addSkus.filter(m => { return !Number.isNaN(m.count) && m.count !== 0 && m.count !== '' })
-  filterToData.forEach((sku, index) => {
-    sku.name = product.name;
-    sku.spuId = product._id;
-    sku.distinctWords = (sku.distinctWords && sku.distinctWords.indexOf(product._id) !== -1) ? sku.distinctWords : sku.distinctWords + sku.spuId;
-    sku.categoryId = product.categoryId;
-    sku.skuNum = pad(modifySkus.length + index + 1, 2);
-  })
-  let skusRet = yield call(service['insertSkuData'], 'Sku', filterToData);
+//   let filterToData = addSkus.filter(m => { return !Number.isNaN(m.count) && m.count !== 0 && m.count !== '' })
+//   filterToData.forEach((sku, index) => {
+//     sku.name = product.name;
+//     sku.spuId = product._id;
+//     sku.distinctWords = (sku.distinctWords && sku.distinctWords.indexOf(product._id) !== -1) ? sku.distinctWords : sku.distinctWords + sku.spuId;
+//     sku.categoryId = product.categoryId;
+//     sku.skuNum = pad(modifySkus.length + index + 1, 2);
+//   })
+//   let skusRet = yield call(service['insertSkuData'], 'Sku', filterToData);
 
-  skusRet.length && message.success(`插入Sku${skusRet.length}条`);
+//   skusRet.length && message.success(`插入Sku${skusRet.length}条`);
 
-  skusRet.map(sku => { return sku.data.data.item })
-    .map(v => { return { name: v.name, skuId: v._id, tempNum: v.count } })
-    .forEach(item => {
-      for (let i = 0; i < item.tempNum; i++) {
-        let obj = Object.assign({}, item);
-        obj.stockNum = pad((i + 1), 3);
-        stocks.push(obj);
-      }
-    });
+//   skusRet.map(sku => { return sku.data.data.item })
+//     .map(v => { return { name: v.name, skuId: v._id, tempNum: v.count } })
+//     .forEach(item => {
+//       for (let i = 0; i < item.tempNum; i++) {
+//         let obj = Object.assign({}, item);
+//         obj.stockNum = pad((i + 1), 3);
+//         stocks.push(obj);
+//       }
+//     });
 
-  let retStock = yield call(service['insertStockData'], 'Stock', stocks);
-  retStock.length && message.success(`插入Stock${retStock.length}条`);
-  //生成skus
-  const page = yield select(state => state['spus'].page);
-  yield put({ type: 'fetch', payload: { page } });
-}
-
-
-exports['SkuModel'].effects.fetch = function* ({ payload: { page } }, { call, put }) {
-  const categoryMap = yield call(service["getCategoryMap"], 'Category');
-  const serialMap = yield call(service["getSerialMap"], 'Serial');
-  const colorMap = yield call(service["getColorMap"], 'Color');
-  const countryMap = yield call(service["getCountryMap"], 'Country');
-  const brandMap = yield call(service["getBrandMap"], 'Brand');
-  const attributeMap = yield call(service["getAttributeMap"], 'Attribute');
-  const skus = yield call(service["SkuService"].fetch, { page });
-  let skuList = skus.data.data.list;
-  let setIds = new Set();
-  skuList.forEach(p => {
-    setIds.add(p.spuId);
-  });
-  const pids = Array.from(setIds);
-
-  const spus = yield call(service['getDataService'], 'Spu', { "_id": { "$in": pids } })
-
-  skuList.forEach(p => {
-    spus.data.data.list.forEach(s => {
-      if (p.spuId === s._id) {
-        p.spu = s;
-      }
-    })
-  })
-
-  const rd = {
-    data: skuList,
-    total: skus.data.data.count,
-    page: parseInt(page),
-    categoryMap: categoryMap,
-    serialMap: serialMap,
-    colorMap: colorMap,
-    countryMap: countryMap,
-    brandMap: brandMap,
-    attributeMap: attributeMap,
-  }
-  yield put({ type: 'save22', payload: rd });
-}
-
-export var pad = function (tbl) {
-  return function (num, n) {
-    return (0 >= (n = n - num.toString().length)) ? num : (tbl[n] || (tbl[n] = Array(n + 1).join(0))) + num;
-  }
-}([]);
+//   let retStock = yield call(service['insertStockData'], 'Stock', stocks);
+//   retStock.length && message.success(`插入Stock${retStock.length}条`);
+//   //生成skus
+//   const page = yield select(state => state['spus'].page);
+//   yield put({ type: 'fetch', payload: { page } });
+// }
 
 
-exports["BannerModel"].effects.fetch = function* ({ payload: { page } }, { call, put }) {
-  // 无条件的
+// exports['SkuModel'].effects.fetch = function* ({ payload: { page } }, { call, put }) {
+//   const categoryMap = yield call(service["getCategoryMap"], 'Category');
+//   const serialMap = yield call(service["getSerialMap"], 'Serial');
+//   const colorMap = yield call(service["getColorMap"], 'Color');
+//   const countryMap = yield call(service["getCountryMap"], 'Country');
+//   const brandMap = yield call(service["getBrandMap"], 'Brand');
+//   const attributeMap = yield call(service["getAttributeMap"], 'Attribute');
+//   const skus = yield call(service["SkuService"].fetch, { page });
+//   let skuList = skus.data.data.list;
+//   let setIds = new Set();
+//   skuList.forEach(p => {
+//     setIds.add(p.spuId);
+//   });
+//   const pids = Array.from(setIds);
 
-  console.log(service, '---service');
+//   const spus = yield call(service['getDataService'], 'Spu', { "_id": { "$in": pids } })
 
-  const banners = yield call(service["fetchRecommendPage"], 'Recommend', { page, rtype: '1' });
-  const rd = { data: banners.data.data.list, total: banners.data.data.count, page: parseInt(page) }
-  yield put({ type: 'save22', payload: rd });
-}
+//   skuList.forEach(p => {
+//     spus.data.data.list.forEach(s => {
+//       if (p.spuId === s._id) {
+//         p.spu = s;
+//       }
+//     })
+//   })
 
-exports["BannerModel"].effects.add = function* ({ payload: { id, values } }, { call, put, select }) {
-  values.rtype = '1';
-  let recommendRes = yield call(service['getRecommendMap'], 'Recommend');
-  values.order = Object.keys(recommendRes).length + 1;
-  yield call(service['RecommendService'].insert, values);
-  const page = yield select(state => state['banners'].page);
-  yield put({ type: 'fetch', payload: { page } });
-}
-exports["BannerModel"].effects.remove = function* ({ payload: { id } }, { call, put, select }) {
-  console.log('remove', { id })
-  yield call(service['RecommendService'].remove, id);
-  const page = yield select(state => state['banners'].page);
-  yield put({ type: 'fetch', payload: { page } });
-}
+//   const rd = {
+//     data: skuList,
+//     total: skus.data.data.count,
+//     page: parseInt(page),
+//     categoryMap: categoryMap,
+//     serialMap: serialMap,
+//     colorMap: colorMap,
+//     countryMap: countryMap,
+//     brandMap: brandMap,
+//     attributeMap: attributeMap,
+//   }
+//   yield put({ type: 'save22', payload: rd });
+// }
 
-exports["BannerModel"].effects.patch = function* ({ payload: { id, values } }, { call, put, select }) {
-  console.log('patch', { id })
-  yield call(service['RecommendService'].update, id, values);
-  const page = yield select(state => state['banners'].page);
-  yield put({ type: 'fetch', payload: { page } });
-}
+
+

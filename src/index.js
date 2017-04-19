@@ -25,8 +25,6 @@ try{
           console.log('load ... model:',cls)
           app.model(models[cls])
       })
-    //   var d = await models.login()
-    //   console.log("dd",{d})
     console.log(app);
     app.router(require('./router'));
     app.start('#root');
