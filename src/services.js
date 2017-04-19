@@ -63,13 +63,21 @@ function getMapByList(list) {
     return tempMap
 }
 
-['Color', 'Country', 'Brand', 'Serial', 'Category', 'Attribute'].map(v => {
+['Color', 'Country', 'Brand', 'Serial', 'Category', 'Attribute','Recommend'].map(v => {
     exports[`get${v}Map`] = async function (v) {
-        let result = await request(`/api/${v}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 100000, startPos: 0 })
+        let result = await request(`/api/${v}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 10000000, startPos: 0 })
         let list = result.data.data.list
         let map = getMapByList(list)
         window.sessionStorage.brandMap = JSON.stringify(map)
         return map;
+    }
+});
+
+//带分页 有条件查询
+['Recommend'].map(v => {
+    exports[`fetch${v}Page`] = async function (v,filter) {
+        filter = Object.assign(filter,{ orderBy: { cnum: -1 }, limit: 100000, startPos: 0 });
+        return await request(`/api/${v}/fetch?token=${localStorage.token}`, filter);
     }
 });
 

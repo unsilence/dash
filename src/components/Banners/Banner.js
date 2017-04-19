@@ -48,33 +48,34 @@ function Banners({ dispatch, list: dataSource, loading, total, page: current ,ca
     },
     {
       title: '标题',
-      dataIndex: 'parentId',
-      key: 'parentId',
-      render: text => <span>{getCategoryName(text)}</span>
+      dataIndex: 'title',
+      key: 'title',
+      render: text => <span>{text}</span>
     },
     {
       title: '发布时间',
-      dataIndex: 'code',
-      key: 'code',
+      dataIndex: 'createAt',
+      key: 'createAt',
       render: text => <span>{text}</span>
     },
     {
       title: '点击量',
-      dataIndex: 'ccodeNum',
-      key: 'ccodeNum',
+      dataIndex: 'clickNum',
+      key: 'clickNum',
       render: text => <span>{text}</span>
     },
     {
       title : "排序"
-
     },
     {
       title: '操作',
       key: 'operation',
       render: (text, record) => (
         <span className={styles.operation2}>
-          
-          <Popconfirm title={"确定要删除分类【" + record.name + "】吗？"} onConfirm={deleteHandler.bind(null, record)}>
+          <AddBannerModal banner={record } onOk={editHandler.bind(null, record._id)}>
+            <Icon type="edit" className={styles.icon} />
+          </AddBannerModal>
+          <Popconfirm title={"确定要删除颜色【" + record.name + "】吗？"} onConfirm={deleteHandler.bind(null, record)}>
             <Icon type="delete" className={styles.icon} />
           </Popconfirm>
         </span>
@@ -101,7 +102,7 @@ function Banners({ dispatch, list: dataSource, loading, total, page: current ,ca
                 <Button style={{marginLeft:"15px"}}>操作日志</Button>
             </BannerConsoleModal>
             
-            <AddBannerModal>
+            <AddBannerModal banner={{}} onOk={editHandler.bind(null,'')}>
                 <Button style={{marginLeft:"15px"}}>添加banner</Button>
             </AddBannerModal>
           </Col>
@@ -127,9 +128,9 @@ function Banners({ dispatch, list: dataSource, loading, total, page: current ,ca
 
 function mapStateToProps(state) {
 
-  const { list, total, page ,categoryMap} = state.categorys;
+  const { list, total, page ,categoryMap} = state.banners;
   return {
-    loading: state.loading.models.categorys,
+    loading: state.loading.models.banners,
     list,
     total,
     page,

@@ -55,35 +55,21 @@ let generate = (name, serviceName) => {
 }
 
 
-['Banner','Recommend','Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
+['Banner', 'Recommend', 'Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
   exports[cls + 'Model'] = generate(cls.toLowerCase() + 's', cls + 'Service')
 })
 exports['login'] = function () { return service.login() }
 exports['checkAccount'] = function () { return service.checkAccount() }
 exports['logout'] = function () { return service.logout() }
 
-exports["BannerModel"].effects.fetch = function* ({ payload: { page } }, { call, put }) {
-  // const categoryMap = yield call(service["getCategoryMap"], 'Category');
-  // const categories = yield call(service["CategoryService"].fetch, { page });
-  // const rd = { data: categories.data.data.list, total: categories.data.data.count, page: parseInt(page), categoryMap: categoryMap }
-  // yield put({ type: 'save22', payload: rd });
-    console.log('-------------------------',service);
-  console.log('-------------------------');
 
-    const banners = yield call(service["RecommendService"].fetch, { page });
-  console.log(banners,'00000000000000000000000000000000');
 
-  
-  const rd = { data: banners.data.data.list, total: banners.data.data.count, page: parseInt(page)}
-  yield put({ type: 'save22', payload: rd });
-
-}
 
 /**-----------------------------自定义------------------------- */
 exports["ColorModel"].effects.fetch = function* ({ payload: { page } }, { call, put }) {
   const colors = yield call(service["ColorService"].fetch, { page });
   let cids = new Set();
-  colors.data.data.list.forEach(c => {cids.add(c.serialId)});
+  colors.data.data.list.forEach(c => { cids.add(c.serialId) });
 
   cids = Array.from(cids);
 
@@ -321,4 +307,37 @@ export var pad = function (tbl) {
   return function (num, n) {
     return (0 >= (n = n - num.toString().length)) ? num : (tbl[n] || (tbl[n] = Array(n + 1).join(0))) + num;
   }
-}([]); 
+}([]);
+
+
+exports["BannerModel"].effects.fetch = function* ({ payload: { page } }, { call, put }) {
+  // 无条件的
+
+  console.log(service, '---service');
+
+  const banners = yield call(service["fetchRecommendPage"], 'Recommend', { page, rtype: '1' });
+  const rd = { data: banners.data.data.list, total: banners.data.data.count, page: parseInt(page) }
+  yield put({ type: 'save22', payload: rd });
+}
+
+exports["BannerModel"].effects.add = function* ({ payload: { id, values } }, { call, put, select }) {
+  values.rtype = '1';
+  let recommendRes = yield call(service['getRecommendMap'], 'Recommend');
+  values.order = Object.keys(recommendRes).length + 1;
+  yield call(service['RecommendService'].insert, values);
+  const page = yield select(state => state['banners'].page);
+  yield put({ type: 'fetch', payload: { page } });
+}
+exports["BannerModel"].effects.remove = function* ({ payload: { id } }, { call, put, select }) {
+  console.log('remove', { id })
+  yield call(service['RecommendService'].remove, id);
+  const page = yield select(state => state['banners'].page);
+  yield put({ type: 'fetch', payload: { page } });
+}
+
+exports["BannerModel"].effects.patch = function* ({ payload: { id, values } }, { call, put, select }) {
+  console.log('patch', { id })
+  yield call(service['RecommendService'].update, id, values);
+  const page = yield select(state => state['banners'].page);
+  yield put({ type: 'fetch', payload: { page } });
+}
