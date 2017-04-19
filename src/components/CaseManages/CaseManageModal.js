@@ -4,7 +4,7 @@ import styles from '../item.less';
 
 const FormItem = Form.Item;
 
-class AddRecommendModal extends Component {
+class AddCasemanageModal extends Component {
 constructor(props) {
     super(props);
     this.state = {
@@ -64,7 +64,7 @@ constructor(props) {
   render() {
     let { children } = this.props;
     let { getFieldDecorator } = this.props.form;
-    let {title,url} = this.props.recommend;
+    let {title,url} = this.props.casemanage;
     const formItemLayout = {
       labelCol: { span: 2 },
       wrapperCol: { span: 18 },
@@ -128,4 +128,4 @@ constructor(props) {
   }
 }
 
-export default Form.create()(AddRecommendModal);
+export default Form.create()(AddCasemanageModal);

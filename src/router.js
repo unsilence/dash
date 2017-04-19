@@ -13,6 +13,7 @@ import Cases from "./routes/Cases.js";
 import Tests from "./routes/Tests.js";
 import Login from "./routes/login.js";
 import Recommend from './routes/Recommends';
+import CaseManages from './routes/CaseManages';
 import Spu from "./routes/Spu";
 import Sku from "./routes/Sku";
 import Stock from "./routes/Stock";
@@ -24,6 +25,7 @@ function RouterConfig({ history }) {
       <Route path="/" component={IndexPage} />
       <Route path="/banners" component={Banner.banners} />
       <Route path="/banners/histrybanner" component={Banner.HistryBanner} />
+      <Route path="/casemanages" component={CaseManages} />
       <Route path="/brands" component={Brands} />
       <Route path="/cases" component={Cases} />
       <Route path="/tests" component={Tests} />

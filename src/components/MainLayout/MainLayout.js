@@ -27,6 +27,12 @@ function MainLayout({ children, location }) {
             browserHistory.push('/recommends')
         })();
     }
+    let CaseManageHandler = (e) =>{
+        e.preventDefault();
+        (async function() {
+            browserHistory.push('/casemanages')
+        })();
+    }
   return (
   <Layout className={styles.layout_wrap}>
     <Sider className={styles.layout_left}>
@@ -39,10 +45,10 @@ function MainLayout({ children, location }) {
       <Header className={styles.layout_top}>
           <Button>美学管家</Button>
           <Button onClick = {BannerHandler}>Banner管理</Button>
-          <Button>导航栏管理</Button>
           <Button onClick = {RecommendHandler}>推荐管理</Button>
-          <Button>案例管理</Button>
+          <Button onClick = {CaseManageHandler}>案例管理</Button>
           <Button>热品管理</Button>
+          <Button>导航栏管理</Button>
           <Button onClick={handleSubmit}>退出</Button>
       </Header>
       <Content className={styles.layout_body_wrap}>
