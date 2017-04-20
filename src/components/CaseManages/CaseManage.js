@@ -4,7 +4,7 @@ import { Table, Pagination, Popconfirm ,Row,Col,Button,Icon,Input} from 'antd';
 import { routerRedux } from 'dva/router';
 import styles from '../list.less';
 let PAGE_SIZE = 10
-import RecommendModal from './RecommendModal';
+import CaseManageModal from './CaseManageModal';
 
 function Recommends({ dispatch, list: dataSource, loading, total, page: current }) {
   console.log(dataSource);
@@ -12,14 +12,14 @@ function Recommends({ dispatch, list: dataSource, loading, total, page: current 
   function deleteHandler(itm) {
       console.log('deleteHandler',itm)
     dispatch({
-      type: 'recommends/remove',
+      type: 'casemanages/remove',
       payload: {id:itm._id},
     });
   }
 
   function pageChangeHandler(page) {
     dispatch(routerRedux.push({
-      pathname: '/recommends',
+      pathname: '/casemanages',
       query: { page },
     }));
   }
@@ -27,12 +27,12 @@ function Recommends({ dispatch, list: dataSource, loading, total, page: current 
   function editHandler(id, values) {
       if(id){
           dispatch({
-            type: 'recommends/patch',
+            type: 'casemanages/patch',
             payload: { id, values },
           });
       }else {
           dispatch({
-            type: 'recommends/add',
+            type: 'casemanages/add',
             payload: { id, values },
           });
       }
@@ -70,9 +70,9 @@ function Recommends({ dispatch, list: dataSource, loading, total, page: current 
       key: 'operation',
       render: (text, serial) => (
         <span className={styles.operation2}>
-          <RecommendModal recommend={serial} onOk={editHandler.bind(null, serial._id)}>
+          <CaseManageModal casemanage={serial} onOk={editHandler.bind(null, serial._id)}>
             <Icon type="edit" className={styles.icon}/>
-          </RecommendModal>
+          </CaseManageModal>
           <Popconfirm title={"确定要删除推荐吗？"} onConfirm={deleteHandler.bind(null, serial)}>
             <Icon type="delete" className={styles.icon}/>
           </Popconfirm>
@@ -91,9 +91,9 @@ function Recommends({ dispatch, list: dataSource, loading, total, page: current 
             <Col span={8}>
               <Button style={{marginRight : "16px"}}>历史推荐</Button>
               <Button style={{marginRight : "16px"}}>操作日志</Button>
-              <RecommendModal recommend={{}} onOk={editHandler.bind(null,'')}>
+              <CaseManageModal casemanage={{}} onOk={editHandler.bind(null,'')}>
                 <Button>添加推荐</Button>
-              </RecommendModal>
+              </CaseManageModal>
             </Col>
         </Row>
         <Table
@@ -105,7 +105,7 @@ function Recommends({ dispatch, list: dataSource, loading, total, page: current 
         />
         <Pagination
           className="ant-table-pagination"
-          total={total}
+          total={total}s
           current={current}
           pageSize={PAGE_SIZE}
           onChange={pageChangeHandler}
@@ -116,9 +116,10 @@ function Recommends({ dispatch, list: dataSource, loading, total, page: current 
 }
 
 function mapStateToProps(state) {
-  const {list, total, page ,categoryMap} = state.recommends;
+  const {list, total, page ,categoryMap} = state.casemanages;
+  console.log(state);
   return {
-    loading: state.loading.models.recommends,
+    loading: state.loading.models.casemanages,
     list,
     total,
     page,

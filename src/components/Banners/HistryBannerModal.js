@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, Select ,Button} from 'antd';
+import { Modal, Button , Table , Icon} from 'antd';
 import styles from '../item.less';
 
-const FormItem = Form.Item;
 
-class BannerAddModal extends Component {
+class HistryBannerModal extends Component {
 
   constructor(props) {
     super(props);
@@ -24,47 +23,48 @@ class BannerAddModal extends Component {
     this.setState({
       visible: false,
     });
-    this.props.form.resetFields(['name','parentId','note']);
+
   };
 
   okHandler = () => {
     const { onOk } = this.props;
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        onOk(values);
-        this.hideModelHandler();
-      }
-    });
+
   };
 
   render() {
-    let {children} = this.props;
-    const formItemLayout = {
-      labelCol: { span: 6 },
-      wrapperCol: { span: 14 },
-    };
-
+    // let {children} = this.props;
+    const columns = [{
+      title: '序号',
+      dataIndex: 'name',
+      key: 'name'
+    }, {
+      title: '标题',
+      dataIndex: 'title',
+      key: 'title'
+    }, {
+      title: '发布时间',
+      dataIndex: '',
+      key: '',
+    }, {
+      title: '结束时间',
+      key: '',
+    },{
+      title : "发布时长",
+      dataIndex : ""
+    },{
+      title : "操作账户",
+      dataIndex : ""
+    },{
+      title : "点击量",
+      dataIndex : ""
+    },{
+      title : "操作",
+      dataIndex : ""
+    }];
     return (
-      <span>
-        <span onClick={this.showModelHandler}>
-            {children}
-        </span>
-        <Modal
-          title="添加banner"
-          visible={this.state.visible}
-          onOk={this.okHandler}
-          onCancel={this.hideModelHandler}
-        >
-          <Form horizontal onSubmit={this.okHandler}>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="分类" >   </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="父分类" > 
-            </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="备注" > </FormItem>
-          </Form>
-        </Modal>
-      </span>
+      <Table columns={columns} />
     );
   }
 }
 
-export default Form.create()(BannerAddModal);
+export default HistryBannerModal;

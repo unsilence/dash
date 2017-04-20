@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import { Table, Pagination, Popconfirm, Row, Col, Button, Icon ,Input} from 'antd';
-import { routerRedux } from 'dva/router';
+import { routerRedux ,browserHistory } from 'dva/router';
 import styles from '../list.less';
 let PAGE_SIZE = 10
 import AddBannerModal from './AddBannerModal.js';
@@ -39,7 +39,12 @@ function Banners({ dispatch, list: dataSource, loading, total, page: current ,ca
       }
 
   }
-
+  let historyHandler = (e) => {
+      e.preventDefault();
+      (async function() {
+          browserHistory.push('/banners/histrybanner')
+      })();
+    }
   const columns = [
     {
       title: '序号',
@@ -95,9 +100,7 @@ function Banners({ dispatch, list: dataSource, loading, total, page: current ,ca
             />
           </Col>
           <Col span={9} push={1} style={{marginBottom:"15px"}}>
-            <HistryBannerModal>
-                <Button style={{marginLeft:"15px"}}>历史banner</Button>
-            </HistryBannerModal>
+            <Button onClick={historyHandler}>历史banner</Button>
             <BannerConsoleModal>
                 <Button style={{marginLeft:"15px"}}>操作日志</Button>
             </BannerConsoleModal>
