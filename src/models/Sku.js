@@ -74,7 +74,7 @@ export var addSkuOption = function (sku) {
         filterToData.forEach((sku, index) => {
             sku.name = product.name;
             sku.spuId = product._id;
-            sku.distinctWords = (sku.distinctWords && sku.distinctWords.indexOf(product._id) !== -1) ? sku.distinctWords : sku.distinctWords + sku.spuId;
+            sku.distinctWords = (sku.distinctWords.indexOf(product._id) !== -1) ? sku.distinctWords : sku.distinctWords + sku.spuId;
             sku.categoryId = product.categoryId;
             sku.skuNum = pad(modifySkus.length + index + 1, 2);
         })

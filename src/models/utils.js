@@ -1,3 +1,4 @@
+import * as service from './../services';
 export var generate = (name, serviceName) => {
     return {
         namespace: name,
