@@ -40,7 +40,7 @@ function RouterConfig({ history }) {
       <Route path="/colors" component={Colors} />
       <Route path="/serials" component={Serials} />
       <Route path="/login" component={Login} />
-      <Route path="/recommends" component={Recommend} />
+      <Route path="/recoms" component={Recommend} />
     </Router>
   );
 }

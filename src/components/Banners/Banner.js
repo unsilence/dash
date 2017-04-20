@@ -11,7 +11,7 @@ import HistryBannerModal from './HistryBannerModal.js';
 function Banners({ dispatch, list: dataSource, loading, total, page: current ,categoryMap}) {
 
   function deleteHandler(itm) {
-      console.log('deleteHandler',itm)
+      // console.log('deleteHandler',itm)
     dispatch({
       type: 'banners/remove',
       payload: {id:itm._id},

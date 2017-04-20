@@ -19,11 +19,11 @@ class BannerAddModal extends Component {
   }
 
   componentWillReceiveProps(nextProps){
-    console.log('00000000',nextProps);
+    // console.log('00000000',nextProps);
   }
 
   componentWillUpdate(nextProps,  nextState){
-      console.log(nextProps,  nextState);
+      // console.log(nextProps,  nextState);
 
   } 
 
@@ -58,7 +58,7 @@ class BannerAddModal extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         values.image = this.state.imageUrl;
-        console.log(values);
+        // console.log(values);
         onOk(values);
         this.hideModelHandler();
       }

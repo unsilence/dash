@@ -4,7 +4,7 @@ export var addBannerOption = function (banner) {
 
     banner.effects.fetch = function* ({ payload: { page } }, { call, put }) {
         // 无条件的
-        const banners = yield call(service["fetchBannerPage"], 'Recommend', { page, rtype: '1' });
+        const banners = yield call(service["fetchBannerPage"], 'Recommend', { page, "rtype": "1" });
         const rd = { data: banners.data.data.list, total: banners.data.data.count, page: parseInt(page) }
         yield put({ type: 'save22', payload: rd });
     }

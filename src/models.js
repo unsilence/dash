@@ -3,17 +3,18 @@ import {generate,pad} from './models/utils';
 import {addSpuOption} from './models/Spu';
 import {addSkuOption} from './models/Sku';
 import {addBannerOption} from './models/Banner';
-import {recommendOption} from './models/Recommend';
+import {recommendOption} from './models/Recom';
 import {caseManageOption} from './models/CaseManage';
 
-['CaseManage','Banner', 'Recommend', 'Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
+['CaseManage','Banner', 'Recom','Recommend', 'Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
   exports[cls + 'Model'] = generate(cls.toLowerCase() + 's', cls + 'Service');
 });
 
 addSpuOption(exports['SpuModel']);
 addSkuOption(exports['SkuModel']);
+recommendOption(exports["RecomModel"]);
 addBannerOption(exports['BannerModel']);
-recommendOption(exports["RecommendModel"]);
+
 caseManageOption(exports["CaseManageModel"])
 
 

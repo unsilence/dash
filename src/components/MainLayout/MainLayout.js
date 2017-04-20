@@ -24,7 +24,7 @@ function MainLayout({ children, location }) {
     let RecommendHandler = (e) =>{
         e.preventDefault();
         (async function() {
-            browserHistory.push('/recommends')
+            browserHistory.push('/recoms')
         })();
     }
     let CaseManageHandler = (e) =>{

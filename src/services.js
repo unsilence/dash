@@ -74,11 +74,10 @@ function getMapByList(list) {
 });
 
 //带分页 有条件查询
-['Recommend','Banner'].map(v => {
+['Recom','Banner'].map(v => {
     exports[`fetch${v}Page`] = async function (v,filter) {
-        filter = Object.assign(filter,{ orderBy: { cnum: -1 }, limit: 10, startPos: 0 });
-        console.log(filter,'------------------------------------------------------------------');
-        return await request(`/api/${v}/fetch?token=${localStorage.token}`, filter);
+        let opt = { orderBy: { cnum: -1 }, limit: 10, startPos: 0 ,filter:filter};
+        return await request(`/api/${v}/fetch?token=${localStorage.token}`, {filter:filter});
     }
 });
 
