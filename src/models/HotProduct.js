@@ -1,17 +1,16 @@
 import * as service from './../services';
 
-export var caseManageOption = function (banner) {
+export var hotProductsOption = function (banner) {
 
     banner.effects.fetch = function* ({ payload: { page } }, { call, put }) {
         // 无条件的
-        const casemanage = yield call(service["fetchCaseManagePage"], 'Recommend', {"rtype": "3" },{page});
-        const rd = { data: casemanage.data.data.list, total: casemanage.data.data.count, page: parseInt(page) }
-        console.log(rd);
+        const hotproducts = yield call(service["fetchHotProductPage"], 'Recommend', { page, rtype: '4' });
+        const rd = { data: hotproducts.data.data.list, total: hotproducts.data.data.count, page: parseInt(page) }
         yield put({ type: 'save22', payload: rd });
     }
 
     banner.effects.add = function* ({ payload: { id, values } }, { call, put, select }) {
-        values.rtype = '3';
+        values.rtype = '4';
         let recommendRes = yield call(service['getRecommendMap'], 'Recommend');
         values.order = Object.keys(recommendRes).length + 1;
         yield call(service['RecommendService'].insert, values);

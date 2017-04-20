@@ -4,9 +4,10 @@ import {addSpuOption} from './models/Spu';
 import {addSkuOption} from './models/Sku';
 import {addBannerOption} from './models/Banner';
 import {recommendOption} from './models/Recom';
-import {caseManageOption} from './models/CaseManage';
+import {caseManageOption} from './models/CaseManage'; 
+import {hotProductsOption} from './models/HotProduct';
 
-['CaseManage','Banner', 'Recom','Recommend', 'Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
+['HotProduct','CaseManage','Banner', 'Recom','Recommend', 'Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
   exports[cls + 'Model'] = generate(cls.toLowerCase() + 's', cls + 'Service');
 });
 
@@ -14,9 +15,8 @@ addSpuOption(exports['SpuModel']);
 addSkuOption(exports['SkuModel']);
 recommendOption(exports["RecomModel"]);
 addBannerOption(exports['BannerModel']);
-
+hotProductsOption(exports['HotProductModel'])
 caseManageOption(exports["CaseManageModel"])
-
 
 exports['login'] = function () { return service.login() }
 exports['checkAccount'] = function () { return service.checkAccount() }

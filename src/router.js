@@ -17,6 +17,7 @@ import CaseManages from './routes/CaseManages';
 import Spu from "./routes/Spu";
 import Sku from "./routes/Sku";
 import Stock from "./routes/Stock";
+import HotProducts from './routes/HotProducts';
 import * as Banner  from "./routes/Banners.js";
 
 function RouterConfig({ history }) {
@@ -26,6 +27,7 @@ function RouterConfig({ history }) {
       <Route path="/banners" component={Banner.banners} />
       <Route path="/banners/histrybanner" component={Banner.HistryBanner} />
       <Route path="/casemanages" component={CaseManages} />
+      <Route path="/hotproducts" component={HotProducts} />
       <Route path="/brands" component={Brands} />
       <Route path="/cases" component={Cases} />
       <Route path="/tests" component={Tests} />

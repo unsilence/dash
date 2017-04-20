@@ -74,7 +74,7 @@ function getMapByList(list) {
 });
 
 //带分页 有条件查询
-['Recom','Banner'].map(v => {
+['Recom','Banner','CaseManage','HotProduct'].map(v => {
     exports[`fetch${v}Page`] = async function (v,filter,page) {
         let opt = { orderBy: { cnum: -1 }, limit: 10, startPos: 0 ,filter:filter};
         return await request(`/api/${v}/fetch?token=${localStorage.token}`, {filter:filter,page});
