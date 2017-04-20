@@ -4,7 +4,7 @@ export var recommendOption = function (recom) {
 
     recom.effects.fetch = function* ({ payload: { page } }, { call, put }) {
         // 无条件的
-        const recoms = yield call(service["fetchRecomPage"], 'Recommend', {page, "rtype": "2" });
+        const recoms = yield call(service["fetchRecomPage"], 'Recommend', {"rtype": "2" },{page});
         const rd = { data: recoms.data.data.list, total: recoms.data.data.count, page: parseInt(page) }
         console.log(rd);
         yield put({ type: 'save22', payload: rd });
