@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, Select, Upload, Icon, Radio } from 'antd';
+import { Modal, Form, Input, Select,Upload,Icon,Button,Radio } from 'antd';
 import styles from '../item.less';
 import TagsInput from '../Product/TagsInput';
 import 'react-tagsinput/react-tagsinput.css';
@@ -16,6 +16,19 @@ function getBase64(img, callback) {
   reader.addEventListener('load', () => callback(reader.result));
   reader.readAsDataURL(img);
 }
+const pops = {
+  action: '/api/file/upload',
+  onChange({ file, fileList }) {
+    if (file.status !== 'uploading') {
+      
+           let newMd5 = file.response.md5list[0]
+          console.log('new md5',newMd5)
+          getBase64(file.originFileObj, imageUrl => this.setState({ imageUrl:newMd5}));
+      console.log(file, fileList);
+    }
+  },
+  defaultFileList: [],
+};
 
 class CaseEditModal extends Component {
 
@@ -71,7 +84,7 @@ class CaseEditModal extends Component {
     this.setState({
       visible: false,
     });
-    this.props.form.resetFields(['headline', 'releaseTime', 'release_time', 'click_rate']);
+    this.props.form.resetFields(['headline','releaseTime','collocatImg','release_time','click_rate']);
   }
   handleChangeInput(tags) {
     this.setState({ tags });

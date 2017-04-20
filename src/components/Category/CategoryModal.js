@@ -65,7 +65,7 @@ class CategoryEditModal extends Component {
         >
           <Form horizontal onSubmit={this.okHandler}>
             <FormItem className={styles.FormItem} {...formItemLayout} label="分类" >    {getFieldDecorator('name', {rules:[{required: true, message: '请输入分类名称!'}], initialValue: name })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="父分类" > {getFieldDecorator('parentId', {rules:[{required: true, message: '请输入所属分类!'}], initialValue: parentId })(
+            <FormItem className={styles.FormItem} {...formItemLayout} label="父分类" > {getFieldDecorator('parentId',{initialValue: parentId })(
               <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>
             )}
             </FormItem>
