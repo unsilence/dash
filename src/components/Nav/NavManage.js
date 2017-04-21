@@ -2,23 +2,23 @@
 import { connect } from 'dva';
 import { Table, Pagination, Popconfirm ,Row,Col,Button,Icon,Input ,Radio} from 'antd';
 import { routerRedux } from 'dva/router';
-import HotProductsRadio from "./HotProductsRadio";
+import NavManageRadio from "./NavManageRadio";
 import styles from '../list.less';
 let PAGE_SIZE = 10
-import HotProductsModal from './HotProductsModal.js';
-function HotProducts({ dispatch, list: dataSource, loading, total, page: current }) {
+import NavManageModal from './NavManageModal.js';
+function NavManage({ dispatch, list: dataSource, loading, total, page: current }) {
 
   function deleteHandler(itm) {
       console.log('deleteHandler',itm)
     dispatch({
-      type: 'hotproducts/remove',
+      type: 'navmanages/remove',
       payload: {id:itm._id},
     });
   }
 
   function pageChangeHandler(page) {
     dispatch(routerRedux.push({
-      pathname: '/hotproducts',
+      pathname: '/navmanages',
       query: { page },
     }));
   }
@@ -27,19 +27,19 @@ function HotProducts({ dispatch, list: dataSource, loading, total, page: current
     console.log(id+'========================================================================'+values);
       if(id){
           dispatch({
-            type: 'hotproducts/patch',
+            type: 'navmanages/patch',
             payload: { id, values },
           });
       }else {
           dispatch({
-            type: 'hotproducts/add',
+            type: 'navmanages/add',
             payload: { id, values },
           });
       }
 
   }
   function disp () {
-    
+    console.log("0000000000000000000000000000000000000000000");
   }
   const columns = [
     {
@@ -72,9 +72,9 @@ function HotProducts({ dispatch, list: dataSource, loading, total, page: current
       key: 'operation',
       render: (text, serial) => (
         <span className={styles.operation2}>
-          <HotProductsModal hotproduct={serial} onOk={editHandler.bind(null, serial._id)}>
+          <NavManageModal navmanage={serial} onOk={editHandler.bind(null, serial._id)}>
             <Icon type="edit" className={styles.icon}/>
-          </HotProductsModal>
+          </NavManageModal>
           <Popconfirm title={"确定要删除推荐吗？"} onConfirm={deleteHandler.bind(null, serial)}>
             <Icon type="delete" className={styles.icon}/>
           </Popconfirm>
@@ -93,12 +93,12 @@ function HotProducts({ dispatch, list: dataSource, loading, total, page: current
             <Col span={8}>
               <Button style={{marginRight : "16px"}}>历史热品</Button>
               <Button style={{marginRight : "16px"}}>操作日志</Button>
-              <HotProductsModal hotproduct={{}} onOk={editHandler.bind(null,'')}>
+              <NavManageModal navmanage={{}} onOk={editHandler.bind(null,'')}>
                 <Button>添加热品</Button>
-              </HotProductsModal>
+              </NavManageModal>
             </Col>
         </Row>
-        <HotProductsRadio change={editHandler} disp={disp}/>
+        <NavManageRadio change={editHandler} disp={disp}/>
         <Table
           columns={columns}
           dataSource={dataSource}
@@ -120,10 +120,9 @@ function HotProducts({ dispatch, list: dataSource, loading, total, page: current
 
 function mapStateToProps(state) {
   console.log(state);
-  const {list, total, page ,categoryMap} = state.hotproducts;
-  console.log(state);
+  const {list, total, page ,categoryMap} = state.navmanages;
   return {
-    loading: state.loading.models.hotproducts,
+    loading: state.loading.models.navmanages,
     list,
     total,
     page,
@@ -131,4 +130,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(HotProducts);
+export default connect(mapStateToProps)(NavManage);

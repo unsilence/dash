@@ -4,22 +4,22 @@ import styles from '../item.less';
 
 const FormItem = Form.Item;
 
-class AddRecommendModal extends Component {
+class AddNavManageModal extends Component {
 constructor(props) {
     super(props);
     this.state = {
       visible: false,
-      recommend :this.props.recommend,
-      imageUrl:this.props.recommend?this.props.recommend.image:null
+      navmanage :this.props.navmanage,
+      imageUrl:this.props.navmanage?this.props.navmanage.image:null
     };
   }
 
   componentWillReceiveProps(nextProps){
-    // console.log('00000000',nextProps);
+    console.log('00000000',nextProps);
   }
 
   componentWillUpdate(nextProps,  nextState){
-      // console.log(nextProps,  nextState);
+      console.log(nextProps,  nextState);
 
   } 
 
@@ -54,7 +54,7 @@ constructor(props) {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         values.image = this.state.imageUrl;
-        // console.log(values);
+        console.log(values);
         onOk(values);
         this.hideModelHandler();
       }
@@ -64,7 +64,7 @@ constructor(props) {
   render() {
     let { children } = this.props;
     let { getFieldDecorator } = this.props.form;
-    let {title,url} = this.props.recommend;
+    let {title,url} = this.props.navmanage;
     const formItemLayout = {
       labelCol: { span: 2 },
       wrapperCol: { span: 18 },
@@ -128,4 +128,4 @@ constructor(props) {
   }
 }
 
-export default Form.create()(AddRecommendModal);
+export default Form.create()(AddNavManageModal);

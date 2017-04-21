@@ -6,8 +6,9 @@ import {addBannerOption} from './models/Banner';
 import {recommendOption} from './models/Recom';
 import {caseManageOption} from './models/CaseManage'; 
 import {hotProductsOption} from './models/HotProduct';
+import {navRecomOption} from "./models/NavRecom";
 
-['HotProduct','CaseManage','Banner', 'Recom','Recommend', 'Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
+['NavManage','HotProduct','CaseManage','Banner', 'Recom','Recommend', 'Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
   exports[cls + 'Model'] = generate(cls.toLowerCase() + 's', cls + 'Service');
 });
 
@@ -17,6 +18,7 @@ recommendOption(exports["RecomModel"]);
 addBannerOption(exports['BannerModel']);
 hotProductsOption(exports['HotProductModel'])
 caseManageOption(exports["CaseManageModel"])
+navRecomOption(exports["NavManageModel"])
 
 exports['login'] = function () { return service.login() }
 exports['checkAccount'] = function () { return service.checkAccount() }

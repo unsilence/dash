@@ -7,7 +7,7 @@ const CheckboxGroup = Checkbox.Group;
     const name = ["摆件","布艺","灯具","壁饰","地毯","其他"];
     const plainOptions = ['Apple', 'Pear', 'Orange'];
     // const defaultCheckedList = ['Apple', 'Orange'];  // 设置默认选中的选项
-class HotProductsRadioModal extends Component {
+class NavManageRadioModal extends Component {
 constructor(props) {
     super(props);
     this.state = {
@@ -127,4 +127,4 @@ constructor(props) {
   }
 }
 
-export default Form.create()(HotProductsRadioModal);
+export default Form.create()(NavManageRadioModal);

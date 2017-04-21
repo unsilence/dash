@@ -33,10 +33,16 @@ function MainLayout({ children, location }) {
             browserHistory.push('/casemanages')
         })();
     }
-    let HotProductHandler = (e) =>{
+    let HotProductHandler = (e) =>{ 
         e.preventDefault();
         (async function() {
             browserHistory.push('/hotproducts')
+        })();
+    }
+    let NavManage = (e) =>{ 
+        e.preventDefault();
+        (async function() {
+            browserHistory.push('/navmanages')
         })();
     }
   return (
@@ -54,7 +60,7 @@ function MainLayout({ children, location }) {
           <Button onClick = {RecommendHandler}>推荐管理</Button>
           <Button onClick = {CaseManageHandler}>案例管理</Button>
           <Button onClick = {HotProductHandler}>热品管理</Button>
-          <Button>导航栏管理</Button>
+          <Button onClick = {NavManage}>导航栏管理</Button>
           <Button onClick={handleSubmit}>退出</Button>
       </Header>
       <Content className={styles.layout_body_wrap}>

@@ -2,11 +2,11 @@ import React ,{ Component }from 'react';
 import { connect } from 'dva';
 import {Row,Col,Button,Icon ,Radio} from 'antd';
 import { routerRedux } from 'dva/router';
-import HotProductsRadioModal from "./HotProductsRadioModal";
+import NavManageRadioModal from "./NavManageRadioModal";
 import styles from '../list.less';
 
 const RadioGroup = Radio.Group;
-export default class HotProductsRadio extends Component {
+export default class NavManageRadio extends Component {
   constructor(props) {
       super(props);
       this.state = {
@@ -42,9 +42,9 @@ export default class HotProductsRadio extends Component {
                       <Radio value={3}>地毯</Radio>
                       <Radio value={4}>窗帘</Radio>
                     </RadioGroup>
-                    <HotProductsRadioModal onOk={this.onOk}>
+                    <NavManageRadioModal onOk={this.onOk}>
                         <Icon type="select" onClick={this.props.disp}/>
-                    </HotProductsRadioModal>
+                    </NavManageRadioModal>
                 </Col>
            </Row>
         </span>     

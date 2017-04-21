@@ -9,8 +9,8 @@ constructor(props) {
     super(props);
     this.state = {
       visible: false,
-      banner :this.props.banner,
-      imageUrl:this.props.banner?this.props.banner.image:null
+      hotproduct :this.props.hotproduct,
+      imageUrl:this.props.hotproduct?this.props.hotproduct.image:null
     };
   }
 

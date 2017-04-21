@@ -15,7 +15,7 @@ async function request(url, dt) {
     console.log(url, "RETRUN:", data)
     return ret;
 }
-['Recommend','Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
+['Nav','Recommend','Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
     exports[cls + 'Service'] = {
         fetch({ page = 1 }) {
             return request(`/api/${cls}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 10, startPos: 10 * (page - 1) });
@@ -63,7 +63,7 @@ function getMapByList(list) {
     return tempMap
 }
 
-['Color', 'Country', 'Brand', 'Serial', 'Category', 'Attribute','Recommend'].map(v => {
+['Color', 'Country', 'Brand', 'Serial', 'Category', 'Attribute','Recommend','Nav'].map(v => {
     exports[`get${v}Map`] = async function (v) {
         let result = await request(`/api/${v}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 10000000, startPos: 0 })
         let list = result.data.data.list
@@ -74,7 +74,7 @@ function getMapByList(list) {
 });
 
 //带分页 有条件查询
-['Recom','Banner','CaseManage','HotProduct'].map(v => {
+['Recom','Banner','CaseManage','HotProduct','Nav'].map(v => {
     exports[`fetch${v}Page`] = async function (v,filter,page) {
         let opt = { orderBy: { cnum: -1 }, limit: 10, startPos: 0 ,filter:filter};
         return await request(`/api/${v}/fetch?token=${localStorage.token}`, {filter:filter,page});
