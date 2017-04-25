@@ -23,12 +23,19 @@ export default class NavManageRadio extends Component {
     change(this.state.value,{...this.state});
   }
   onOk = (value) => {
-    console.log(value); // 从radio 组件获取的选中信息
-    this.setState({
-      childValue : value
-    })
+    const { okHandler } = this.props;
+      okHandler(value);
+    // this.setState({
+    //   childValue : value
+    // })
+
   }
   render(){
+    const { categoryMap ,navMap ,tablist} = this.props;
+    let dataArr = [];
+    for (let item in categoryMap) {
+      dataArr.push(categoryMap[item])
+    }
     return (
         <span>
           <Row type="flex" justify="start" gutter={10} style={{marginBottom : "10px" ,marginTop : "10px"}}>
@@ -37,14 +44,20 @@ export default class NavManageRadio extends Component {
                 </Col>
                 <Col span={18} className="gutter-row">
                     <RadioGroup onChange={this.changeHandler} value={this.state.value}>
-                      <Radio value={1}>摆件</Radio>
-                      <Radio value={2}>灯饰</Radio>
-                      <Radio value={3}>地毯</Radio>
-                      <Radio value={4}>窗帘</Radio>
+                    {
+                      dataArr.map((item,index) => {
+                        return (
+                            item.parentId? "" : <Radio value={item.name} key={item._id}>{item.name}</Radio>
+                          )
+                      })
+                    }      
                     </RadioGroup>
-                    <NavManageRadioModal onOk={this.onOk}>
-                        <Icon type="select" onClick={this.props.disp}/>
+                    <NavManageRadioModal onOk={this.onOk} parentList={dataArr} navMap={navMap} tablist={tablist}>
+                        <Icon type="select"/>
                     </NavManageRadioModal>
+                </Col>
+                <Col span={2}>
+                    <Button style={{marginRight : "16px"}}>更新导航栏</Button>
                 </Col>
            </Row>
         </span>     

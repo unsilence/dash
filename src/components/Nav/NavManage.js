@@ -6,8 +6,7 @@ import NavManageRadio from "./NavManageRadio";
 import styles from '../list.less';
 let PAGE_SIZE = 10
 import NavManageModal from './NavManageModal.js';
-function NavManage({ dispatch, list: dataSource, loading, total, page: current }) {
-
+function NavManage({ dispatch, list: dataSource, loading, total, page: current ,categoryMap ,navMap,data}) {
   function deleteHandler(itm) {
       console.log('deleteHandler',itm)
     dispatch({
@@ -38,9 +37,15 @@ function NavManage({ dispatch, list: dataSource, loading, total, page: current }
       }
 
   }
-  function disp () {
-    console.log("0000000000000000000000000000000000000000000");
-  }
+  function okHandler(values) {
+    console.log(values);
+    if(values){
+      dispatch({
+          type: 'navmanages/addNav',
+          payload: { id : values.parentId ,  values},
+      })
+    }
+  } 
   const columns = [
     {
       title: '序号',
@@ -94,11 +99,11 @@ function NavManage({ dispatch, list: dataSource, loading, total, page: current }
               <Button style={{marginRight : "16px"}}>历史热品</Button>
               <Button style={{marginRight : "16px"}}>操作日志</Button>
               <NavManageModal navmanage={{}} onOk={editHandler.bind(null,'')}>
-                <Button>添加热品</Button>
+                <Button>添加资源</Button>
               </NavManageModal>
             </Col>
         </Row>
-        <NavManageRadio change={editHandler} disp={disp}/>
+        <NavManageRadio change={editHandler} categoryMap={categoryMap} navMap={navMap} tablist={dataSource} okHandler={okHandler.bind(null)}/>
         <Table
           columns={columns}
           dataSource={dataSource}
@@ -120,13 +125,14 @@ function NavManage({ dispatch, list: dataSource, loading, total, page: current }
 
 function mapStateToProps(state) {
   console.log(state);
-  const {list, total, page ,categoryMap} = state.navmanages;
+  const {list, total, page ,categoryMap ,navMap,data} = state.navmanages;
   return {
     loading: state.loading.models.navmanages,
     list,
     total,
     page,
-    categoryMap
+    categoryMap,
+    navMap,
   };
 }
 
