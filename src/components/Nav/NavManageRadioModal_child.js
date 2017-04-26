@@ -14,17 +14,20 @@ constructor(props) {
     };
   }
   getCheckObj(){
-    const { childrenList ,navMap} = this.props;
-    let ck = {};
-    for(let key in navMap){
-      ck[key] = true;
-      this.props.navMap[key].childIds.forEach(v =>{
-        ck[v] = true;
+    let { checkedChildIds , child} = this.props;
+    let obj = {};
+    if(checkedChildIds && checkedChildIds[child._id] && checkedChildIds[child._id].length > 0){
+      obj.checkedList = checkedChildIds[child._id];
+    }
+    return obj;
+  }
+  componentWillReceiveProps (nextProps) {
+    if(nextProps.childrenList !== undefined){
+      this.setState({
+        checkedList : nextProps.childrenList
       })
     }
-    return ck;
   }
-
   getChildCheckItems(_ids){
     return _ids.filter(v => {return this.state.checkObj[v] !== undefined});
   }
@@ -33,12 +36,8 @@ constructor(props) {
   }
   showModelHandler = (e) => {
     if (e) e.stopPropagation();
-    const { childrenList } = this.props;
-    console.log(childrenList);
-    this.state.checkObj.checkedList = childrenList;
     this.setState({
-      visible: true,
-      checkObj : this.state.checkObj
+      visible: true
     });
   };
 
@@ -80,7 +79,7 @@ constructor(props) {
     }
   }
   render() {
-    const { child , rootObj ,children ,childrenList} = this.props;
+    const { child , rootObj ,children ,childrenList ,checkedChildIds} = this.props;
     let childList = rootObj[child._id];
     const { getFieldDecorator } = this.props.form;
     // const { parentList ,navMap ,tablist} = this.props;

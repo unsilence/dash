@@ -37,13 +37,20 @@ function NavManage({ dispatch, list: dataSource, loading, total, page: current ,
       }
 
   }
-  function okHandler(values) {
+  function okHandler(id,values) {
     console.log(values);
     if(values){
-      dispatch({
-          type: 'navmanages/addNav',
-          payload: { id : values.parentId ,  values},
-      })
+      if(id){
+          dispatch({
+            type: 'navmanages/patchNav',
+            payload: { id, values },
+          });
+      }else {
+          dispatch({
+            type: 'navmanages/addNav',
+            payload: { id, values },
+          });
+      }
     }
   } 
   const columns = [

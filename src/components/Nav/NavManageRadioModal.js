@@ -20,26 +20,28 @@ constructor(props) {
     this.isCheckedHandler = this.isCheckedHandler.bind(this);
   }
   getCheckObj(){
-    let ck = {};
-    for(let key in this.props.navMap){
-      ck[key] = true;
-      this.props.navMap[key].childIds.forEach(v =>{
-        ck[v] = true;
+    let obj = {};
+    let { navMap } = this.props;
+    if(navMap){
+      navMap[0].nav.forEach(v => {
+        obj[v.categoryId] = true;
       })
     }
-    return ck;
+    return obj;
   }
-
   getChildCheckItems(_ids){
     return _ids.filter(v => {return this.state.checkObj[v] !== undefined});
   }
   componentWillReceiveProps(nextProps){
-    console.log('00000000',nextProps);
+    if(nextProps.navMap){
+      this.setState({
+        upData : nextProps.navMap[0].nav
+      })
+    }
   }
 
   componentWillUpdate(nextProps,  nextState){
       console.log(nextProps,  nextState);
-
   } 
 
 
@@ -70,10 +72,18 @@ constructor(props) {
 
   okHandler = () => {
     const { onOk } = this.props;
+     let temp = {};   
+    if(this.props.navMap && this.props.navMap.length　=== 1 ){
+    　temp = this.props.navMap[0];
+    }
+    else{
+      // return ;
+    }
+    console.log(this.state.upData);
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log(this.state.upData);
-        onOk(this.state.upData);
+        temp.nav = this.state.upData;
+        onOk(temp._id,temp);
         this.hideModelHandler();
       }
     });
@@ -83,25 +93,22 @@ constructor(props) {
 
       this.state.checkObj[item._id] = !this.state.checkObj[item._id];
       this.state.checkObj[item._id+"child"] = [];
-      if(this.state.checkObj[item._id])
-          {
-            rootObj[item._id].forEach(v => {
-              this.state.checkObj[v._id] = true;
-            })
+      if(this.state.checkObj[item._id]){
             for(let i = 0;i<rootObj[item._id].length;i++){
               this.state.checkObj[item._id+"child"].push(rootObj[item._id][i].value);
             }
-          }else{
-            this.state.checkObj[item._id+"child"] = [];
-          }
-        }else{
+      }else{
+          this.state.checkObj[item._id+"child"] = [];
+      }
+    }else{
           this.state.checkObj[item._id] = true;
           this.state.checkObj[item._id+"child"] = [];
           for(let i = 0;i<rootObj[item._id].length;i++){
             this.state.checkObj[item._id+"child"].push(rootObj[item._id][i].value);
           }
+          this.state.upData.push({"categoryId" : item._id ,"childIds" : this.state.checkObj[item._id+"child"]});
         }
-        console.log(this.state.checkObj[item._id+"child"]);
+        console.log(this.state.upData);
     }
     onChangeHandler = (checkedList,item,rootObj) => {
       this.state.checkObj[item._id+"child"] = checkedList;
@@ -132,12 +139,12 @@ constructor(props) {
         this.state.checkObj[item._id] = true;
         if(this.state.upData.length > 0){
           this.state.upData.forEach(v => {
-            if(v.parentId == item._id){
-                v.parentId = item._id;
-                v.children = valuesList;
+            if(v.categoryId === item._id){
+                v.categoryId = item._id;
+                v.childIds = valuesList;
                 this.state.checkObj[item._id+"child"] = valuesList;
             }else{
-                this.state.upData.push({"categoryId" : item._id , "childIds" : valuesList })
+                this.state.upData.push({"categoryId" : item._id , "childIds" : valuesList });
                 this.state.checkObj[item._id+"child"] = valuesList;
             }
           })
@@ -145,6 +152,8 @@ constructor(props) {
           this.state.upData.push({"categoryId" : item._id , "childIds" : valuesList})
           this.state.checkObj[item._id+"child"] = valuesList;
         }
+      }else{
+        this.state.checkObj[item._id] = false;
       }
       this.setState({checkObj:this.state.checkObj})
     }
@@ -164,28 +173,23 @@ constructor(props) {
   render() {
     let { children } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { parentList ,navMap ,tablist} = this.props;
+    const { parentList ,navMap ,tablist , childIdList ,checkedChildIds} = this.props;
+    console.log(parentList);
+    console.log(childIdList);
     // 选中子级的过滤方法 
-
-
-
+    let navOjb = null;
+    if(this.props.navMap && this.props.navMap.length === 1)
+    {
+      navOjb = this.props.navMap[0]._id;
+    }
 
     // 过滤处理单选弹出框的方法
-    let list = [];
-    let childList = [];
     let rootObj = {};
-    for(let i=0;i<parentList.length;i++){
-      if(!parentList[i].parentId){
-        list.push(parentList[i]);
-      }else{
-        childList.push(parentList[i])
-      }
-    }
-    for(let i =0;i<list.length;i++){
-      rootObj[list[i]._id] = [];
-      for(let j =0;j<childList.length;j++){
-        if(childList[j].parentId === list[i]._id){
-          rootObj[list[i]._id].push({label:childList[j].name,value:childList[j]._id})
+    for(let i =0;i<parentList.length;i++){
+      rootObj[parentList[i]._id] = [];
+      for(let j =0;j<childIdList.length;j++){
+        if(childIdList[j].parentId === parentList[i]._id){
+          rootObj[parentList[i]._id].push({label:childIdList[j].name,value:childIdList[j]._id})
         }
       }
     }
@@ -236,7 +240,7 @@ constructor(props) {
                         <FormItem className={styles.FormItem}>
                           {getFieldDecorator('radio_1')(
                             <div>{
-                              list.map((item,index) => (
+                              parentList.map((item,index) => (
                               <span key={index}>
                               <Checkbox
                                   indeterminate={rootObj[item._id].indeterminate}
@@ -245,7 +249,7 @@ constructor(props) {
                               >
                                   {item.name}
                               </Checkbox>
-                              <NavManageRadioModalChild child={item} rootObj={rootObj} onOk={(valuesList) => this.childOkCallback(valuesList,item,rootObj)} childrenList={this.state.checkObj[item._id+"child"]}>
+                              <NavManageRadioModalChild child={item} rootObj={rootObj} onOk={(valuesList) => this.childOkCallback(valuesList,item,rootObj)} childrenList={this.state.checkObj[item._id+"child"]} checkedChildIds={checkedChildIds}>
                                 <span style={{marginLeft : "0px",marginRight : "0px" , color : "#00f" }}>编辑</span>
                               </NavManageRadioModalChild>
                               </span>
