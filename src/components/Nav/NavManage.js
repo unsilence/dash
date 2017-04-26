@@ -23,7 +23,7 @@ function NavManage({ dispatch, list: dataSource, loading, total, page: current ,
   }
 
   function editHandler(id, values) {
-    console.log(id+'========================================================================'+values);
+    // console.log(id+'========================================================================'+values);
       if(id){
           dispatch({
             type: 'navmanages/patch',
@@ -38,7 +38,7 @@ function NavManage({ dispatch, list: dataSource, loading, total, page: current ,
 
   }
   function okHandler(id,values) {
-    console.log(values);
+    // console.log(values);
     if(values){
       if(id){
           dispatch({
@@ -53,6 +53,7 @@ function NavManage({ dispatch, list: dataSource, loading, total, page: current ,
       }
     }
   } 
+
   const columns = [
     {
       title: '序号',
@@ -131,7 +132,7 @@ function NavManage({ dispatch, list: dataSource, loading, total, page: current ,
 }
 
 function mapStateToProps(state) {
-  console.log(state);
+  // console.log(state);
   const {list, total, page ,categoryMap ,navMap,data} = state.navmanages;
   return {
     loading: state.loading.models.navmanages,

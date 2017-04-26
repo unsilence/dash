@@ -28,8 +28,6 @@ export default class NavManageRadio extends Component {
     }
   render(){
     const { categoryMap ,navMap ,tablist} = this.props;
-    console.log(categoryMap);
-    console.log(navMap);
     let dataArr = [];
     let parentList = [];
     let childIdList = [];

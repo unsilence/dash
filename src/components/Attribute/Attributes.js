@@ -52,7 +52,7 @@ function Attributes({ dispatch, list: dataSource, loading, total, page: current,
       if (_id === '' || !_id) {
         return '';
       }
-      return categoryMap[_id] ?categoryMap[_id].name :''
+      return categoryMap[_id] ?categoryMap[_id].name :'';
     }
     return cstr;
   }
