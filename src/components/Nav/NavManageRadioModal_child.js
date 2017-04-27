@@ -24,7 +24,7 @@ constructor(props) {
   componentWillReceiveProps (nextProps) {
     if(nextProps.childrenList !== undefined){
       this.setState({
-        checkedList : nextProps.childrenList
+        checkObj : {"checkedList" : nextProps.childrenList}
       })
     }
   }

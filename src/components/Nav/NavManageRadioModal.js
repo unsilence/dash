@@ -6,6 +6,8 @@ import styles from '../item.less';
 import * as utils from '../utils.js';
 const FormItem = Form.Item;
 const CheckboxGroup = Checkbox.Group;
+var navParentIds;
+var _upData;
 class NavManageRadioModal extends Component {
   
   constructor(props) {
@@ -15,36 +17,49 @@ class NavManageRadioModal extends Component {
       visible: false,
       indeterminate: true,
       upData: [],
-      checkObj: this.getCheckObj(),
+      navOjb : [],
+      checkObj: {},
       text: "排序",
       sortShow: false
     };
     this.isCheckedHandler = this.isCheckedHandler.bind(this);
   }
-  getCheckObj() {
-    let obj = {};
-    let { navMap } = this.props;
-    if (navMap) {
-      navMap[0].nav.forEach(v => {
-        obj[v.categoryId] = true;
-      })
-    }
-    return obj;
-  }
+  // getCheckObj() {
+  //   let obj = {};
+  //   let { navMap } = this.props;
+  //   if (navMap) {
+  //     navMap[0].nav.forEach(v => {
+  //       obj[v.categoryId] = true;
+  //     })
+  //   }
+  //   return obj;
+  // }
   getChildCheckItems(_ids) {
     return _ids.filter(v => { return this.state.checkObj[v] !== undefined });
   }
-  componentWillReceiveProps(nextProps, nextState) {
-    console.log(nextProps, nextState)
-    // if(nextProps.navMap){
-    //   this.setState({
-    //     upData : nextProps.navMap[0].nav
-    //   })
-    // }
+  componentWillReceiveProps(nextProps) {
+    console.log(nextProps)
+    if(nextProps.navMap && nextProps.navMap[0]){
+    
+        this.state.upData = nextProps.navMap[0].nav;
+
+    }
+    if (this.props.navMap && this.props.navMap.length === 1) {
+      this.state.navOjb = ([].concat(...this.props.navMap.map(v => { return v.nav }))).map(c =>{return c.categoryId});
+      this.state.navOjb.sort();
+    }
+    this.state.navOjb.map(v => {
+      this.state.checkObj[v] = true;
+    })
   }
 
   componentWillUpdate(nextProps, nextState) {
-    // console.log(nextProps,  nextState);
+
+    if(typeof navParentIds ==  "object"){
+      // if(navParentIds.length > 0 ){
+        this.state.navOjb = navParentIds;
+      // }
+    }
   }
 
 
@@ -82,6 +97,8 @@ class NavManageRadioModal extends Component {
    
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        if(_upData != undefined)
+          this.state.upData = _upData;
         temp.nav = this.state.upData;
         onOk(temp._id, temp);
         this.hideModelHandler();
@@ -89,31 +106,69 @@ class NavManageRadioModal extends Component {
     });
   };
   onCheckAllChange = (e, item, rootObj) => {
-    if (item._id in this.state.checkObj) {
+    if(navParentIds == undefined){
+        navParentIds = this.state.navOjb;
+        navParentIds.sort();
+      }
+    if(_upData == undefined){
+      _upData = this.state.upData;
+    }
+    if (this.state.checkObj[item._id]) {
 
-      this.state.checkObj[item._id] = !this.state.checkObj[item._id];
+      // this.state.checkObj[item._id] = !this.state.checkObj[item._id];
+
+      navParentIds.indexOf(item._id) === -1 ? navParentIds.push(item._id) : navParentIds.splice(navParentIds.indexOf(item._id),1);
       this.state.checkObj[item._id + "child"] = [];
-      if (this.state.checkObj[item._id]) {
+      if (navParentIds.indexOf(item._id) !== -1) {
         for (let i = 0; i < rootObj[item._id].length; i++) {
           this.state.checkObj[item._id + "child"].push(rootObj[item._id][i].value);
         }
+        // let temp = this.state.upData;
+        // this.state.upData = [];
+        // temp.map((v,index) => {
+        //   if(this.state.navOjb.indexOf(v.categoryId) !== -1){
+        //     this.state.upData.push(v);
+        //   }
+        // })
+        if(_upData.length > 0){
+          _upData.map(v => {
+            if(v.categoryId === item._id){
+              v.childIds = this.state.checkObj[item._id + "child"];
+            }else{
+              _upData.push({ "categoryId": item._id, "childIds": this.state.checkObj[item._id + "child"] })
+            }
+          })
+        }else{
+          _upData.push({ "categoryId": item._id, "childIds": this.state.checkObj[item._id + "child"] })
+        }
+        
       } else {
         this.state.checkObj[item._id + "child"] = [];
+        _upData.map((v,index) => {
+          if(v.categoryId === item._id){
+            _upData.splice(index,1);
+          }
+        })
+        this.state.checkObj[item._id] = false;
       }
     } else {
-      this.state.checkObj[item._id] = true;
+      // this.state.checkObj[item._id] = true;
+      // navParentIds = this.state.navOjb;
+      navParentIds.indexOf(item._id) === -1 ? navParentIds.push(item._id) : navParentIds.splice(navParentIds.indexOf(item._id),1);
       this.state.checkObj[item._id + "child"] = [];
       for (let i = 0; i < rootObj[item._id].length; i++) {
         this.state.checkObj[item._id + "child"].push(rootObj[item._id][i].value);
       }
-      this.state.upData.push({ "categoryId": item._id, "childIds": this.state.checkObj[item._id + "child"] });
+      _upData.push({ "categoryId": item._id, "childIds": this.state.checkObj[item._id + "child"] });
+      this.state.checkObj[item._id] = true;
     }
+    console.log(this.state.checkObj[item._id + "child"]);
   }
-  onChangeHandler = (checkedList, item, rootObj) => {
-    this.state.checkObj[item._id + "child"] = checkedList;
-    checkedList.length > 0 ? this.state.checkObj[item._id] = true : this.state.checkObj[item._id] = false;
+  // onChangeHandler = (checkedList, item, rootObj) => {
+  //   this.state.checkObj[item._id + "child"] = checkedList;
+  //   checkedList.length > 0 ? this.state.checkObj[item._id] = true : this.state.checkObj[item._id] = false;
 
-  }
+  // }
   isCheckedHandler = (tabList, navMap) => {
     // console.log(navMap);
     const navArr = [];
@@ -134,25 +189,43 @@ class NavManageRadioModal extends Component {
     return checked;
   }
   childOkCallback = (valuesList, item, rootObj) => {
+    // if(!navParentIds){
+      navParentIds = this.state.navOjb;
+      // _upData = this.state.upData;
+    // }
     if (valuesList.length > 0) {
-      this.state.checkObj[item._id] = true;
-      if (this.state.upData.length > 0) {
-        this.state.upData.forEach(v => {
+      // this.state.checkObj[item._id] = true;
+      navParentIds.push(item._id);
+      navParentIds.sort();
+      if (_upData.length > 0) {
+        _upData.forEach(v => {
           if (v.categoryId === item._id) {
-            v.categoryId = item._id;
-            v.childIds = valuesList;
             this.state.checkObj[item._id + "child"] = valuesList;
+            v.childIds = valuesList;
           } else {
-            this.state.upData.push({ "categoryId": item._id, "childIds": valuesList });
+            _upData.push({ "categoryId": item._id, "childIds": valuesList });
             this.state.checkObj[item._id + "child"] = valuesList;
           }
         })
       } else {
-        this.state.upData.push({ "categoryId": item._id, "childIds": valuesList })
+        _upData.push({ "categoryId": item._id, "childIds": valuesList })
         this.state.checkObj[item._id + "child"] = valuesList;
       }
     } else {
-      this.state.checkObj[item._id] = false;
+      // this.state.checkObj[item._id] = false;
+      if(navParentIds.indexOf(item._id) !== -1){
+        navParentIds.splice(navParentIds.indexOf(item._id),1);
+        this.setState({
+          navOjb : navParentIds
+        })
+        let temp = _upData;
+        _upData = [];
+        temp.map((v,index) => {
+          if(this.state.navOjb.indexOf(v.categoryId) !== -1){
+            _upData.push(v);
+          }
+        })
+      }
     }
     this.setState({ checkObj: this.state.checkObj })
   }
@@ -169,17 +242,22 @@ class NavManageRadioModal extends Component {
       })
     }
   }
+  // editHandler = () => {
+  //   if(navParentIds !== undefined){
+  //     if(navParentIds.length <= 0){
+  //       navParentIds = this.state.navOjb;
+  //     }
+  //   }
+  // }
   render() {
     let { children } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { parentList, navMap, tablist, childIdList, checkedChildIds } = this.props;
-    // console.log(parentList);
-    // console.log(childIdList);
-    // 选中子级的过滤方法
-    let navOjb = [];
-    if (this.props.navMap && this.props.navMap.length === 1) {
-      navOjb = ([].concat(...this.props.navMap.map(v => { return v.nav }))).map(c =>{return c.categoryId});
-    }
+
+    // let navOjb = [];
+    // if (this.props.navMap && this.props.navMap.length === 1) {
+    //   navOjb = ([].concat(...this.props.navMap.map(v => { return v.nav }))).map(c =>{return c.categoryId});
+    // }
 
     // 过滤处理单选弹出框的方法
     let rootObj = {};
@@ -196,7 +274,7 @@ class NavManageRadioModal extends Component {
     //   labelCol: { span: 2 },
     //   wrapperCol: { span: 18 },
     // };
-    console.log(parentList ,navOjb,'----比较------')
+    console.log(parentList ,this.state.navOjb,'----比较------')
     return (
       <span>
         <span onClick={this.showModelHandler}>
@@ -208,31 +286,7 @@ class NavManageRadioModal extends Component {
           onOk={this.okHandler}
           onCancel={this.hideModelHandler}
           width={600}
-        >{/*
-        list.map((item,index) => 
-           (
-              <Form horizontal onSubmit={this.okHandler} key = {index}>
-                  <FormItem className={styles.FormItem} {...formItemLayout}>
-                      {getFieldDecorator('radio_1')(
-                      <div>
-                        <Checkbox
-                            indeterminate={rootObj[item._id].indeterminate}
-                            onChange={(e) => this.onCheckAllChange(e,item,rootObj)}
-                            checked={this.state.checkObj[item._id]}
-                        >
-                            {item.name}
-                        </Checkbox>
-                        <br />
-                        <CheckboxGroup options={rootObj[item._id]} value={this.state.checkObj[item._id+"child"]} onChange={(list) => this.onChangeHandler(list,item,rootObj)} key={index}/>
-                      </div>
-                      )}
-                  </FormItem>
-                </Form>
-          )
-        )
-        */}
-        
-
+        >
           <Form layout="horizontal" onSubmit={this.okHandler}>
             <Row type="flex" justify="end">
               <span style={{ marginRight: "20px" }} onClick={this.sortHandler}>{this.state.text}</span>
@@ -246,7 +300,7 @@ class NavManageRadioModal extends Component {
                         <Checkbox
                           indeterminate={rootObj[item._id].indeterminate}
                           onChange={(e) => this.onCheckAllChange(e, item, rootObj)}
-                          checked={navOjb.indexOf(item._id) !== -1 }
+                          checked={this.state.navOjb.indexOf(item._id) !== -1 }
                         >
                           {item.name}
                         </Checkbox>

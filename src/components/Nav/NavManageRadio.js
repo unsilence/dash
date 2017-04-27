@@ -11,7 +11,8 @@ export default class NavManageRadio extends Component {
       super(props);
       this.state = {
         value : 1,
-        childValue : null
+        childValue : null,
+        updata : {}
       };
     }
   changeHandler = (e) => {
@@ -23,9 +24,18 @@ export default class NavManageRadio extends Component {
     change(this.state.value,{...this.state});
   }
   onOk = (id,value) => {
+    this.setState({
+      updata : {id,value}
+    })
+  }
+  upData = () => {
     const { okHandler } = this.props;
-      okHandler(id,value);
+    if(this.state.updata.id && this.state.updata.value){
+      okHandler(this.state.updata.id,this.state.updata.value);
+    }else{
+      console.log("没有新的数据提交！");
     }
+  }
   render(){
     const { categoryMap ,navMap ,tablist} = this.props;
     let dataArr = [];
@@ -41,6 +51,7 @@ export default class NavManageRadio extends Component {
         }
       }
     }
+    console.log(navMap);
     if(navMap){
       if(navMap.length > 0 && navMap[0].nav.length > 0){
         for(let v of dataArr){
@@ -76,7 +87,7 @@ export default class NavManageRadio extends Component {
                     </NavManageRadioModal>
                 </Col>
                 <Col span={2}>
-                    <Button style={{marginRight : "16px"}} >更新导航栏</Button>
+                    <Button style={{marginRight : "16px"}} onClick={this.upData}>更新导航栏</Button>
                 </Col>
            </Row>
         </span>     
