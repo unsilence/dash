@@ -20,7 +20,8 @@ class NavManageRadioModal extends Component {
       navOjb : [],
       checkObj: {},
       text: "排序",
-      sortShow: false
+      sortShow: false,
+      sort : []
     };
     this.isCheckedHandler = this.isCheckedHandler.bind(this);
   }
@@ -46,7 +47,7 @@ class NavManageRadioModal extends Component {
     }
     if (this.props.navMap && this.props.navMap.length === 1) {
       this.state.navOjb = ([].concat(...this.props.navMap.map(v => { return v.nav }))).map(c =>{return c.categoryId});
-      this.state.navOjb.sort();
+      this.state.navOjb = Array.from(new Set(this.state.navOjb));
     }
     this.state.navOjb.map(v => {
       this.state.checkObj[v] = true;
@@ -109,12 +110,12 @@ class NavManageRadioModal extends Component {
   onCheckAllChange = (e, item, rootObj) => {
     if(navParentIds == undefined){
         navParentIds = this.state.navOjb;
-        navParentIds.sort();
+        navParentIds = Array.from(new Set(navParentIds));
       }
     if(_upData == undefined){
       _upData = this.state.upData;
     }
-    if (this.state.checkObj[item._id]) {
+    if (this.state.checkObj[item._id]) {  // 判断 一级分类是否被选中
 
       // this.state.checkObj[item._id] = !this.state.checkObj[item._id];
 
@@ -199,49 +200,95 @@ class NavManageRadioModal extends Component {
     if (valuesList.length > 0) {
       // this.state.checkObj[item._id] = true;
       navParentIds.push(item._id);
-      navParentIds.sort();
+      navParentIds = Array.from(new Set(navParentIds));
       if (_upData.length > 0) {
         _upData.forEach(v => {
           if (v.categoryId === item._id) {
             this.state.checkObj[item._id + "child"] = valuesList;
             v.childIds = valuesList;
+            this.state.checkObj[item._id] = true;
+            this.setState({
+              checkObj : this.state.checkObj
+            })
           } else {
             _upData.push({ "categoryId": item._id, "childIds": valuesList });
             this.state.checkObj[item._id + "child"] = valuesList;
+            this.state.checkObj[item._id] = true;
+            this.setState({
+              checkObj : this.state.checkObj
+            })
           }
         })
       } else {
         _upData.push({ "categoryId": item._id, "childIds": valuesList })
         this.state.checkObj[item._id + "child"] = valuesList;
-      }
-    } else {
-      // this.state.checkObj[item._id] = false;
-      if(navParentIds.indexOf(item._id) !== -1){
-        navParentIds.splice(navParentIds.indexOf(item._id),1);
+        this.state.checkObj[item._id] = true;
         this.setState({
-          navOjb : navParentIds
+          checkObj : this.state.checkObj
         })
+      }  // 二级分类确定返回的选定 数组 在大于 0 的情况下
+    } else {  // 二级分类确定返回的选定 数组 在 小于 0 的情况下
+      this.state.checkObj[item._id] = false;
+      if(navParentIds.indexOf(item._id) !== -1){  // 判断一级分类已选中的数组中有无该分类 这是有的情况
+        navParentIds.splice(navParentIds.indexOf(item._id),1);
+        this.state.checkObj[item._id + "child"] = [];
         let temp = _upData;
         _upData = [];
         temp.map((v,index) => {
           if(this.state.navOjb.indexOf(v.categoryId) !== -1){
             _upData.push(v);
+            this.state.checkObj[v.categoryId] = true;
+          }else{
+            this.state.checkObj[v.categoryId] = false;
           }
+        })
+        this.setState({
+          navOjb : navParentIds,
+          checkObj : this.state.checkObj
+        })
+      }else{  // 判断一级分类已选中的数组中有无该分类 这是无的情况
+        this.state.checkObj[item._id + "child"] = [];
+        let temp = _upData;
+        _upData = [];
+        temp.map((v,index) => {
+          if(this.state.navOjb.indexOf(v.categoryId) !== -1){
+            _upData.push(v);
+            this.state.checkObj[v.categoryId] = true;
+          }else{
+            this.state.checkObj[v.categoryId] = false;
+          }
+        })
+        this.setState({
+          navOjb : navParentIds,
+          checkObj : this.state.checkObj
         })
       }
     }
-    this.setState({ checkObj: this.state.checkObj })
+    // this.setState({ checkObj: this.state.checkObj })
   }
   sortHandler = () => {
+    let { parentList } = this.props;
     if (this.state.text === "排序") {
       this.setState({
         text: "勾选",
         sortShow: true
       })
+      parentList.map(v => {
+      if(this.state.navOjb.indexOf(v._id) !== -1){
+          this.state.sort.push(v);
+          this.setState({
+            sort : this.state.sort
+          })
+        }
+      })
     } else {
       this.setState({
         text: "排序",
         sortShow: false
+      })
+      this.state.sort = [];
+      this.setState({
+        sort : this.state.sort
       })
     }
   }
@@ -318,7 +365,7 @@ class NavManageRadioModal extends Component {
               <FormItem className={styles.FormItem}>
                 {getFieldDecorator('radio_1')(
                   <div>{
-                    list.map((item, index) => (
+                    this.state.sort.map((item, index) => (
                       <span key={index} style={{ padding: "10px", border: "1px solid #666", borderRadius: "5px" }}>
                         {item.name}
                       </span>

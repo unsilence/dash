@@ -10,12 +10,15 @@ constructor(props) {
     this.state = {
       indeterminate: true,
       checkObj:this.getCheckObj(),
-      text : "排序"
+      text : "排序",
+      sort : [],
+      sortIsShow : false
     };
   }
   getCheckObj(){
     let { checkedChildIds , child} = this.props;
     let obj = {};
+    obj.checkedList = [];
     if(checkedChildIds && checkedChildIds[child._id] && checkedChildIds[child._id].length > 0){
       obj.checkedList = checkedChildIds[child._id];
     }
@@ -68,13 +71,28 @@ constructor(props) {
     })
   }
   sortClickHandler = () => {
+     const { child , rootObj } = this.props;
+     let childList = rootObj[child._id];
+      console.log(this.state.sort);
     if(this.state.text === "排序"){
+      this.state.checkObj.checkedList.map(v => {
+        childList.map(l => {
+          if(v === l.value){
+            this.state.sort.push(l)
+          }
+        })
+     })
       this.setState({
-        text : "勾选"
+        text : "勾选",
+        sort : this.state.sort,
+        sortIsShow : true
       })
     }else{
+      this.state.sort = [];
       this.setState({
-        text : "排序"
+        text : "排序",
+        sort : this.state.sort,
+        sortIsShow : false
       })
     }
   }
@@ -121,13 +139,25 @@ constructor(props) {
           <Form layout="vertical" onSubmit={this.okHandler}>
             <Row type="flex" justify="end">
                 <span style={{marginRight:"20px" }} onClick={this.sortClickHandler}>{this.state.text}</span>
-            </Row> 
+            </Row> {
+              !this.state.sortIsShow ?
             <FormItem className={styles.FormItem}>
                 <div>
                   <CheckboxGroup options={childList} value={this.state.checkObj.checkedList} onChange={this.onChangeHandler}/>            
                 </div>
-            </FormItem>
-          </Form>
+            </FormItem> :
+            <FormItem className={styles.FormItem}>
+                {getFieldDecorator('radio_1')(
+                  <div>{
+                    this.state.sort.map((item, index) => (
+                      <span key={index} style={{ padding: "10px", border: "1px solid #666", borderRadius: "5px" }}>
+                        {item.label}
+                      </span>
+                    ))
+                  }</div>
+                )}
+              </FormItem>
+             } </Form>
         </Modal>
       </span>
     );
