@@ -97,8 +97,9 @@ class NavManageRadioModal extends Component {
    
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        if(_upData != undefined)
+        if(_upData != undefined){
           this.state.upData = _upData;
+        }
         temp.nav = this.state.upData;
         onOk(temp._id, temp);
         this.hideModelHandler();
@@ -162,7 +163,6 @@ class NavManageRadioModal extends Component {
       _upData.push({ "categoryId": item._id, "childIds": this.state.checkObj[item._id + "child"] });
       this.state.checkObj[item._id] = true;
     }
-    console.log(this.state.checkObj[item._id + "child"]);
   }
   // onChangeHandler = (checkedList, item, rootObj) => {
   //   this.state.checkObj[item._id + "child"] = checkedList;
@@ -189,9 +189,12 @@ class NavManageRadioModal extends Component {
     return checked;
   }
   childOkCallback = (valuesList, item, rootObj) => {
-    // if(!navParentIds){
+    if(navParentIds == undefined){
       navParentIds = this.state.navOjb;
-      // _upData = this.state.upData;
+    }
+    if(_upData == undefined){
+      _upData = this.state.upData;
+    }
     // }
     if (valuesList.length > 0) {
       // this.state.checkObj[item._id] = true;

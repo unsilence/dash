@@ -30,7 +30,7 @@ export default class NavManageRadio extends Component {
   }
   upData = () => {
     const { okHandler } = this.props;
-    if(this.state.updata.id && this.state.updata.value){
+    if(this.state.updata.value){
       okHandler(this.state.updata.id,this.state.updata.value);
     }else{
       console.log("没有新的数据提交！");
