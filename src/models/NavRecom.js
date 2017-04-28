@@ -2,11 +2,11 @@ import * as service from './../services';
 
 export var navRecomOption = function (nav) {
 
-    nav.effects.fetch = function* ({ payload: { page } }, { call, put }) {
+    nav.effects.fetch = function* ({ payload: { page} }, { call, put }) {
         const categoryMap = yield call(service["getCategoryMap"], 'Category');  // 获取类型的数据
         const navMap = yield call(service["NavService"].fetch, {page});
         // 无条件的
-        const navmanages = yield call(service["fetchNavPage"], 'Recommend', { "rtype": "5" },{page});
+        const navmanages = yield call(service["fetchNavPage"], 'Recommend', { "rtype": "5"},{page});
         const rd = { data: navmanages.data.data.list, total: navmanages.data.data.count, page: parseInt(page) ,categoryMap : categoryMap ,navMap : navMap.data.data.list}
         yield put({ type: 'save22', payload: rd });
     }
