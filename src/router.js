@@ -21,6 +21,7 @@ import Stock from "./routes/Stock";
 import HotProducts from './routes/HotProducts';
 import * as Banner  from "./routes/Banners.js";
 
+
 function RouterConfig({ history }) {
   return (
     <Router history={history}>
