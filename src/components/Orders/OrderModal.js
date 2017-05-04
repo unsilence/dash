@@ -89,8 +89,9 @@ class OrderEditModal extends Component {
     })
   }
   render() {
-    const { children } = this.props;
+    const { children , projectData } = this.props;
     const { current } = this.state;
+    console.log(projectData);
     // const formItemLayout = {
     //   labelCol: { span: 6 },
     //   wrapperCol: { span: 14 },
@@ -165,17 +166,18 @@ class OrderEditModal extends Component {
               </Col>
             </Row>
           }
+          maskClosable={false}
         >
           <Row type="flex" justify="start" gutter={20} style={{marginTop : "10px" , marginBottom : "10px"}}>
-            <Col span={4}>订单编号:</Col>
-            <Col span={4}>联系人:</Col>
-            <Col span={4}>联系电话:</Col>
-            <Col span={4}>创建时间:</Col>
-            <Col span={4}>上门时间:</Col>
+            <Col span={4}>订单编号:{projectData.orderNum}</Col>
+            <Col span={4}>联系人:{projectData.designerName}</Col>
+            <Col span={4}>联系电话:{projectData.designerPhone}</Col>
+            <Col>创建时间:{projectData.createAt}</Col>
+            <Col span={4}>上门时间:{projectData.doorTime}</Col>
           </Row>
           <Row type="flex" justify="start" gutter={20}>
-            <Col span={4}>上门地址:</Col>
-            <Col span={4}>备注信息:</Col>
+            <Col span={4}>上门地址:{projectData.address}</Col>
+            <Col>备注信息:{projectData.note}</Col>
           </Row>
           <Row type="flex" justify="start" gutter={20} style={{marginTop : "20px" , marginBottom : "50px"}}>
               <Steps current={current}>

@@ -7,8 +7,10 @@ import {recommendOption} from './models/Recom';
 import {caseManageOption} from './models/CaseManage'; 
 import {hotProductsOption} from './models/HotProduct';
 import {navRecomOption} from "./models/NavRecom";
+import {editOrderOption} from "./models/Order.js";
 
-['NavManage','HotProduct','CaseManage','Banner', 'Recom','Recommend', 'Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
+
+['ProjectInfo','NavManage','HotProduct','CaseManage','Banner', 'Recom','Recommend', 'Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
   exports[cls + 'Model'] = generate(cls.toLowerCase() + 's', cls + 'Service');
 });
 
@@ -19,6 +21,7 @@ addBannerOption(exports['BannerModel']);
 hotProductsOption(exports['HotProductModel'])
 caseManageOption(exports["CaseManageModel"])
 navRecomOption(exports["NavManageModel"])
+editOrderOption(exports["OrderModel"])
 
 exports['login'] = function () { return service.login() }
 exports['checkAccount'] = function () { return service.checkAccount() }

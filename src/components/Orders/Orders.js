@@ -8,8 +8,8 @@ import { browserHistory } from 'dva/router';
 let PAGE_SIZE = 10
 import OrderEditModal from './OrderModal.js';
 
-function Orders({ dispatch, list: dataSource, loading, total, page: current }) {
-
+function Orders({ dispatch, list: dataSource, loading, total, page: current}) {
+console.log(dataSource);
   function deleteHandler(itm) {
     console.log('deleteHandler',itm)
     dispatch({
@@ -25,62 +25,73 @@ function Orders({ dispatch, list: dataSource, loading, total, page: current }) {
     }));
   }
 
-  function editHandler(e,id, values) {
-    if(id){
-      dispatch({
-        type: 'orders/patch',
-        payload: { id, values },
-      });
-    }else {
-      dispatch({
-        type: 'orders/add',
-        payload: { id, values },
-      });
-    }
-
+  function editHandler(e) {
+    let id = "545656546548321832";
+    let values = {
+      skuNumList : [{ skuNum: "58eef3004c6fc72a6f2c53d5", count: 1, price: 1000,stocks: "" }],
+      totalPrice: "666666",
+      userId : "7758521",
+      state : "待审核",
+      note : "业主要求只能设计师进场",
+      orderNum : "1314521",
+      projectInfoId : "59098cf239e76c12c8b87b95",
+      refuseInfo : "拒绝理由"
+    };
+    // if(id){
+    //   dispatch({
+    //     type: 'orders/patch',
+    //     payload: { id, values },
+    //   });
+    // }else {
+    //   dispatch({
+    //     type: 'orders/add',
+    //     payload: { id, values },
+    //   });
+    // }
+    dispatch({
+      type : "orders/add",
+      payload : { id , values }
+    })
   }
 
-  const newData = [
-  {
-    "_id": 1,
-    "name": '胡彦斌',
-    "date": "2017/3/12",
-    "address": '西湖区湖底公园1号',
-    "_state" : "待审核",
-    "remarks" : "业主要求只能设计师进场"
-  },{
-    "_id": 2,
-    "name": '刘德华',
-    "date": "2017/3/12",
-    "address": '西湖区湖底公园1号',
-    "_state" : "待上门",
-    "remarks" : "业主要求只能设计师进场"
-  },{
-    "_id": 3,
-    "name": '郭富城',
-    "date": "2017/3/12",
-    "address": '西湖区湖底公园1号',
-    "_state" : "结算完成",
-    "remarks" : "只拍照，不售卖"
+  function addProject () {
+    let id = "123";
+    let values = {
+          name: "工程名称",
+          designerName: "设计师名称",
+          designerPhone: "18911337833",
+          designerDepartment: "设计部门",
+          address:"地址",
+          doorTime:"上门时间2017-5-5",
+          days:"天数",
+          area:"面积",
+          schedule:"0", // 订单进度
+          note: "业主只许可4个人以下进入房间",
+          userId:"管理员ID"  // 来验证是否有审核资格
+      };
+
+      dispatch({
+        type : "orders/addPerject",
+        payload  : { id , values}
+      })
   }
-  ]
 
   const columns = [{
     title : "ID",
-    dataIndex : "_id",
-    key : "_id"
+    dataIndex : "orderNum",
+    key : "orderNum"
   },{
     title : "预约地址",
     dataIndex : "address",
-    key : "1"
+    key : "address"
   },{
     title : "设计师",
-    dataIndex : "name",
-    key : "name"
+    dataIndex : "designerName",
+    key : "designerName"
   },{
     title: '上门时间',
-    dataIndex: 'date',
-    key : "date"
+    dataIndex: 'doorTime',
+    key : "doorTime"
   // specify the condition of filtering result
   // here is that finding the name started with `value`
   // onFilter: (value, record) => record.name.indexOf(value) === 0,
@@ -88,21 +99,21 @@ function Orders({ dispatch, list: dataSource, loading, total, page: current }) {
     // filterIcon : <Icon type="search" />
 }, {
   title: '订单状态',
-  dataIndex: '_state',
-  key : "_state",
+  dataIndex: 'state',
+  key : "state",
+   // render : (text,data) => (<span>{projectMap[data.projectInfoId].state}</span>)
 
 },{
     title : "备注",
-    dataIndex : "remarks",
-    key : "remarks"
+    dataIndex : "note",
+    key : "note"
   },
  {
   title: '操作',
-  dataIndex: 'toDo',
-  key : "toDo",
+  key : "_id",
   render : (text,data) => (
       <span>
-        <OrderEditModal text={text} data={data}>
+        <OrderEditModal text={text} projectData={data}>
           <Button>编辑</Button>
         </OrderEditModal>
       </span>
@@ -121,12 +132,12 @@ return (
             />
           </Col>
           <Col span={1} pull={1} style={{marginBottom:"15px"}}>
-                <Button style={{marginLeft:"15px"}}>操作日志</Button>
+                <Button style={{marginLeft:"15px"}} onClick={editHandler}>操作日志</Button>
           </Col>
       </Row>
       <Table
         columns={columns}
-        dataSource={newData}
+        dataSource={dataSource}
         loading={loading}
         rowKey={record => record._id}
         pagination={false}
@@ -144,8 +155,8 @@ return (
 }
 
 function mapStateToProps(state) {
-
-  const { list, total, page } = state.orders;
+  console.log(state);
+  const { list, total, page} = state.orders;
   return {
     loading: state.loading.models.orders,
     list,
