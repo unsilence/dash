@@ -3,24 +3,10 @@ import { Modal, Input,Select ,Row ,Col , Iocn , Steps, Button, Table} from 'antd
 import styles from '../item.less';
 
 import AuditModal from "./auditModal.js";
+import { getProductNum } from '../utils'
 const Step = Steps.Step;
 // const FormItem = Form.Item;
-const data = [{
-  "key" : 1,
-  "_id" : 123456,
-  "name" : {
-    "img" : "无",
-    "text" : "loli纯天然羊毛手工地毯"
-  },
-  "props" : {"颜色" : "古典花纹" , "尺寸" : "200X180"},
-  "unitPrice" : 1320,
-  "num" : 3,
-  "favourable" : "无" ,
-  "otherMessage" : [{"date" : "2017.03.12" , "name" : "邸建" , "proJectName" : "朝阳大悦城别墅项目"},
-                    {"date" : "2017.03.13" , "name" : "邸建" , "proJectName" : "朝阳大悦城别墅项目"},
-                    {"date" : "2017.03.14" , "name" : "邸建" , "proJectName" : "朝阳大悦城别墅项目"}],
-  "states" : "已预约"
-}]
+
 class OrderEditModal extends Component {
 
   constructor(props) {
@@ -88,61 +74,103 @@ class OrderEditModal extends Component {
       status : this.state.status
     })
   }
+
+  sizeHandler = (skuPropsList , value) => {
+    let text = "";
+    let temp;
+    skuPropsList.forEach(v => {
+      v.attributes.forEach(t => {
+        if(t.attributeID === value._id && value.colors === undefined){
+          temp = t.value;
+        }
+      })
+    })
+    temp = JSON.parse(temp);
+    for(let a in temp){
+      text += temp[a]+"X";
+    }
+    text = text.substr(0,text.length-1);
+    return text;
+  }
+  colorHandler = (v) => {
+    let text = "";
+    v.forEach(p => {
+      if(p !== undefined){
+        text += p.name+"、";
+      }
+    })
+    text = text.substr(0,text.length-1);
+    return text;
+  }
   render() {
-    const { children , projectData } = this.props;
+    const { children , projectData , skuPropsList , skuProjectList ,categoryMap,skuattributeIDs ,dataSource } = this.props;
     const { current } = this.state;
-    console.log(projectData);
+    console.log(dataSource);
+    console.log(skuPropsList);
+    console.log(categoryMap);
+    console.log(skuProjectList);
     // const formItemLayout = {
     //   labelCol: { span: 6 },
     //   wrapperCol: { span: 14 },
     // };
     const columns = [{
       title : "商品编号",
-      key : "_id",
-      dataIndex : "_id"
+      key : "skuNum",
+      dataIndex : "skuNum",
+      render : (text ,data) => <span>{getProductNum(data.categoryId,categoryMap)+data.spu.productNum+text}</span>
     },{
       title : "名称",
-      render : (text,data) => (
-          <span key={data.name.text}>
-            {data.name.text}
-          </span>
-        )
+      dataIndex : "name",
+      render : (text,data) => <span style={{display:"block",width:"100%",height:"100%",lineHeight:"60px"}}><img src={data.images[0].url} style={{width:"60px",height:"60px",float:"left",marginRight:"10px"}}/>{text}</span>
     },{
       title : "属性",
       render : (text,data) => {
-        let dataArr = [];
-        for(let t in data.props){
-          dataArr.push(t);
-        }
-        return dataArr.map(v => (
-          <p key={data.props[v]}><label>{v+":"}</label><span>{data.props[v]}</span></p>
+        return skuattributeIDs.map(v => (
+          <p key={v.name}><label>{v.name+":"}</label><span>{v.colors !== undefined ? this.colorHandler(v.colors) : this.sizeHandler(skuPropsList,v)}</span></p>
         ))
       }
     },{
       title : "单价(元)",
-      key : "unitPrice ",
-      dataIndex : "unitPrice"
+      key : "price",
+      render : (text,data) => {
+        let price ="";
+        dataSource.forEach(t => {
+          t.skuNumList.map(v => {
+            if(v.skuNum === data._id){
+                price = v.price;
+            }
+          })
+        })
+        return <span>{price}</span>
+      }
     },{
       title : "数量",
-      key : "num",
-      dataIndex : "num"
+      key : "count",
+      render : (text,data) => {
+        let count = "";
+        dataSource.forEach(t => {
+          t.skuNumList.map(v => {
+            if(v.skuNum === data._id){
+                count = v.count;
+            }
+          })
+        })
+        return <span>{count}</span>
+      }
     },{
       title : "优惠",
       key : "favourable",
       dataIndex : "favourable"
     },{
       title : "其他预约信息",
+      key : "outo",
       render : (text,data) => {
-        return (
-          data.otherMessage.map(v => (
-            <p key={v.date}>{v.date + "/" + v.name + "/" + v.proJectName}</p>
-          ))
-        )
+          return  skuProjectList.map(v => (<p key={v.createAt}>{v.createAt.split("T")[0]+"/"+v.designerName+"/"+v.name}</p>))
       }
     },{
       title : "状态",
-      key : "states",
-      dataIndex : "states"
+      key : "state",
+      dataIndex : "state"
     }]
     return (
       <span>
@@ -191,7 +219,7 @@ class OrderEditModal extends Component {
           </Row>
           <Table
             columns={columns}
-            dataSource={data}
+            dataSource={skuPropsList}
             pagination={false}
           />
           <Row type="flex" justify="end" gutter={20} style={{marginTop : "20px"}}>

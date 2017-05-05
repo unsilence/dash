@@ -8,16 +8,17 @@ import { browserHistory } from 'dva/router';
 let PAGE_SIZE = 10
 import OrderEditModal from './OrderModal.js';
 
-function Orders({ dispatch, list: dataSource, loading, total, page: current}) {
-console.log(dataSource);
+function Orders({ dispatch, list: dataSource, loading, total, page: current ,skuProjectList ,skuPropsList , categoryMap,skuattributeIDs}) {
+  console.log(dataSource);
+  console.log(skuProjectList);
+  console.log(skuPropsList);
+  console.log(skuattributeIDs);
   function deleteHandler(itm) {
-    console.log('deleteHandler',itm)
     dispatch({
       type: 'orders/remove',
       payload: {id:itm._id},
     });
   }
-
   function pageChangeHandler(page) {
     dispatch(routerRedux.push({
       pathname: '/orders',
@@ -113,7 +114,13 @@ console.log(dataSource);
   key : "_id",
   render : (text,data) => (
       <span>
-        <OrderEditModal text={text} projectData={data}>
+        <OrderEditModal text={text} 
+                        projectData={data} 
+                        skuProjectList={skuProjectList} 
+                        skuPropsList={skuPropsList} 
+                        categoryMap={categoryMap}
+                        skuattributeIDs={skuattributeIDs}
+                        dataSource={dataSource}>
           <Button>编辑</Button>
         </OrderEditModal>
       </span>
@@ -156,12 +163,16 @@ return (
 
 function mapStateToProps(state) {
   console.log(state);
-  const { list, total, page} = state.orders;
+  const { list, total, page ,skuPropsList ,skuProjectList , categoryMap ,skuattributeIDs } = state.orders;
   return {
     loading: state.loading.models.orders,
     list,
     total,
     page,
+    skuPropsList,
+    skuProjectList,
+    categoryMap,
+    skuattributeIDs,
   };
 }
 
