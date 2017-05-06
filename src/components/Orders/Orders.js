@@ -8,7 +8,7 @@ import { browserHistory } from 'dva/router';
 let PAGE_SIZE = 10
 import OrderEditModal from './OrderModal.js';
 
-function Orders({ dispatch, list: dataSource, loading, total, page: current ,skuProjectList ,skuPropsList , categoryMap,skuattributeIDs}) {
+function Orders({ dispatch, list: dataSource, loading, total, page: current ,skuProjectList ,skuPropsList , categoryMap,skuattributeIDs ,_list}) {
   console.log(dataSource);
   console.log(skuProjectList);
   console.log(skuPropsList);
@@ -120,7 +120,10 @@ function Orders({ dispatch, list: dataSource, loading, total, page: current ,sku
                         skuPropsList={skuPropsList} 
                         categoryMap={categoryMap}
                         skuattributeIDs={skuattributeIDs}
-                        dataSource={dataSource}>
+                        dataSource={dataSource}
+                        dispatch={dispatch}
+                        itemId={data._id}
+                        _list={_list}>
           <Button>编辑</Button>
         </OrderEditModal>
       </span>
@@ -163,10 +166,11 @@ return (
 
 function mapStateToProps(state) {
   console.log(state);
-  const { list, total, page ,skuPropsList ,skuProjectList , categoryMap ,skuattributeIDs } = state.orders;
+  const { list, total, page ,skuPropsList ,skuProjectList , categoryMap ,skuattributeIDs ,_list} = state.orders;
   return {
     loading: state.loading.models.orders,
     list,
+    _list,
     total,
     page,
     skuPropsList,

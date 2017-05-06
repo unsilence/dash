@@ -11,6 +11,8 @@ class OrderEditModal extends Component {
 
   constructor(props) {
     super(props);
+    const { _list , itemId } = this.props; 
+
     this.state = {
       visible: false,
       current : 0,
@@ -24,6 +26,62 @@ class OrderEditModal extends Component {
       }
     };
 
+
+    if(_list[itemId].state.indexOf("失败") !== -1){
+      switch(_list[itemId].state){
+        case "提交审核失败":
+        this.state.status.status0 = "error";
+        break;
+        case "审核失败":
+        this.state.status.status1 = "error";
+        break;
+        case "物流确认失败":
+        this.state.status.status2 = "error";
+        break;
+        case "上门服务失败":
+        this.state.status.status3 = "error";
+        break;
+        case "点货失败":
+        this.state.status.status4 = "error";
+        break;
+        case "结算失败":
+        this.state.status.status5 = "error";
+        break;
+
+      }
+    }else{
+      switch(_list[itemId].state){
+        case "等待审核" :
+        this.state.current = 0;
+        break;
+        case "等待物流确认" :
+        this.state.current = 1;
+        break;
+        case "等待上门服务" :
+        this.state.current = 2;
+        break;
+        case "等待点货确认" :
+        this.state.current = 3;
+        break;
+        case "等待结算" :
+        this.state.current = 4;
+        break;
+        case "结算完成" :
+        this.state.current = 5;
+        break;
+      }
+    }
+    
+    let num;
+    for(let v in this.state.status){
+      if(this.state.status[v] === "error"){
+        num = parseInt(v.substring(v.length-1,v.length));
+      }
+    }
+    for(let k =0;k<num;k++){
+      let temp = "status"+k;
+      this.state.status[temp] = "finish";
+    }
     this.okHandler = this.okHandler.bind(this);
     this.hideModelHandler = this.hideModelHandler.bind(this);
   }
@@ -57,21 +115,87 @@ class OrderEditModal extends Component {
     // }
   };
   passHandler = (values) => {
+    const { _list , dispatch , itemId } = this.props; 
     console.log(values);
+    console.log(_list);
+    console.log(dispatch);
     const current = this.state.current+1
     if(this.state.current < 6){
       this.setState({
         current : current
       })
     }
+      switch(current){
+        case 0 :
+        _list[itemId].state = "等待审核";
+        break;
+        case 1 :
+        _list[itemId].state = "等待物流确认";
+        break;
+        case 2 :
+        _list[itemId].state = "等待上门服务";
+        break;
+        case 3 :
+        _list[itemId].state = "等待点货确认";
+        break;
+        case 4 :
+        _list[itemId].state = "等待结算";
+        break;
+        case 5 :
+        _list[itemId].state = "结算完成";
+        break;
+      }
+
+    _list[itemId].refuseInfo = values;
+    dispatch({
+      type : "orders/patch",
+      payload : {id : itemId , values : _list[itemId]}
+    })
+
   }
   noPassHandler = (values) => {
     console.log(values);
+    const { _list , dispatch , itemId } = this.props; 
+    // const current = this.state.current+1
     const current = this.state.current;
     const status = "status"+current;
     this.state.status[status] = "error";
     this.setState({
       status : this.state.status
+    })
+    let num;
+    for(let v in this.state.status){
+      if(this.state.status[v] === "error") {
+        num = parseInt(v.substring(v.length-1,v.length));
+      }
+    }
+
+    switch(num){
+        case 0:
+        _list[itemId].state = "提交审核失败";
+        break;
+        case 1:
+        _list[itemId].state = "审核失败";
+        break;
+        case 2:
+        _list[itemId].state = "物流确认失败";
+        break;
+        case 3:
+        _list[itemId].state = "上门服务失败";
+        break;
+        case 4:
+        _list[itemId].state = "点货失败";
+        break;
+        case 5:
+        _list[itemId].state = "结算失败";
+        break;
+
+      }
+      _list[itemId].refuseInfo = values;
+
+      dispatch({
+      type : "orders/patch",
+      payload : {id : itemId , values : _list[itemId]}
     })
   }
 
@@ -109,10 +233,8 @@ class OrderEditModal extends Component {
     console.log(skuPropsList);
     console.log(categoryMap);
     console.log(skuProjectList);
-    // const formItemLayout = {
-    //   labelCol: { span: 6 },
-    //   wrapperCol: { span: 14 },
-    // };
+    
+
     const columns = [{
       title : "商品编号",
       key : "skuNum",

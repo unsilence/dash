@@ -4,9 +4,9 @@ export var editOrderOption = function (orders) {
 
     orders.effects.fetch = function* ({ payload: { page } }, { call, put }) {
         // 无条件的 ProjectInfo
-        const orders = yield call(service["fetchOrderPage"], 'Order', {},{page});
-        let list = orders.data.data.list;  // 请求回来订单的数组列表
-
+        const orders_ = yield call(service["fetchOrderPage"], 'Order', {},{page});
+        let list = orders_.data.data.list;  // 请求回来订单的数组列表
+        let _list = yield call(service["getOrderMap"], 'Order');
         let skuIds = new Set();
         list.map(v => {v.skuNumList.map(t => {skuIds.add(t.skuNum)})});  // 得到suk列表的id数组
         let pids = list.map(v =>{return v.projectInfoId})  // 一个加载已有订单的项目信息ID 数组
@@ -88,7 +88,7 @@ export var editOrderOption = function (orders) {
                             v.doorTime = infoMap[v.projectInfoId].doorTime;
                             });
         // console.log(ProjectInfoData);
-        const rd = { data: list, total: orders.data.data.count, page: parseInt(page) , skuProjectList , skuPropsList ,categoryMap ,skuattributeIDs}
+        const rd = { data: list, total: orders_.data.data.count, page: parseInt(page) , skuProjectList , skuPropsList ,categoryMap ,skuattributeIDs ,_list}
         yield put({ type: 'save22', payload: rd });
     }
 
@@ -109,7 +109,7 @@ export var editOrderOption = function (orders) {
     orders.effects.patch = function* ({ payload: { id, values } }, { call, put, select }) {
         console.log('patch', { id })
         yield call(service['OrderService'].update, id, values);
-        const page = yield select(state => state['Order'].page);
+        const page = yield select(state => state['orders'].page);
         yield put({ type: 'fetch', payload: { page } });
     }
     orders.effects.addPerject = function* ({ payload: { id, values } }, { call, put, select }) {
