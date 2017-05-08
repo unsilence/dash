@@ -178,3 +178,107 @@ function trimRight(s){
 }
 
 exports["trim"] = trim;
+
+
+
+
+// 生成图片跟随鼠标移动方法
+let points = [];  // 存储点的数组
+function imgMove(url,record){
+  if(!url) {
+    return false;
+  }
+  let body_ = document.querySelector("body");
+  let img = document.createElement("img");
+  img.setAttribute("style","width:30px;height:30px;position:absolute;z-index:9999999999;pointer-events:none;");
+  body_.appendChild(img);
+  let addAfterImg = document.getElementById('addAffter');
+
+  var targetY=0, targetX=0 ;
+  var point = [];
+  var radio;
+  const parentDiv = document.getElementById('addAffterParent');
+  function moveHandler (e) {
+    img.style.left = e.clientX+"px";
+    img.style.top = e.clientY+"px";
+    img.src = "http://localhost:8000"+url;
+  }
+  /*获取元素的纵坐标*/
+function getTop(e){
+   var offset=e.offsetTop;
+   if(e.offsetParent!=null){
+     offset+=getTop(e.offsetParent);
+   }         
+   return offset;
+}
+/*获取元素的横坐标*/
+function getLeft(e){
+   var offset=e.offsetLeft;
+   if(e.offsetParent!=null){
+      offset+=getLeft(e.offsetParent);
+   } 
+   return offset;
+} 
+function mouseDownMoveHandler(me) {
+  if(me.clientX - targetX >= 0 && me.clientX - targetX <= 200 && me.clientY - targetY >= 0 && me.clientY - targetY <= 200){
+    points.forEach(v => {
+      if(v.childNodes[0].tagName === "INPUT" && v.childNodes[0].checked == true){
+        v.style.left = (me.clientX - targetX) + "px";
+        v.style.top = (me.clientY - targetY-10) + "px";
+      }
+    })
+  }
+}
+  function _click (e){
+    if(img.parentNode  === body_){
+          document.removeEventListener("mousemove",moveHandler,false);
+          body_.removeChild(img);
+              let element = document.getElementById('addAffter');
+              targetY = getTop(element);
+              targetX = getLeft(element);
+              let x = e.clientX;
+              let y = e.clientY;
+              let _point = document.createElement("span");
+              _point.setAttribute("style","position:absolute;left:"+(x-targetX-5)+"px;top:"+(y-targetY-10)+"px;display :block;"); //width:10px;height : 10px;border-radius:5px;background:red;
+              radio = document.createElement("input");
+              radio.type = "radio";
+              radio.name = "item";
+              radio.setAttribute("style","outline : none;")
+              radio.value = record._id;
+              radio.addEventListener("keydown",function(e){
+                if(e.keyCode == 46){
+                  let self = this;
+                  points.forEach((v,index) => {
+                    if(v.childNodes[0].checked == true){
+                      points.splice(index,1);
+                    }
+                  })
+                  console.log(points);
+                  parentDiv.removeChild(this.parentNode);
+                }
+              },false);
+              _point.appendChild(radio);
+              points.push(_point);
+              console.log(points);
+              // point.id  = record._id;
+              parentDiv.appendChild(_point);
+              console.log((x-targetX) +"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +(y-targetY));
+              console.log(record);
+
+    }else{
+      document.removeEventListener("click",_click,false);
+    }
+    }
+  parentDiv.addEventListener("mousedown",function(event){
+      if(event.target.tagName === "INPUT" && event.target.name === "item" && event.target.checked){
+          parentDiv.addEventListener("mousemove",mouseDownMoveHandler,false);
+      }
+  },false);
+  parentDiv.addEventListener("mouseup",function(event){
+      parentDiv.removeEventListener("mousemove",mouseDownMoveHandler,false);
+  },false);
+  document.addEventListener("mousemove",moveHandler,false);
+  addAfterImg.addEventListener("click",_click,false);
+}
+
+exports["imgMove"] = imgMove;

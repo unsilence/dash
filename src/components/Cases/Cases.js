@@ -1,13 +1,15 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Table, Pagination, Popconfirm ,Row,Col,Button,Icon} from 'antd';
+import { Table, Pagination, Popconfirm ,Row,Col,Button,Icon,Input} from 'antd';
 import { routerRedux } from 'dva/router';
 import styles from '../list.less';
 let PAGE_SIZE = 10
 import CaseModal from './CaseModal';
 import moment from 'moment';
-function Cases({ dispatch, list: dataSource, loading, total, page: current }) {
 
+import RecommendNum from "./recommendNumComponent.js";
+import Propelling from "./propelling.js";
+function Cases({ dispatch, list: dataSource, loading, total, page: current }) {
   function deleteHandler(itm) {
       console.log('deleteHandler',itm)
     dispatch({
@@ -78,22 +80,17 @@ function Cases({ dispatch, list: dataSource, loading, total, page: current }) {
       render: text => <span>{moment(new Date(text)).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
-      title: '配图',
-      dataIndex: 'collocatImg',
-      key: 'collocatImg',
-      render: text =><img style={{width:"50px",heigth:"50px"}} src={'/api/file/'+text}/>,
-    },
-    {
       title: '操作',
       key: 'operation',
       render: (text, cases) => (
         <span className={styles.operation2}>
-          <CaseModal case={cases} onOk={editHandler.bind(null, cases._id)}>
-            <Icon type="edit" className={styles.icon}/>
-          </CaseModal>
-          <Popconfirm title={"确定要删除案例【"+cases.headline+"】吗？"} onConfirm={deleteHandler.bind(null, cases)}>
-            <Icon type="delete" className={styles.icon}/>
-          </Popconfirm>
+          <Row>
+            <RecommendNum dispatch={dispatch} />
+            <Propelling dispatch={dispatch} />
+            <CaseModal case={cases} onOk={editHandler.bind(null, cases._id)}>
+              <Button>编辑</Button>
+            </CaseModal>
+          </Row>
         </span>
       ),
     },
