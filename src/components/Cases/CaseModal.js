@@ -55,7 +55,7 @@ class CaseEditModal extends Component {
 
   constructor(props) {
     super(props);
-
+    console.log(this.props.cases);
     this.images = [];
     this.state = {
       visible: false,
@@ -63,10 +63,10 @@ class CaseEditModal extends Component {
       tags: [],
       content: "",
 
-      imageUrl: props.case.collocatImg,
+      imageUrl: this.props.cases.collocatImg,
       previewVisible: false,
       previewImage: '',
-      fileList: this.props.case.images || [],
+      fileList: this.props.cases.images || [],
     };
   }
 
@@ -111,13 +111,13 @@ class CaseEditModal extends Component {
     this.setState({ tags });
   }
   okHandler = (e) => {
-    const { onOk } = this.props;
+    const { onOk , cases } = this.props;
     let item = Object.assign({}, this.props.record);
 
     this.props.form.validateFields((err, values) => {
       if (!err) {
         values.images = this.images;
-        onOk(values);
+        onOk(cases._id , values);
         this.hideModelHandler();
       }
     });
@@ -168,18 +168,19 @@ class CaseEditModal extends Component {
     console.log("aaaaaaaaaaaaaaa");
   }
   render() {
-    const { children } = this.props;
+    const { children ,cases } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { _id, urladdress, projectName, headline, key, caseNote, images, caseDoormodel, caseSpace, caseStyle, createAt, updateAt } = this.props.case;
+    // const { _id, urladdress, projectName, headline, key, caseNote, images, caseDoormodel, caseSpace, caseStyle, createAt, updateAt } = this.props.case;
+    console.log(cases);
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
     console.log(this.state.fileList);
     const imageUrl = this.state.imageUrl;
-    const casespaceButton = caseSpaces.map(t => <RadioButton value={t.value}>{t.value}</RadioButton>);
-    const casemodelButton = caseModels.map(v => <RadioButton value={v.value}>{v.value}</RadioButton>);
-    const casestyleButton = caseStyles.map(a => <RadioButton value={a.value}>{a.value}</RadioButton>);
+    // const casespaceButton = ;
+    // const casemodelButton = ;
+    // const casestyleButton = ;
     const column = [{
       title : "图片",
       key : "url",
@@ -228,8 +229,8 @@ class CaseEditModal extends Component {
     key : "price"
   },{
     title : "操作",
-    key : "_id",
-    dataIndex :"_id",
+    key : "todo",
+    dataIndex :"todo",
     render : (text,data) => {
       return (<Popconfirm placement="left" title={text} onConfirm={(text) => this.confirm(text)} okText="确定" cancelText="取消">
                 <span>删除</span>
@@ -270,7 +271,7 @@ class CaseEditModal extends Component {
           {children}
         </span>
         <Modal
-          title={_id ? "修改：" : '新建'}
+          title={cases._id ? "修改：" : '新建'}
           visible={this.state.visible}
           onOk={this.okHandler}
           onCancel={this.hideModelHandler}
@@ -279,17 +280,17 @@ class CaseEditModal extends Component {
         <Form horizontal onSubmit={this.okHandler}>
           <Row justify="space-between">
             <Col span={12}>
-                <FormItem className={styles.FormItem} {...formItemLayout} label="URL" > {getFieldDecorator('urladdress', { rules: [{ required: true, message: '请输入URL!' }], initialValue: urladdress })(<Input size="small" />)}</FormItem>
-                <FormItem className={styles.FormItem} {...formItemLayout} label="项目名称" > {getFieldDecorator('projectName', { rules: [{ required: true, message: '请输入项目名称!' }], initialValue: projectName })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="标题" > {getFieldDecorator('headline', { rules: [{ required: true, message: '请输入标题!' }], initialValue: headline })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >
-              {getFieldDecorator('key', { rules: [{ required: true, message: '请输入搜索关键字!' }], initialValue: [] })(<TagsInput value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v) }} />)}
-            </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="案例介绍" >
-              {getFieldDecorator('caseNote', { rules: [{ required: true, message: '请输入案例介绍内容!' }], initialValue: caseNote })
-                (<Editor icons={icons} value={this.state.content} defaultValue="<p>提示文本</p>" onChange={this.handleAlter.bind(this)} plugins={plugins} />)}
-            </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="添加软装后案例图(长X宽)" >
+                <FormItem className={styles.FormItem} {...formItemLayout} label="URL" > {getFieldDecorator('urladdress', { rules: [{ required: true, message: '请输入URL!' }], initialValue: cases.urladdress })(<Input size="small" />)}</FormItem>
+                <FormItem className={styles.FormItem} {...formItemLayout} label="项目名称" > {getFieldDecorator('projectName', { rules: [{ required: true, message: '请输入项目名称!' }], initialValue: cases.projectName })(<Input size="small" />)}</FormItem>
+                <FormItem className={styles.FormItem} {...formItemLayout} label="标题" > {getFieldDecorator('headline', { rules: [{ required: true, message: '请输入标题!' }], initialValue: cases.headline })(<Input size="small" />)}</FormItem>
+                <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >
+                  {getFieldDecorator('key', { rules: [{ required: true, message: '请输入搜索关键字!' }], initialValue: [] })(<TagsInput value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v) }} />)}
+                </FormItem>
+                <FormItem className={styles.FormItem} {...formItemLayout} label="案例介绍" >
+                  {getFieldDecorator('caseNote', { rules: [{ required: true, message: '请输入案例介绍内容!' }], initialValue: cases.caseNote })
+                (<Editor icons={icons} value={this.state.content} onChange={this.handleAlter.bind(this)} plugins={plugins} />)}
+                </FormItem>
+              <FormItem className={styles.FormItem} {...formItemLayout} label="添加软装后案例图(长X宽)" >
               {(img || []).length > 0 ? afterAdd : <Upload
                 action="/api/file/upload"
                 listType="picture-card"
@@ -311,16 +312,16 @@ class CaseEditModal extends Component {
             </FormItem>
             </Col>
             <Col span={12}>
-                <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例户型" > {getFieldDecorator('caseDoormodel', { rules: [{ required: true, message: '请选择案例户型!' }], initialValue: caseDoormodel })(<RadioGroup defaultValue="别墅" size="default">
-                  {casemodelButton}
+                <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例户型" > {getFieldDecorator('caseDoormodel', { rules: [{ required: true, message: '请选择案例户型!' }], initialValue: cases.caseDoormodel })(<RadioGroup  size="default">
+                  {caseModels.map((v,index) => <RadioButton value={v.value} key={index}>{v.value}</RadioButton>)}
                 </RadioGroup>)}
                 </FormItem>
-                <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例空间" > {getFieldDecorator('caseSpace', { rules: [{ required: true, message: '请选择案例空间!' }], initialValue: caseSpace })(<RadioGroup defaultValue="客厅" size="default">
-                  {casespaceButton}
+                <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例空间" > {getFieldDecorator('caseSpace', { rules: [{ required: true, message: '请选择案例空间!' }], initialValue: cases.caseSpace })(<RadioGroup size="default">
+                  {caseSpaces.map((t,index) => <RadioButton value={t.value} key={index}>{t.value}</RadioButton>)}
                 </RadioGroup>)}
                 </FormItem>
-                <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例风格" > {getFieldDecorator('caseStyle', { rules: [{ required: true, message: '请选择案例风格!' }], initialValue: caseStyle })(<RadioGroup defaultValue="现代" size="default">
-                  {casestyleButton}
+                <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例风格" > {getFieldDecorator('caseStyle', { rules: [{ required: true, message: '请选择案例风格!' }], initialValue: cases.caseStyle })(<RadioGroup size="default">
+                  {caseStyles.map((a,index) => <RadioButton value={a.value} key={index}>{a.value}</RadioButton>)}
                 </RadioGroup>)}
                 </FormItem>
                 <Row>

@@ -110,11 +110,11 @@ class AttributeModalEditModal extends Component {
   typeOnChange = (e) => {
     let type = e.target.value;
     if (type === '2') {
-      this.props.form.setFieldsValue({ 'isNull': '2' });
+      this.props.form.setFieldsValue({ 'is_null': '2' });
       this.setState({useSkuImg:false,isNullDisabled:true})
     }
     else {
-      this.props.form.setFieldsValue({ 'isNull': '1' });
+      this.props.form.setFieldsValue({ 'is_null': '1' });
       this.setState({useSkuImg:true,isNullDisabled:false})
     }
   }
@@ -143,7 +143,7 @@ class AttributeModalEditModal extends Component {
   }
 
   componentDidMount() {
-    this.props.form.setFieldsValue({ 'svalue': this.props.record.svalue || [] });
+    this.props.form.setFieldsValue({ 'select_value': this.props.record.select_value || [] });
   }
 
   setExtendsText = (type) => {
@@ -153,12 +153,12 @@ class AttributeModalEditModal extends Component {
   render() {
     const { children } = this.props;
     const { getFieldDecorator, setFieldsValue } = this.props.form;
-    const { _id, name, categoryId, type, etype, stype, isNull, svalue, createAt, updateAt, size,rank,isShow} = this.props.record;
+    const { _id, name, category_num, vital_type, extends_type, select_type, is_null, select_value, create_at, update_at, sizes,rank,is_show} = this.props.record;
     let data = [];
 
     (this.props.record.categoryList || []).forEach(v => data.unshift(v));
     let cascaderOptions = this.getFormatData(data);
-
+    console.log(cascaderOptions);
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -179,16 +179,16 @@ class AttributeModalEditModal extends Component {
         >
           <Form horizontal onSubmit={this.okHandler}>
             <FormItem className={styles.FormItem} {...formItemLayout} label="所属分类" >
-              {getFieldDecorator('categoryId', {rules:[{required: true, message: '请选择所属分类!'}], initialValue: categoryId })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange} placeholder='Please select' />)}
+              {getFieldDecorator('category_num', {rules:[{required: true, message: '请选择所属分类!'}], initialValue: category_num })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange} placeholder='Please select' />)}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="属性分类" >    {getFieldDecorator('type', { initialValue: type || '3'})(
+            <FormItem className={styles.FormItem} {...formItemLayout} label="属性分类" >    {getFieldDecorator('vital_type', { initialValue: vital_type || '3'})(
               <RadioGroup key='typeSelect' onChange={this.typeOnChange}>
                 <Radio value={'1'}>关键属性</Radio>
                 <Radio value={'2'}>销售属性</Radio>
                 <Radio value={'3'}>其他属性</Radio>
               </RadioGroup>
             )}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="继承公共属性" >    {getFieldDecorator('etype', { initialValue: etype || '0' })(
+            <FormItem className={styles.FormItem} {...formItemLayout} label="继承公共属性" >    {getFieldDecorator('extends_type', { initialValue: extends_type || '0' })(
               <RadioGroup onChange={this.etypeOnChange} onClick={this.etypeOnClick}>
                 <Radio value={'0'}>不继承</Radio>
                 <Radio value={'1'}>尺寸</Radio>
@@ -202,7 +202,7 @@ class AttributeModalEditModal extends Component {
             <FormItem className={styles.FormItem} {...formItemLayout} label="属性名称" >    {getFieldDecorator('name', {rules:[{required: true, message: '请输入属性名称!'}], initialValue: name })(
               <Input size="small" disabled={this.state.disabled} />
             )}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="属性选项" >    {getFieldDecorator('stype', { initialValue: stype || '3' })(
+            <FormItem className={styles.FormItem} {...formItemLayout} label="属性选项" >    {getFieldDecorator('select_type', { initialValue: select_type || '3' })(
               <RadioGroup key='' disabled={this.state.disabled} onChange={this.stypeOnChange}>
                 <Radio value={'3'}>下拉使用</Radio>
                 <Radio value={'1'} >运营输入</Radio>
@@ -210,16 +210,16 @@ class AttributeModalEditModal extends Component {
               </RadioGroup>
             )
             }
-              {getFieldDecorator('svalue')(tagsInput)}
+              {getFieldDecorator('select_value')(tagsInput)}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="可以为空" > {getFieldDecorator('isNull', { initialValue: isNull || '1' })(
-              <RadioGroup key='isNull' disabled={this.state.isNullDisabled}>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="可以为空" > {getFieldDecorator('is_null', { initialValue: is_null || '1' })(
+              <RadioGroup key='is_null' disabled={this.state.isNullDisabled}>
                 <Radio value={true}>是</Radio>
                 <Radio value={false}>否</Radio>
               </RadioGroup>
             )}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="前台显示" > {getFieldDecorator('isShow', { initialValue: isShow || false })(
-              <RadioGroup key='isNull' disabled={this.state.isNullDisabled}>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="前台显示" > {getFieldDecorator('is_show', { initialValue: is_show || false })(
+              <RadioGroup key='is_show' disabled={this.state.isNullDisabled}>
                 <Radio value={true}>是</Radio>
                 <Radio value={false}>否</Radio>
               </RadioGroup>
@@ -227,7 +227,7 @@ class AttributeModalEditModal extends Component {
             <FormItem className={styles.FormItem} {...formItemLayout} label="前台显示顺序" > {getFieldDecorator('rank', { initialValue: rank || '1' })(
                <Input size="small"  />
             )}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="创建时间" style={_id ? { display: 'block' } : { display: 'none' }}>    {getFieldDecorator('createAt', { initialValue: moment(new Date(createAt)).format('YYYY-MM-DD HH:mm:ss') })(
+            <FormItem className={styles.FormItem} {...formItemLayout} label="创建时间" style={_id ? { display: 'block' } : { display: 'none' }}>    {getFieldDecorator('create_at', { initialValue: moment(new Date(create_at)).format('YYYY-MM-DD HH:mm:ss') })(
               <Input size="small" />
             )}</FormItem>
           </Form>

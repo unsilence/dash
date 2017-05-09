@@ -21,7 +21,7 @@ function Attributes({ dispatch, list: dataSource, loading, total, page: current,
       payload: { id: itm._id },
     });
   }
-
+  console.log(dataSource);
   function pageChangeHandler(page) {
     dispatch(routerRedux.push({
       pathname: '/attributes',
@@ -44,17 +44,24 @@ function Attributes({ dispatch, list: dataSource, loading, total, page: current,
 
   }
 
-  function getCategoryName(_ids) {
-    let cids = _ids || []
+  function getCategoryName(_id) {
+    // let cids = _ids || []
 
-    let cstr = cids.map(v => loop(v)).join('/');
-    function loop(_id) {
-      if (_id === '' || !_id) {
-        return '';
-      }
-      return categoryMap[_id] ?categoryMap[_id].name :'';
+    // let cstr = cids.map(v => loop(v)).join('/');
+    // function loop(_id) {
+    //   if (_id === '' || !_id) {
+    //     return '';
+    //   }
+    //   return categoryMap[_id] ?categoryMap[_id].name :'';
+    // }
+    // return cstr;
+    let name_ = "";
+    if(!_id || !categoryMap[_id]){
+      return ;
+    }else{
+      categoryMap[_id].name ? name_ = categoryMap[_id].name : name_ = "";
     }
-    return cstr;
+    return name_;
   }
 
   const columns = [
@@ -65,44 +72,44 @@ function Attributes({ dispatch, list: dataSource, loading, total, page: current,
     },
     {
       title: '所属分类',
-      dataIndex: 'categoryId',
-      key: 'categoryId',//分类类型
+      dataIndex: 'category_num',
+      key: 'category_num',//分类类型
       render: text => <span>{getCategoryName(text)}</span>,
     },
     {
       title: '属性类别',
-      dataIndex: 'type',
-      key: 'type',//关键分类、销售属性、其他属性
+      dataIndex: 'vital_type',
+      key: 'vital_type',//关键分类、销售属性、其他属性
       render: text => <span>{typeObject[text]?typeObject[text]:''}</span>,
     },
     {
       title: '继承公共属性',
-      dataIndex: 'etype',
-      key: 'etype',//继承公共属性
+      dataIndex: 'extends_type',
+      key: 'extends_type',//继承公共属性
       render: text => <span>{extendsObject[text]?extendsObject[text]:''}</span>,
     },
     {
       title: '属性选项',
-      dataIndex: 'stype',
-      key: 'stype',//属性选项属性
+      dataIndex: 'select_type',
+      key: 'select_type',//属性选项属性
       render: text => <span>{stypeObject[text]?stypeObject[text]:''}</span>,
     },
     {
       title: '可以为空',
-      dataIndex: 'isNull',
-      key: 'isNull',//继承公共属性
+      dataIndex: 'is_null',
+      key: 'is_null',//继承公共属性
       render: text => <span>{text ? "是" : "否"}</span>,
     },
     {
       title: '创建时间',
-      dataIndex: 'createAt',
-      key: 'createAt',//继承公共属性
+      dataIndex: 'create_at',
+      key: 'create_at',//继承公共属性
       render: text => <span>{moment(new Date(text)).format('YYYY-MM-DD HH:mm:ss')}</span>
     },
     {
       title: '修改时间',
-      dataIndex: 'updateAt',
-      key: 'updateAt',//继承公共属性
+      dataIndex: 'update_at',
+      key: 'update_at',//继承公共属性
       render: text => <span>{moment(new Date(text)).format('YYYY-MM-DD HH:mm:ss')}</span>
     },
     {

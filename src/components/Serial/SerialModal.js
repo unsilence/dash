@@ -37,6 +37,7 @@ class SerialEditModal extends Component {
     // }
     // e.preventDefault();
     this.props.form.validateFields((err, values) => {
+      console.log(values);
       if (!err) {
         onOk(values);
         this.hideModelHandler();

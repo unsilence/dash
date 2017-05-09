@@ -4,7 +4,8 @@ import { Table, Pagination, Popconfirm ,Row,Col,Button,Icon,Input} from 'antd';
 import { routerRedux } from 'dva/router';
 import styles from '../list.less';
 let PAGE_SIZE = 10
-import CaseModal from './CaseModal';
+import CaseEditModal from './CaseModal';
+import CaseEditModalAdd from './CaseModalAdd.js'
 import moment from 'moment';
 
 import RecommendNum from "./recommendNumComponent.js";
@@ -39,7 +40,6 @@ function Cases({ dispatch, list: dataSource, loading, total, page: current }) {
       }
 
   }
-
   const columns = [
     {
       title: 'id',
@@ -87,9 +87,9 @@ function Cases({ dispatch, list: dataSource, loading, total, page: current }) {
           <Row>
             <RecommendNum dispatch={dispatch} />
             <Propelling dispatch={dispatch} />
-            <CaseModal case={cases} onOk={editHandler.bind(null, cases._id)}>
+            <CaseEditModal cases={cases} onOk={editHandler}>
               <Button>编辑</Button>
-            </CaseModal>
+            </CaseEditModal>
           </Row>
         </span>
       ),
@@ -100,9 +100,9 @@ function Cases({ dispatch, list: dataSource, loading, total, page: current }) {
     <div className={styles.normal}>
       <div>
         <Row type="flex" justify="end">
-            <CaseModal case={{}} onOk={editHandler.bind(null,'')}>
+            <CaseEditModalAdd case={{}} onOk={editHandler.bind(null,'')}>
                 <Button  icon="plus-circle-o">添加</Button>
-            </CaseModal>
+            </CaseEditModalAdd>
         </Row>
         <Table
           columns={columns}

@@ -15,7 +15,8 @@ function Categorys({ dispatch, list: dataSource, loading, total, page: current ,
       payload: { id: itm._id },
     });
   }
-
+  console.log(categoryMap);
+  console.log(dataSource);
   function pageChangeHandler(page) {
     dispatch(routerRedux.push({
       pathname: '/categorys',
@@ -53,14 +54,14 @@ function Categorys({ dispatch, list: dataSource, loading, total, page: current ,
     },
     {
       title: '父分类',
-      dataIndex: 'parentId',
-      key: 'parentId',
+      dataIndex: 'father_num',
+      key: 'father_num',
       render: text => <span>{getCategoryName(text)}</span>
     },
     {
       title: '编码',
-      dataIndex: 'code',
-      key: 'code',
+      dataIndex: 'uniquc_num',
+      key: 'uniquc_num',
       render: text => <span>{text}</span>
     },
     {

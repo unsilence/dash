@@ -24,12 +24,13 @@ class ColorEditModal extends Component {
     this.setState({
       visible: false,
     });
-    this.props.form.resetFields(['name','seriesId']);
+    this.props.form.resetFields(['name','serial_num']);
   };
 
   okHandler = () => {
     const { onOk } = this.props;
     this.props.form.validateFields((err, values) => {
+      console.log(values);
       if (!err) {
         onOk(values);
         this.hideModelHandler();
@@ -67,7 +68,7 @@ class ColorEditModal extends Component {
         >
           <Form horizontal onSubmit={this.okHandler}>
             <FormItem className={styles.FormItem} {...formItemLayout} label="名字" > {getFieldDecorator('name', {rules:[{required: true, message: '请输入颜色名称!'}], initialValue: name })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="色系" > {getFieldDecorator('seriesId', {rules:[{required: true, message: '请选择所属色系!'}], initialValue: seriesId })(
+            <FormItem className={styles.FormItem} {...formItemLayout} label="色系" > {getFieldDecorator('serial_num', {rules:[{required: true, message: '请选择所属色系!'}], initialValue: seriesId })(
               <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>
             )}
             </FormItem>

@@ -7,7 +7,7 @@ let PAGE_SIZE = 10
 import ColorModal from './ColorModal';
 
 function Colors({ dispatch, list: dataSource, loading, total, page: current, serialMap }) {
-
+  console.log(dataSource);
   function deleteHandler(itm) {
     console.log('deleteHandler', itm)
     dispatch({
@@ -15,7 +15,6 @@ function Colors({ dispatch, list: dataSource, loading, total, page: current, ser
       payload: { id: itm._id },
     });
   }
-
   function pageChangeHandler(page) {
     dispatch(routerRedux.push({
       pathname: '/colors',
@@ -56,14 +55,14 @@ function Colors({ dispatch, list: dataSource, loading, total, page: current, ser
     },
     {
       title: '色系',
-      dataIndex: 'seriesId',
-      key: 'seriesId',
+      dataIndex: 'serial_num',
+      key: 'serial_num',
       render: text => <span>{getSerialName(text)}</span>
     },
     {
       title: '分类',
-      dataIndex: 'categoryId',
-      key: 'categoryId',
+      dataIndex: 'category_num',
+      key: 'category_num',
     },
     {
       title: '操作',
@@ -111,7 +110,6 @@ function Colors({ dispatch, list: dataSource, loading, total, page: current, ser
 function mapStateToProps(state) {
 
   const { list, total, page, serialMap } = state.colors;
-
   return {
     loading: state.loading.models.colors,
     list,
