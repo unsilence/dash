@@ -52,8 +52,8 @@ function Spu({ dispatch, list: dataSource, loading, total, page: current, serial
   const columns = [
     {
       title: 'SPU编号',
-      dataIndex: 'productNum',
-      key: 'productNum',
+      dataIndex: 'unique_num',
+      key: 'unique_num',
       render: (text,product) => <span>{getProductNum(product.categoryId,categoryMap)+product.productNum}</span>,
     },
     {
