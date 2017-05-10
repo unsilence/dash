@@ -6,7 +6,7 @@ import HotProductsRadio from "./HotProductsRadio";
 import styles from '../list.less';
 let PAGE_SIZE = 10
 import HotProductsModal from './HotProductsModal.js';
-function HotProducts({ dispatch, list: dataSource, loading, total, page: current }) {
+function HotProducts({ dispatch, list: dataSource, loading, total, page: current ,categoryMap}) {
 
   function deleteHandler(itm) {
       console.log('deleteHandler',itm)
@@ -54,18 +54,18 @@ function HotProducts({ dispatch, list: dataSource, loading, total, page: current
     },
     {
       title: '发布时间',
-      dataIndex: 'createAt',
-      key: 'createAt',
+      dataIndex: 'create_at',
+      key: 'create_at',
     },
     {
       title: '发布时长',
-      dataIndex: 'updateAt',
-      key: 'updateAt',
+      dataIndex: 'update_at',
+      key: 'update_at',
     },
     {
       title: '点击量',
-      dataIndex: 'clickNum',
-      key: 'clickNum',
+      dataIndex: 'hot ',
+      key: 'hot',
     },
     {
       title: '操作',
@@ -98,7 +98,7 @@ function HotProducts({ dispatch, list: dataSource, loading, total, page: current
               </HotProductsModal>
             </Col>
         </Row>
-        <HotProductsRadio change={editHandler} disp={disp}/>
+        <HotProductsRadio change={editHandler} disp={disp} categoryMap={categoryMap} dataSource={dataSource}/>
         <Table
           columns={columns}
           dataSource={dataSource}

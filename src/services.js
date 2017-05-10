@@ -15,7 +15,7 @@ async function request(url, dt) {
     console.log(url, "RETRUN:", data)
     return ret;
 }
-['Projectinfo','Order','Nav','Recommend','Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
+['Projectinfo','Order','Nav','Recommend','Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test','System'].map(cls => {
     exports[cls + 'Service'] = {
         fetch({ page = 1 }) {
             return request(`/api/${cls}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 10, startPos: 10 * (page - 1) });
@@ -73,7 +73,7 @@ function getMapByList(list) {
     }
 });
 //带分页 有条件查询
-['Recom','Banner','CaseManage','HotProduct','Nav','Order','Projectinfo','Case'].map(v => {
+['Recommend','Banner','CaseManage','HotProduct','Nav','Order','Projectinfo','Case'].map(v => {
     exports[`fetch${v}Page`] = async function (v,filter,page) {
         let opt = { orderBy: { cnum: -1 }, limit: 10, startPos: 0 ,filter:filter};
         return await request(`/api/${v}/fetch?token=${localStorage.token}`, {filter:filter,page});

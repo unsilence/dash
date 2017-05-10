@@ -11,7 +11,9 @@ export default class HotProductsRadio extends Component {
       super(props);
       this.state = {
         value : 1,
-        childValue : null
+        childValue : null,
+        categoryMap : {},
+        dataSource : []
       };
     }
   changeHandler = (e) => {
@@ -27,6 +29,15 @@ export default class HotProductsRadio extends Component {
     this.setState({
       childValue : value
     })
+  }
+  componentWillUpdate (newprops) {
+    // console.log(newprops);
+    // let categoryList = Object.values(newprops.categoryMap);
+    // console.log(categoryList);
+    // this.setState({
+    //   categoryMap : newprops.categoryMap,
+    //   dataSource : newprops.dataSource
+    // })
   }
   render(){
     return (

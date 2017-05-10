@@ -4,16 +4,16 @@ export var caseManageOption = function (banner) {
 
     banner.effects.fetch = function* ({ payload: { page } }, { call, put }) {
         // 无条件的
-        const casemanage = yield call(service["fetchCaseManagePage"], 'Recommend', {"rtype": "3" },{page});
+        const casemanage = yield call(service["fetchCaseManagePage"], 'Recommend', {"itype": "3" },{page});
         const rd = { data: casemanage.data.data.list, total: casemanage.data.data.count, page: parseInt(page) }
         console.log(rd);
         yield put({ type: 'save22', payload: rd });
     }
 
     banner.effects.add = function* ({ payload: { id, values } }, { call, put, select }) {
-        values.rtype = '3';
-        let recommendRes = yield call(service['getRecommendMap'], 'Recommend');
-        values.order = Object.keys(recommendRes).length + 1;
+        values.itype = '3';
+        // let recommendRes = yield call(service['getRecommendMap'], 'Recommend');
+        // values.order = Object.keys(recommendRes).length + 1;
         yield call(service['RecommendService'].insert, values);
         const page = yield select(state => state['recommends'].page);
         yield put({ type: 'fetch', payload: { page } });

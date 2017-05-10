@@ -9,9 +9,8 @@ import BannerConsoleModal from './BannerConsoleModal.js';
 import HistryBannerModal from './HistryBannerModal.js';
 
 function Banners({ dispatch, list: dataSource, loading, total, page: current ,categoryMap}) {
-
+  console.log(dataSource);
   function deleteHandler(itm) {
-      // console.log('deleteHandler',itm)
     dispatch({
       type: 'banners/remove',
       payload: {id:itm._id},
@@ -48,8 +47,8 @@ function Banners({ dispatch, list: dataSource, loading, total, page: current ,ca
   const columns = [
     {
       title: '序号',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'cnum',
+      key: 'cnum',
     },
     {
       title: '标题',
@@ -59,14 +58,14 @@ function Banners({ dispatch, list: dataSource, loading, total, page: current ,ca
     },
     {
       title: '发布时间',
-      dataIndex: 'createAt',
-      key: 'createAt',
+      dataIndex: 'create_at',
+      key: 'create_at',
       render: text => <span>{text}</span>
     },
     {
       title: '点击量',
-      dataIndex: 'clickNum',
-      key: 'clickNum',
+      dataIndex: 'hot',
+      key: 'hot',
       render: text => <span>{text}</span>
     },
     {
@@ -80,7 +79,7 @@ function Banners({ dispatch, list: dataSource, loading, total, page: current ,ca
           <AddBannerModal banner={record } onOk={editHandler.bind(null, record._id)}>
             <Icon type="edit" className={styles.icon} />
           </AddBannerModal>
-          <Popconfirm title={"确定要删除颜色【" + record.name + "】吗？"} onConfirm={deleteHandler.bind(null, record)}>
+          <Popconfirm title={"确定要删除banner【" + record.title + "】吗？"} onConfirm={deleteHandler.bind(null, record)}>
             <Icon type="delete" className={styles.icon} />
           </Popconfirm>
         </span>

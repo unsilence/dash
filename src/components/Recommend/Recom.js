@@ -49,18 +49,18 @@ function Recoms({ dispatch, list: dataSource, loading, total, page: current }) {
     },
     {
       title: '发布时间',
-      dataIndex: 'createAt',
-      key: 'createAt',
+      dataIndex: 'create_at',
+      key: 'create_at',
     },
     {
       title: '发布时长',
-      dataIndex: 'updateAt',
-      key: 'updateAt',
+      dataIndex: 'update_at',
+      key: 'update_at',
     },
     {
       title: '点击量',
-      dataIndex: 'clickNum',
-      key: 'clickNum',
+      dataIndex: 'hot',
+      key: 'hot',
     },
     {
       title: '操作',

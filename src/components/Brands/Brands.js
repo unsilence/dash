@@ -47,8 +47,8 @@ console.log("ta laizi nali!",dataSource)
     },
     {
       title: '中文名',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'name_cn',
+      key: 'name_cn',
       render: text => <a href="">{text}</a>,
     },
     {
@@ -63,13 +63,13 @@ console.log("ta laizi nali!",dataSource)
     },
     {
       title: '首字母',
-      dataIndex: 'firstletter',
-      key: 'firstletter',
+      dataIndex: 'initial',
+      key: 'initial',
     },
     {
       title: '介绍',
-      dataIndex: 'note',
-      key: 'note',
+      dataIndex: 'description',
+      key: 'description',
     },
     {
       title: 'Operation',

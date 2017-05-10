@@ -54,7 +54,6 @@ constructor(props) {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         values.image = this.state.imageUrl;
-        console.log(values);
         onOk(values);
         this.hideModelHandler();
       }
@@ -96,7 +95,7 @@ constructor(props) {
                   type: 'url', message: '请输入正确URL地址!',
                 }],
               })(
-                <Input type="url" placeholder="请输入URL地址" className={styles.FormInput} />
+                <Input type="url" placeholder="请输入URL地址"  />
                 )}
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="标题">
@@ -105,7 +104,7 @@ constructor(props) {
                   type: 'string', message: '请输入正确标题地址!',
                 }],
               })(
-                <Input type="text" placeholder="请输入标题" className={styles.FormInput} />
+                <Input type="text" placeholder="请输入标题"  />
                 )}
             </FormItem>
               <FormItem className={styles.FormItem} {...formItemLayout} label="图片" >

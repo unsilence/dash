@@ -37,7 +37,7 @@ class BrandEditModal extends Component {
     this.setState({
       visible: false,
     });
-    this.props.form.resetFields(['name', 'name_en', 'shortcut', 'firstletter', 'categoryId', 'note','logo','definition','countryId','key'])
+    this.props.form.resetFields(['name_cn', 'name_en', 'shortcut', 'initial', 'category_num', 'description','logo','country_num','key','brand_info'])
   };
   onChange = (value) => {
     console.log('onChange ', value, arguments);
@@ -47,6 +47,7 @@ class BrandEditModal extends Component {
     const { onOk } = this.props;
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        console.log(values);
         onOk(values);
         this.hideModelHandler();
       }
@@ -58,7 +59,8 @@ class BrandEditModal extends Component {
     const brandCountry = brandcounty.map(t=><Option value={t.value}>{t.value}</Option>);
     const brandFirstletter = brandLetter.map(a=><Option value={a.value}>{a.value}</Option>);
     const { getFieldDecorator } = this.props.form;
-    const { _id, name, name_en, shortcut, firstletter, categoryId, note,logo,definition,countryId,key } = this.props.record;
+    const { record } = this.props;
+    console.log(record);
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -83,28 +85,28 @@ class BrandEditModal extends Component {
           {children}
         </span>
         <Modal
-          title={_id ? "修改：" : '新建'}
+          title={record._id ? "修改：" : '新建'}
           visible={this.state.visible}
           onOk={this.okHandler}
           onCancel={this.hideModelHandler}
         >
           <Form horizontal onSubmit={this.okHandler} ref='brandfrom'>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="中文品牌名称" >    {getFieldDecorator('name', {rules:[{required: true, message: '请输入中文品牌名称!'}], initialValue: name })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="英文品牌名称" >    {getFieldDecorator('name_en', {rules:[{required: true, message: '请输入英文品牌名称!'}], initialValue: name_en })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="品牌缩写" >    {getFieldDecorator('shortcut', {rules:[{required: true, message: '请输入品牌缩写!'}], initialValue: shortcut })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="品牌首字母" >    {getFieldDecorator('firstletter', {rules:[{required: true, message: '请选择品牌首字母!'}], initialValue: firstletter })
+            <FormItem className={styles.FormItem} {...formItemLayout} label="中文品牌名称" >    {getFieldDecorator('name_cn', {rules:[{required: true, message: '请输入中文品牌名称!'}], initialValue: record.name_cn })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="英文品牌名称" >    {getFieldDecorator('name_en', {rules:[{required: true, message: '请输入英文品牌名称!'}], initialValue: record.name_en })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="品牌缩写" >    {getFieldDecorator('shortcut', {rules:[{required: true, message: '请输入品牌缩写!'}], initialValue: record.shortcut })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="品牌首字母" >    {getFieldDecorator('initial', {rules:[{required: true, message: '请选择品牌首字母!'}], initialValue: record.initial })
             (<Select size="large">
 				{brandFirstletter}
             </Select>
             )}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="品牌所属分类" >
-              {getFieldDecorator('categoryId', {rules:[{required: true, message: '请选择品牌所属分类!'}], initialValue: categoryId })(<TreeSelect {...tProps} />)}
+              {getFieldDecorator('category_num', {rules:[{required: true, message: '请选择品牌所属分类!'}], initialValue: record.category_num })(<TreeSelect {...tProps} />)}
             </FormItem>
             
-            <FormItem className={styles.FormItem} {...formItemLayout} label="品牌介绍" >       {getFieldDecorator('note', {rules:[{required: true, message: '请输入品牌介绍!'}], initialValue: note })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="品牌LOGO" >       {getFieldDecorator('logo', {rules:[{required: true, message: '请上传品牌LOGO!'}], initialValue: logo })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="品牌定义" >       {getFieldDecorator('definition', {rules:[{required: true, message: '请输入品牌定义!'}], initialValue: definition })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="品牌国家" >      {getFieldDecorator('countryId', {rules:[{required: true, message: '请选择品牌国家!'}], initialValue: countryId })(
+            <FormItem className={styles.FormItem} {...formItemLayout} label="品牌介绍" >       {getFieldDecorator('description', {rules:[{required: true, message: '请输入品牌介绍!'}], initialValue: record.description })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="品牌LOGO" >       {getFieldDecorator('logo', {rules:[{required: true, message: '请上传品牌LOGO!'}], initialValue: record.logo })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="品牌定义" >       {getFieldDecorator('brand_info', {rules:[{required: true, message: '请输入品牌定义!'}], initialValue: record.brand_info })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="品牌国家" >      {getFieldDecorator('country_num', {rules:[{required: true, message: '请选择品牌国家!'}], initialValue: record.country_num })(
             <Select size="large" defaultValue="中国">
 				 {brandCountry}
             </Select>
