@@ -83,12 +83,7 @@ function getProductNum(_ids, categoryMap) {
       return cd;
     }
     if (categoryMap[_id]) {
-      if (categoryMap[_id].code === '') {
-        cd = categoryMap[_id].ccodeNum;
-      }
-      else {
-        cd = categoryMap[_id].code;
-      }
+        cd = categoryMap[_id].unique_num;
     }
     return cd;
   }
