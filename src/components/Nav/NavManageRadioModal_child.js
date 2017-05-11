@@ -9,22 +9,23 @@ class NavManageRadioModalChild extends Component {
     super(props);
     this.state = {
       indeterminate: true,
-      checkObj:this.getCheckObj(),
+      checkObj:{},
       text : "排序",
       sort : [],
       sortIsShow : false
     };
   }
-  getCheckObj(){
-    let { checkedChildIds , child} = this.props;
-    let obj = {};
-    obj.checkedList = [];
-    if(checkedChildIds && checkedChildIds[child._id] && checkedChildIds[child._id].length > 0){
-      obj.checkedList = checkedChildIds[child._id];
-    }
-    return obj;
-  }
+  // getCheckObj(){
+  //   let { checkedChildIds , child} = this.props;
+  //   let obj = {};
+  //   obj.checkedList = [];
+  //   if(checkedChildIds && checkedChildIds[child._id] && checkedChildIds[child._id].length > 0){
+  //     obj.checkedList = checkedChildIds[child._id];
+  //   }
+  //   return obj;
+  // }
   componentWillReceiveProps (nextProps) {
+
     if(nextProps.childrenList !== undefined){
       this.setState({
         checkObj : {"checkedList" : nextProps.childrenList}
@@ -97,8 +98,9 @@ class NavManageRadioModalChild extends Component {
   }
 }
 render() {
-  const { child , rootObj ,children ,childrenList ,checkedChildIds} = this.props;
+  const { child , rootObj ,children ,childrenList } = this.props;
   let childList = rootObj[child._id];
+  console.log(childList);
   const { getFieldDecorator } = this.props.form;
   return (
     <span>
@@ -118,7 +120,7 @@ render() {
       !this.state.sortIsShow ?
       <FormItem className={styles.FormItem}>
       <div>
-      <CheckboxGroup options={childList} value={this.state.checkObj.checkedList} onChange={this.onChangeHandler}/>            
+      <CheckboxGroup options={childList} value={this.state.checkObj.checkedList ?  this.state.checkObj.checkedList : childrenList} onChange={this.onChangeHandler}/>            
       </div>
       </FormItem> :
       <FormItem className={styles.FormItem}>

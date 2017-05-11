@@ -21,19 +21,24 @@ class NavManageRadioModal extends Component {
       sortShow: false,
       sort : []
     };
-    this.isCheckedHandler = this.isCheckedHandler.bind(this);
+    // this.isCheckedHandler = this.isCheckedHandler.bind(this);
   }
   getChildCheckItems(_ids) {
     return _ids.filter(v => { return this.state.checkObj[v] !== undefined });
   }
   componentWillReceiveProps(nextProps) {   // 刷新或者点击一级分类的按钮的时候会触发该方法
-    if(nextProps.navMap && nextProps.navMap[0]){   // 把初始的nav数据赋值给this.state.upData保存起来
+    if(nextProps.navMap ){   // 把初始的nav数据赋值给this.state.upData保存起来
       
-      this.state.upData = nextProps.navMap[0].nav;
+      this.state.upData = nextProps.navMap;
 
     }
-    if (this.props.navMap && this.props.navMap.length === 1) {   // 得到一级分类选中的id 数组 并 赋值给this.state.navOjb 保存起来
-      this.state.navOjb = ([].concat(...this.props.navMap.map(v => { return v.nav }))).map(c =>{return c.categoryId});
+    if (nextProps.navMap && nextProps.navMap.length > 0) {   // 得到一级分类选中的id 数组 并 赋值给this.state.navOjb 保存起来
+      // this.state.navOjb = ([].concat(...nextProps.navMap.map(v => { return v.nav }))).map(c =>{return c.categoryId});
+      this.state.navOjb = nextProps.navMap.map(v => {
+        this.state.checkObj[v.categoryId+"child"] = v.childIds;
+        return v.categoryId
+      });
+      console.log(this.state.checkObj);
       this.state.navOjb = Array.from(new Set(this.state.navOjb));
       this.setState({
         navOjb : this.state.navOjb
@@ -83,7 +88,7 @@ class NavManageRadioModal extends Component {
     const { onOk } = this.props;
     let temp = {};
     if (this.props.navMap && this.props.navMap.length 　=== 1) {
-      temp = this.props.navMap[0];
+      temp = this.props.navMap;
     }
     
     this.props.form.validateFields((err, values) => {
@@ -91,8 +96,8 @@ class NavManageRadioModal extends Component {
         if(_upData != undefined){
           this.state.upData = _upData;
         }
-        temp.nav = this.state.upData;
-        onOk(temp._id, temp);
+        temp = this.state.upData;
+        onOk(temp);
         this.hideModelHandler();
       }
     });
@@ -126,26 +131,27 @@ class NavManageRadioModal extends Component {
       this.state.checkObj[item._id] = true;
     }
   }
-  isCheckedHandler = (tabList, navMap) => {
-    // console.log(navMap);
-    const navArr = [];
-    const idList = [];
-    const checked = [];
-    for (let item in navMap) {
-      navArr.push(navMap[item])
-    }
-    // console.log(navArr);
-    for (let v of navArr) {
-      idList.push(v._id);
-    }
-    for (let i = 0; i < tabList.length; i++) {
-      if (idList.includes(tabList[i])) {
-        checked.push(idList[i])
-      }
-    }
-    return checked;
-  }
+  // isCheckedHandler = (tabList, navMap) => {
+  //   // console.log(navMap);
+  //   const navArr = [];
+  //   const idList = [];
+  //   const checked = [];
+  //   for (let item in navMap) {
+  //     navArr.push(navMap[item])
+  //   }
+  //   // console.log(navArr);
+  //   for (let v of navArr) {
+  //     idList.push(v._id);
+  //   }
+  //   for (let i = 0; i < tabList.length; i++) {
+  //     if (idList.includes(tabList[i])) {
+  //       checked.push(idList[i])
+  //     }
+  //   }
+  //   return checked;
+  // }
   childOkCallback = (valuesList, item, rootObj) => {
+    console.log(valuesList);
     if(navParentIds == undefined){
       navParentIds = this.state.navOjb;
     }
@@ -245,19 +251,20 @@ class NavManageRadioModal extends Component {
   render() {
     let { children } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { parentList, navMap, tablist, childIdList, checkedChildIds } = this.props;
+    const { parentList, navMap, tablist, childIdList } = this.props;
     // 过滤处理单选弹出框的方法
+    console.log(parentList);
     let rootObj = {};
     for (let i = 0; i < parentList.length; i++) {
       rootObj[parentList[i]._id] = [];
       for (let j = 0; j < childIdList.length; j++) {
-        if (childIdList[j].parentId === parentList[i]._id) {
+        if (childIdList[j].father_num === parentList[i]._id) {
           rootObj[parentList[i]._id].push({ label: childIdList[j].name, value: childIdList[j]._id })
         }
       }
     }
     //  ==================================================
-    console.log(parentList ,this.state.navOjb,'----比较------')
+
     return (
       <span>
       <span onClick={this.showModelHandler}>
@@ -287,8 +294,8 @@ class NavManageRadioModal extends Component {
           >
           {item.name}
           </Checkbox>
-          <NavManageRadioModalChild child={item} rootObj={rootObj} onOk={(valuesList) => this.childOkCallback(valuesList, item, rootObj)} childrenList={this.state.checkObj[item._id + "child"]} checkedChildIds={checkedChildIds}>
-          <span style={{ marginLeft: "0px", marginRight: "0px", color: "#00f" }}>编辑</span>
+          <NavManageRadioModalChild child={item} rootObj={rootObj} onOk={(valuesList) => this.childOkCallback(valuesList, item, rootObj)} childrenList={this.state.checkObj[item._id + "child"]}>
+            <span style={{ marginLeft: "0px", marginRight: "0px", color: "#00f" }}>编辑</span>
           </NavManageRadioModalChild>
           </span>
           ))

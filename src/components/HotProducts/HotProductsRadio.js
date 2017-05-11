@@ -10,36 +10,95 @@ export default class HotProductsRadio extends Component {
   constructor(props) {
       super(props);
       this.state = {
-        value : 1,
-        childValue : null,
+        value : '',
+        childValue : [],
         categoryMap : {},
         dataSource : []
       };
     }
-  changeHandler = (e) => {
+  componentWillReceiveProps (nextProps) {
+     const { list , categoryMap , hotList } = nextProps;
+    let options = [];
+    let _list = [];
+    let categoryList = [];
+    console.log(hotList);
+    list.forEach(v => {
+      _list.push(v.category_num);
+    })
+    if(hotList != undefined){
+      for(let v in categoryMap){
+        for(let t in hotList){
+          hotList[t].forEach(k => {
+            if(k == categoryMap[v]._id){
+              options.push(categoryMap[v]);
+            }
+          })
+        }
+      } 
+    } 
+    this.setState({
+      childValue : options
+    })
+  }
+  changeHandler_ = (e) => {
     if (e) e.stopPropagation();
-    const { change } = this.props;
+    const { changeHandler } = this.props;
     this.setState({
       value : e.target.value
     })
-    change(this.state.value,{...this.state});
+    changeHandler( e.target.value);
   }
-  onOk = (value) => {
-    console.log(value); // 从radio 组件获取的选中信息
-    this.setState({
-      childValue : value
+  onOk = (_value) => {
+    console.log(_value);
+    const { dispatch ,hotList} = this.props;
+    let hotProduct = [];
+    let id = Object.keys(hotList)[0];
+    _value.forEach(v => {
+      hotProduct.push(v._id);
     })
+    let value = JSON.stringify(hotProduct);
+    let key = 'hot';
+    let values = {key:key ,value:value};
+
+    if(id){
+      dispatch({
+        type: 'hotproducts/hotpatch',
+        payload: { id, values },
+      })
+    }else{
+      dispatch({
+        type: 'hotproducts/addCategory',
+        payload: { id, values },
+      })
+    }
   }
-  componentWillUpdate (newprops) {
-    // console.log(newprops);
-    // let categoryList = Object.values(newprops.categoryMap);
-    // console.log(categoryList);
-    // this.setState({
-    //   categoryMap : newprops.categoryMap,
-    //   dataSource : newprops.dataSource
-    // })
-  }
+  // checkInfo = () => {
+  //   const { list , categoryMap } = this.props;
+  //   let options = [];
+  //   let _list = [];
+  //   list.forEach(v => {
+  //     _list.push(v.category_num);
+  //   })
+  //   for(let v in categoryMap){
+  //     categoryList.push(categoryMap[v]);
+  //     _list.forEach(t => {
+  //       if(v == t){
+  //           options.push(categoryMap[v]);
+  //       }
+  //     })
+  //   }
+  //   this.setState({
+  //     childValue : options
+  //   })
+  // }
   render(){
+    const { categoryMap ,infoCheck , list ,hotList} = this.props;
+    
+    let categoryList = [];
+    for(let v in categoryMap){
+      categoryList.push(categoryMap[v]);
+    }
+    
     return (
         <span>
           <Row type="flex" justify="start" gutter={10} style={{marginBottom : "10px" ,marginTop : "10px"}}>
@@ -47,14 +106,13 @@ export default class HotProductsRadio extends Component {
                     <span>分类：</span>
                 </Col>
                 <Col span={18} className="gutter-row">
-                    <RadioGroup onChange={this.changeHandler} value={this.state.value}>
-                      <Radio value={1}>摆件</Radio>
-                      <Radio value={2}>灯饰</Radio>
-                      <Radio value={3}>地毯</Radio>
-                      <Radio value={4}>窗帘</Radio>
+                    <RadioGroup onChange={this.changeHandler_} value={this.state.value ? this.state.value : infoCheck}>
+                      {
+                        this.state.childValue.map((v,index) => <Radio value={v._id} key={index}>{v.name}</Radio>)
+                      }
                     </RadioGroup>
-                    <HotProductsRadioModal onOk={this.onOk}>
-                        <Icon type="select" onClick={this.props.disp}/>
+                    <HotProductsRadioModal onOk={this.onOk} categoryList={categoryList} checkInfo={this.state.childValue}>
+                        <Icon type="select" />
                     </HotProductsRadioModal>
                 </Col>
            </Row>

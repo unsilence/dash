@@ -1,46 +1,86 @@
-﻿import React from 'react';
+﻿import React ,{ Component }from 'react';
 import { connect } from 'dva';
 import { Table, Pagination, Popconfirm ,Row,Col,Button,Icon,Input ,Radio} from 'antd';
 import { routerRedux } from 'dva/router';
 import HotProductsRadio from "./HotProductsRadio";
 import styles from '../list.less';
-let PAGE_SIZE = 10
-import HotProductsModal from './HotProductsModal.js';
-function HotProducts({ dispatch, list: dataSource, loading, total, page: current ,categoryMap}) {
+let PAGE_SIZE = 10;
 
-  function deleteHandler(itm) {
+import HotProductsModal from './HotProductsModal.js';
+class HotProducts extends Component{    //({ dispatch, list: dataSource, loading, total, page: current ,categoryMap })
+
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      addId : '',
+      list : [],
+      tempAddId : null
+    }
+  }
+
+  componentWillReceiveProps(nextProps){
+    const { hotList } = nextProps;
+    let id = '';
+    for(let v in hotList){
+      id = hotList[v][0];
+    }
+    this.setState({
+      addId : id
+    })
+  }
+  deleteHandler = (itm) => {
+    const { dispatch } = this.props;
       console.log('deleteHandler',itm)
+      let categoryId ;
+      this.state.tempAddId == null ? categoryId = this.state.addId : categoryId = this.state.tempAddId;
     dispatch({
       type: 'hotproducts/remove',
-      payload: {id:itm._id},
+      payload: {id:itm._id , categoryId},
     });
   }
 
-  function pageChangeHandler(page) {
+   pageChangeHandler = (page) => {
+    const { dispatch } = this.props;
     dispatch(routerRedux.push({
       pathname: '/hotproducts',
       query: { page },
     }));
-  }
+  } 
 
-  function editHandler(id, values) {
-    console.log(id+'========================================================================'+values);
+   editHandler = (id, values) => {
+    console.log(id);
+    const { dispatch } = this.props;
       if(id){
           dispatch({
             type: 'hotproducts/patch',
             payload: { id, values },
           });
       }else {
+        let categoryId ;
+        this.state.tempAddId == null ? categoryId = this.state.addId : categoryId = this.state.tempAddId;
           dispatch({
             type: 'hotproducts/add',
-            payload: { id, values },
+            payload: { id, values , categoryId},
           });
       }
 
   }
-  function disp () {
-    
+  changeHandler = (value) => {
+    console.log(value);
+    const { list , dispatch } = this.props;
+    dispatch({
+      type: 'hotproducts/fetch',
+      payload: { "id" : value , "page" :  1},
+    });
+    this.setState({
+      tempAddId : value
+    })
+    // this.setState({
+    //   addId : value
+    // })
   }
+  render () {
   const columns = [
     {
       title: '序号',
@@ -72,10 +112,10 @@ function HotProducts({ dispatch, list: dataSource, loading, total, page: current
       key: 'operation',
       render: (text, serial) => (
         <span className={styles.operation2}>
-          <HotProductsModal hotproduct={serial} onOk={editHandler.bind(null, serial._id)}>
+          <HotProductsModal hotproduct={serial} onOk={this.editHandler.bind(null, serial._id)}>
             <Icon type="edit" className={styles.icon}/>
           </HotProductsModal>
-          <Popconfirm title={"确定要删除推荐吗？"} onConfirm={deleteHandler.bind(null, serial)}>
+          <Popconfirm title={"确定要删除推荐吗？"} onConfirm={this.deleteHandler.bind(null, serial)}>
             <Icon type="delete" className={styles.icon}/>
           </Popconfirm>
         </span>
@@ -93,42 +133,47 @@ function HotProducts({ dispatch, list: dataSource, loading, total, page: current
             <Col span={8}>
               <Button style={{marginRight : "16px"}}>历史热品</Button>
               <Button style={{marginRight : "16px"}}>操作日志</Button>
-              <HotProductsModal hotproduct={{}} onOk={editHandler.bind(null,'')}>
+              <HotProductsModal hotproduct={{}} onOk={this.editHandler} addId={this.state.tempAddId == null ? this.state.addId : this.state.tempAddId}>
                 <Button>添加热品</Button>
               </HotProductsModal>
             </Col>
         </Row>
-        <HotProductsRadio change={editHandler} disp={disp} categoryMap={categoryMap} dataSource={dataSource}/>
+        <HotProductsRadio list={this.props.list} hotList={this.props.hotList} categoryMap={this.props.categoryMap} dataSource={this.props.dataSource} infoCheck={this.state.addId} changeHandler={this.changeHandler} dispatch={this.props.dispatch}/>
         <Table
           columns={columns}
-          dataSource={dataSource}
-          loading={loading}
+          dataSource={this.props.list}
+          loading={this.props.loading}
           rowKey={serial => serial._id}
           pagination={false}
         />
         <Pagination
           className="ant-table-pagination"
-          total={total}s
-          current={current}
+          total={this.props.total}
+          current={this.props.page}
           pageSize={PAGE_SIZE}
-          onChange={pageChangeHandler}
+          onChange={this.pageChangeHandler}
         />
       </div>
     </div>
   );
+  }
 }
 
 function mapStateToProps(state) {
-  console.log(state);
-  const {list, total, page ,categoryMap} = state.hotproducts;
-  console.log(state);
+  const {list, total, page ,categoryMap ,hotList} = state.hotproducts;
   return {
     loading: state.loading.models.hotproducts,
     list,
     total,
     page,
-    categoryMap
+    categoryMap,
+    hotList
   };
 }
 
-export default connect(mapStateToProps)(HotProducts);
+function mapDispatchToProps (dispatch) {
+    return {
+      dispatch : dispatch
+    }
+}
+export default connect(mapStateToProps,mapDispatchToProps)(HotProducts);

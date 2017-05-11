@@ -60,14 +60,8 @@ function Categorys({ dispatch, list: dataSource, loading, total, page: current ,
     },
     {
       title: '编码',
-      dataIndex: 'uniquc_num',
-      key: 'uniquc_num',
-      render: text => <span>{text}</span>
-    },
-    {
-      title: '子编码',
-      dataIndex: 'ccodeNum',
-      key: 'ccodeNum',
+      dataIndex: 'unique_num',
+      key: 'unique_num',
       render: text => <span>{text}</span>
     },
     {

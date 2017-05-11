@@ -63,7 +63,7 @@ function getMapByList(list) {
     return tempMap
 }
 
-['Color', 'Country', 'Brand', 'Serial', 'Category', 'Attribute','Recommend','Nav','Order','Case'].map(v => {
+['Color', 'Country', 'Brand', 'Serial', 'Category', 'Attribute','Recommend','Nav','Order','Case','System'].map(v => {
     exports[`get${v}Map`] = async function (v) {
         let result = await request(`/api/${v}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 10000000, startPos: 0 })
         let list = result.data.data.list
@@ -73,7 +73,7 @@ function getMapByList(list) {
     }
 });
 //带分页 有条件查询
-['Recommend','Banner','CaseManage','HotProduct','Nav','Order','Projectinfo','Case'].map(v => {
+['Recommend','Banner','CaseManage','HotProduct','Nav','Order','Projectinfo','Case','System'].map(v => {
     exports[`fetch${v}Page`] = async function (v,filter,page) {
         let opt = { orderBy: { cnum: -1 }, limit: 10, startPos: 0 ,filter:filter};
         return await request(`/api/${v}/fetch?token=${localStorage.token}`, {filter:filter,page});

@@ -17,53 +17,45 @@ export default class NavManageRadio extends Component {
   }
   changeHandler = (e) => {
     if (e) e.stopPropagation();
-    // const { change } = this.props;
+    const { change } = this.props;
     this.setState({
       value : e.target.value
     })
-    // change(this.state.value,{...this.state});
+    change(e.target.value);
   }
-  onOk = (id,value) => {
+  onOk = (values) => {
+    let value = JSON.stringify(values);
     this.setState({
-      updata : {id,value}
+      updata : {value}
     })
   }
   upData = () => {
-    const { okHandler } = this.props;
+    const { okHandler ,isHasId } = this.props;
     if(this.state.updata.value){
-      okHandler(this.state.updata.id,this.state.updata.value);
+      okHandler(isHasId,this.state.updata.value);
     }else{
       console.log("没有新的数据提交！");
     }
   }
+
+
   render(){
-    const { categoryMap ,navMap ,tablist} = this.props;
-    let dataArr = [];
+    const { categoryMap ,navList ,tablist} = this.props;
+    let parentList_ = [];
+    if(navList && categoryMap){
+      navList.forEach(v => {
+        parentList_.push(categoryMap[v.categoryId]);
+      })
+    }
     let parentList = [];
     let childIdList = [];
-    let checkedChildIds = {};
     if(categoryMap){
       for(let v in categoryMap){
-        if(!categoryMap[v].parentId){
-          dataArr.push(categoryMap[v]);
+        if(!categoryMap[v].father_num){
+          parentList.push(categoryMap[v]);   //  parentList 存储的是没有tather_num 的分类 一级分类
         }else{
-          childIdList.push(categoryMap[v]);
+          childIdList.push(categoryMap[v]); // childIdList 存储的是有tather_num 的分类 二级分类
         }
-      }
-    }
-    console.log(navMap);
-    if(navMap){
-      if(navMap.length > 0 && navMap[0].nav.length > 0){
-        for(let v of dataArr){
-          for(let k of navMap[0].nav){
-            if(k.categoryId === v._id){
-              parentList.push(v);
-              checkedChildIds[k.categoryId] = k.childIds;
-            }
-          }
-        }
-      }else{
-        parentList = [];
       }
     }
     return (
@@ -75,15 +67,15 @@ export default class NavManageRadio extends Component {
       <Col span={18} className="gutter-row">
       <RadioGroup onChange={this.changeHandler} value={this.state.value}>
       {
-        parentList.map((item,index) => {
+        parentList_.map((item,index) => {
           return (
-            item.parentId? "" : <Radio value={index+1} key={item._id}>{item.name}</Radio>
+            <Radio value={index+1} key={item._id}>{item.name}</Radio>
             )
           })
         }      
         </RadioGroup>
-        <NavManageRadioModal onOk={this.onOk} parentList={dataArr} navMap={navMap} tablist={tablist} checkedChildIds={checkedChildIds} childIdList={childIdList}>
-        <Icon type="select"/>
+        <NavManageRadioModal onOk={this.onOk} parentList={parentList} navMap={navList} tablist={tablist} childIdList={childIdList}>
+          <Icon type="select"/>
         </NavManageRadioModal>
         </Col>
         <Col span={2}>

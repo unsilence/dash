@@ -4,30 +4,29 @@ import styles from '../item.less';
 
 const FormItem = Form.Item;
 const CheckboxGroup = Checkbox.Group;
-    const name = ["摆件","布艺","灯具","壁饰","地毯","其他"];
-    const plainOptions = ['Apple', 'Pear', 'Orange'];
+    // const name = ["摆件","布艺","灯具","壁饰","地毯","其他"];
+    // const plainOptions = ['Apple', 'Pear', 'Orange'];
     // const defaultCheckedList = ['Apple', 'Orange'];  // 设置默认选中的选项
 class HotProductsRadioModal extends Component {
 constructor(props) {
     super(props);
     this.state = {
       visible: false,
-      checkedList: (function (){  //是一个包含已经选中的数组
-        let rootObj = {};
-        name.map(item => (rootObj[item] = []))
-        return rootObj;
-      })(),
+      checkedList: [],
       indeterminate: true,
       checkAll: false,
     };
   }
 
+
+  getCheckList () {
+    const { categoryIds , categoryMap } = this.props;
+  }
+
   componentWillReceiveProps(nextProps){
-    console.log('00000000',nextProps);
   }
 
   componentWillUpdate(nextProps,  nextState){
-      console.log(nextProps,  nextState);
 
   } 
 
@@ -58,37 +57,44 @@ constructor(props) {
   }
 
   okHandler = () => {
-    const { onOk } = this.props;
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        onOk(values);
+    const { onOk , categoryList} = this.props;
+    let list = [];
+    categoryList.forEach(v => {
+      this.state.checkedList.forEach(t => {
+        if(v.name === t){
+          list.push(v);
+        }
+      })
+    })
+        onOk(list);
         this.hideModelHandler();
-      }
-    });
   };
-   onCheckAllChange = (e) => {
-      this.setState({
-        checkedList: e.target.checked ? plainOptions : [],
-        indeterminate: false,
-        checkAll: e.target.checked,
-      });
-    }
     onChangeHandler = (checkedList) => {
+      console.log(checkedList);
       this.setState({
-        checkedList : {"摆件" : checkedList},
-        // qindeterminate: !!checkedList.length && (checkedList.length < plainOptions.length),
-        // checkAll: checkedList.length === plainOptions.length,
-
+        checkedList : checkedList
       })
     }
+    defaultValue = () => {
+      const { categoryList ,checkInfo} = this.props;
+      console.log(checkInfo);
+      let defaultValueArr = [];
+      checkInfo.forEach(v => {
+        defaultValueArr.push(v.name);
+      })
+      return defaultValueArr;
+    }
   render() {
-    let { children } = this.props;
+    let { children , categoryList } = this.props;
     const { getFieldDecorator } = this.props.form;
-    console.log(this.state);
     const formItemLayout = {
       labelCol: { span: 2 },
       wrapperCol: { span: 18 },
     };
+    let plainOptions = [];
+    categoryList.forEach(v => {
+      plainOptions.push(v.name);
+    })
     return (
       <span>
         <span onClick={this.showModelHandler}>
@@ -99,29 +105,9 @@ constructor(props) {
           visible={this.state.visible}
           onOk={this.okHandler}
           onCancel={this.hideModelHandler}
-        >{
-        name.map((item,index) => 
-           (
-              <Form horizontal onSubmit={this.okHandler} key = {index}>
-                  <FormItem className={styles.FormItem} {...formItemLayout}>
-                      {getFieldDecorator('radio_1',{initialvalue : "Apple"})(
-                      <div>
-                        <Checkbox
-                            indeterminate={this.state.indeterminate}
-                            onChange={this.onCheckAllChange}
-                            checked={this.state.checkAll}
-                        >
-                            {item}
-                        </Checkbox>
-                        <br />
-                        <CheckboxGroup options={plainOptions} value={this.state.checkedList[item]} onChange={this.onChangeHandler}/>
-                        </div>
-                      )}
-                  </FormItem>
-                </Form>
-          )
-        )
-        }</Modal>
+        >
+          <CheckboxGroup options={plainOptions} defaultValue={this.defaultValue()} onChange={this.onChangeHandler} />
+        </Modal>
       </span>
     );
   }

@@ -3,7 +3,6 @@ import { Modal, Form, Input, Select ,Icon ,Upload} from 'antd';
 import styles from '../item.less';
 
 const FormItem = Form.Item;
-
 class AddhotproductModal extends Component {
 constructor(props) {
     super(props);
@@ -15,11 +14,9 @@ constructor(props) {
   }
 
   componentWillReceiveProps(nextProps){
-    console.log('00000000',nextProps);
   }
 
   componentWillUpdate(nextProps,  nextState){
-      console.log(nextProps,  nextState);
 
   } 
 
@@ -50,12 +47,14 @@ constructor(props) {
   }
 
   okHandler = () => {
-    const { onOk } = this.props;
+    const { onOk , addId} = this.props;
+    console.log(addId);
     this.props.form.validateFields((err, values) => {
       if (!err) {
         values.image = this.state.imageUrl;
+        values.category_num = addId;
         console.log(values);
-        onOk(values);
+        onOk(null,values);
         this.hideModelHandler();
       }
     });

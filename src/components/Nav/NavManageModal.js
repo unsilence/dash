@@ -15,11 +15,9 @@ class AddNavManageModal extends Component {
   }
 
   componentWillReceiveProps(nextProps){
-    console.log('00000000',nextProps);
   }
 
   componentWillUpdate(nextProps,  nextState){
-    console.log(nextProps,  nextState);
 
   } 
 
@@ -50,12 +48,16 @@ class AddNavManageModal extends Component {
   }
 
   okHandler = () => {
-    const { onOk } = this.props;
+    const { dispatch ,fetchId} = this.props;
     this.props.form.validateFields((err, values) => {
       if (!err) {
         values.image = this.state.imageUrl;
-        console.log(values);
-        onOk(values);
+        values.category_num = fetchId;
+        dispatch({
+          type : "navmanages/add",
+          payload : { values }
+        })
+
         this.hideModelHandler();
       }
     });
