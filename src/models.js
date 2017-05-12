@@ -65,6 +65,26 @@ exports["BrandModel"].effects.fetch = function* ({ payload: { page } }, { call, 
   yield put({ type: 'save22', payload: rd });
 }
 
+exports['getCategory'] = function ({page,id}) { return service.fetchSystemPage("Recommend",{ "itype": "5" ,"category_num" : id },{page})};
+
+exports['addNavList'] =  async function (id , value ) { 
+        value.itype = '5';
+        await service.RecommendService.insert(value);
+        let ocj = await service.fetchSystemPage("Recommend",{ "itype": "5" ,"category_num" : value.category_num },{page : 1});
+        console.log(ocj,'---0-09-09-09-09-0-08-98-9');
+        return ocj;
+        // const page = yield select(state => state['navmanages'].page);
+        
+};
+exports['upDataList'] = function (id , value) { 
+        service.RecommendService.update(id,value);
+        // const page = yield select(state => state['navmanages'].page);
+        return service.fetchSystemPage("Recommend",{ "itype": "5" ,"category_num" : value.category_num  },{page : 1});
+};
+exports["removeNavList"] = function ( id , num) {
+        service.RecommendService.remove(id);
+        return service.fetchSystemPage("Recommend",{ "itype": "5" ,"category_num" : num },{page : 1});
+}
 // exports['SpuModel'].effects.fetch = function* ({ payload: { page } }, { call, put }) {
 //   const categoryMap = yield call(service["getCategoryMap"], 'Category');
 //   const serialMap = yield call(service["getSerialMap"], 'Serial');

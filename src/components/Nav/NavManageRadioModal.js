@@ -98,6 +98,7 @@ class NavManageRadioModal extends Component {
         }
         temp = this.state.upData;
         onOk(temp);
+        console.log(temp);
         this.hideModelHandler();
       }
     });

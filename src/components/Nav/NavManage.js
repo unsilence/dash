@@ -4,6 +4,7 @@ import { Table, Pagination, Popconfirm ,Row,Col,Button,Icon,Input ,Radio} from '
 import { routerRedux } from 'dva/router';
 import NavManageRadio from "./NavManageRadio";
 import styles from '../list.less';
+import * as models from "../../models.js";
 let PAGE_SIZE = 10;
 let tempId ;
 import NavManageModal from './NavManageModal.js';
@@ -11,25 +12,34 @@ class NavManage extends  Component{    //{ dispatch, list: dataSource, loading, 
   constructor(props){
     super(props);
     this.state ={
-      fetchId : ''
+      fetchId : '',
+      recommeneds : ''
     }
   }
 
   componentWillReceiveProps(nextProps){
     const { navList } = nextProps;
+  if(navList){
    if(navList.length > 0){
       this.setState({
         fetchId : navList[0].categoryId
       })
    }
   }
+  }
   deleteHandler = (itm) => {
-    console.log('deleteHandler',itm)
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'navmanages/remove',
-      payload: {id:itm._id},
-    });
+    // console.log('deleteHandler',itm)
+    // const { dispatch } = this.props;
+    // dispatch({
+    //   type: 'navmanages/remove',
+    //   payload: {id:itm._id},
+    // });
+    let num = tempId ? tempId : this.state.fetchId;
+    models.removeNavList(itm._id , num).then((value) => {
+      this.setState({
+        recommeneds : value.data.data.list
+      })
+    })
   }
 
   pageChangeHandler = (page) => {
@@ -43,28 +53,50 @@ class NavManage extends  Component{    //{ dispatch, list: dataSource, loading, 
   editHandler = (id, values) => {
     const { dispatch } = this.props;
     // console.log(id+'========================================================================'+values);
+    // if(id){
+    //   dispatch({
+    //     type: 'navmanages/patch',
+    //     payload: { id, values },
+    //   });
+    // }else {
+    //   dispatch({
+    //     type: 'navmanages/add',
+    //     payload: { id, values },
+    //   });
+    // }
     if(id){
-      dispatch({
-        type: 'navmanages/patch',
-        payload: { id, values },
-      });
-    }else {
-      dispatch({
-        type: 'navmanages/add',
-        payload: { id, values },
-      });
+      models.upDataList(id,values).then( (value) => {
+        this.setState({
+          recommeneds : value.data.data.list
+        })
+      })
+    }else{
+      models.addNavList(id,values).then(v => {
+        let recommeneds = v.data.data.list;
+         console.log(recommeneds,'000900909809098')
+         this.setState({recommeneds})
+      })
+     
+      // this.setState({recommeneds})
     }
 
   }
   fetchNav = (id) => {
-    const { dispatch } = this.props;
+    // const { dispatch } = this.props;
+    // tempId = id;
+    // if(id){
+    //   dispatch({
+    //     type : 'navmanages/fetchRecommened',
+    //     payload : { id }
+    //   })
+    // }
+    console.log(id);
     tempId = id;
-    if(id){
-      dispatch({
-        type : 'navmanages/fetch',
-        payload : { id }
+    models.getCategory({page : 1,id}).then((value) => {
+      this.setState({
+      recommeneds : value.data.data.list
       })
-    }
+    });
   }
   okHandler = (id,value) => {
     const { dispatch } = this.props;
@@ -117,7 +149,7 @@ class NavManage extends  Component{    //{ dispatch, list: dataSource, loading, 
       key: 'operation',
       render: (text, serial) => (
         <span className={styles.operation2}>
-        <NavManageModal navmanage={serial} onOk={this.editHandler}>
+        <NavManageModal navmanage={serial} onOk={this.editHandler.bind(null,serial._id)}>
         <Icon type="edit" className={styles.icon}/>
         </NavManageModal>
         <Popconfirm title={"确定要删除推荐吗？"} onConfirm={this.deleteHandler.bind(null, serial)}>
@@ -138,7 +170,7 @@ class NavManage extends  Component{    //{ dispatch, list: dataSource, loading, 
       <Col span={8}>
       <Button style={{marginRight : "16px"}}>历史热品</Button>
       <Button style={{marginRight : "16px"}}>操作日志</Button>
-      <NavManageModal navmanage={{}} dispatch={this.props.dispatch} fetchId={ tempId ? tempId : this.state.fetchId}>
+      <NavManageModal navmanage={{}} onOk={this.editHandler.bind(null,"")} fetchId={ tempId ? tempId : this.state.fetchId}>
         <Button>添加资源</Button>
       </NavManageModal>
       </Col>
@@ -146,7 +178,7 @@ class NavManage extends  Component{    //{ dispatch, list: dataSource, loading, 
       <NavManageRadio change={this.fetchNav} categoryMap={this.props.categoryMap} navList={this.props.navList} tablist={this.props.dataSource} okHandler={this.okHandler} isHasId={this.props.isHasId}/>
       <Table
       columns={columns}
-      dataSource={this.props.list}
+      dataSource={this.state.recommeneds ? this.state.recommeneds : this.props.list}
       loading={this.props.loading}
       rowKey={serial => serial._id}
       pagination={false}

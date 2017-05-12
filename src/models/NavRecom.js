@@ -5,18 +5,20 @@ export var navRecomOption = function (nav) {
     nav.effects.fetch = function* ({ payload: { page,id } }, { call, put }) {
         const navCategory = yield call(service["getSystemMap"],"System");
         let navList = [];
-        let isHasId = null;
+        let isHasId = {};
         Object.values(navCategory).forEach(v => {
             if(v.key == "nav"){
                 navList = JSON.parse(v.value);
-                isHasId = v._id;
+                isHasId["isHasId"] = v._id;
             }
         });
         let id_;
         if(navList.length > 0){
             id ? id_ = id : id_ = navList[0].categoryId;
         }
-        console.log(navList);
+        isHasId["inInfo"] = id_;
+        id_ ? id_ : id_ = 1;
+        console.log(id_);
         const categoryMap = yield call(service["getCategoryMap"], 'Category');  // 获取类型的数据
         // 无条件的
         const navmanages = yield call(service["fetchNavPage"], 'Recommend', { "itype": "5" ,"category_num" : id_ },{page});

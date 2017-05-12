@@ -4,26 +4,36 @@ import {Row,Col,Button,Icon ,Radio} from 'antd';
 import { routerRedux } from 'dva/router';
 import NavManageRadioModal from "./NavManageRadioModal";
 import styles from '../list.less';
-
+let inInfo;
 const RadioGroup = Radio.Group;
 export default class NavManageRadio extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value : 1,
+      value : "",
       childValue : null,
       updata : {}
     };
   }
+  componentWillReceiveProps(nextProps){
+    if(!nextProps.isHasId){return};
+    this.setState({
+      value : nextProps.isHasId.inInfo
+    })
+  }
   changeHandler = (e) => {
     if (e) e.stopPropagation();
     const { change } = this.props;
-    this.setState({
-      value : e.target.value
-    })
+    // this.setState({
+    //   value : e.target.value
+    // })
+    inInfo = e.target.value;
+    console.log(e.target.value);
     change(e.target.value);
   }
   onOk = (values) => {
+    const { change } = this.props;
+    if(!inInfo){inInfo = values[0].categoryId; change(inInfo);};
     let value = JSON.stringify(values);
     this.setState({
       updata : {value}
@@ -32,7 +42,7 @@ export default class NavManageRadio extends Component {
   upData = () => {
     const { okHandler ,isHasId } = this.props;
     if(this.state.updata.value){
-      okHandler(isHasId,this.state.updata.value);
+      okHandler(isHasId.isHasId,this.state.updata.value);
     }else{
       console.log("没有新的数据提交！");
     }
@@ -42,11 +52,20 @@ export default class NavManageRadio extends Component {
   render(){
     const { categoryMap ,navList ,tablist} = this.props;
     let parentList_ = [];
-    if(navList && categoryMap){
-      navList.forEach(v => {
-        parentList_.push(categoryMap[v.categoryId]);
-      })
+    let isNull = [];
+    for(let v in categoryMap){   // 验证 categoryMap 是不是 一个空对象
+      if(v){
+        isNull.push(v);
+      }
     }
+    if(isNull.length > 0){
+      if(navList){
+        navList.forEach(v => {
+          parentList_.push(categoryMap[v.categoryId]);
+        })
+      }
+    }
+    
     let parentList = [];
     let childIdList = [];
     if(categoryMap){
@@ -65,11 +84,11 @@ export default class NavManageRadio extends Component {
       <span>分类：</span>
       </Col>
       <Col span={18} className="gutter-row">
-      <RadioGroup onChange={this.changeHandler} value={this.state.value}>
+      <RadioGroup onChange={this.changeHandler} value={inInfo ? inInfo : this.state.value}>
       {
         parentList_.map((item,index) => {
           return (
-            <Radio value={index+1} key={item._id}>{item.name}</Radio>
+            <Radio value={item._id} key={item._id}>{item.name}</Radio>
             )
           })
         }      

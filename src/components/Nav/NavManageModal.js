@@ -48,16 +48,13 @@ class AddNavManageModal extends Component {
   }
 
   okHandler = () => {
-    const { dispatch ,fetchId} = this.props;
+    const { onOk , fetchId } = this.props;
     this.props.form.validateFields((err, values) => {
       if (!err) {
         values.image = this.state.imageUrl;
         values.category_num = fetchId;
-        dispatch({
-          type : "navmanages/add",
-          payload : { values }
-        })
-
+        console.log(fetchId);
+        onOk(values);
         this.hideModelHandler();
       }
     });
