@@ -8,9 +8,9 @@ import { browserHistory } from 'dva/router';
 let PAGE_SIZE = 10
 import OrderEditModal from './OrderModal.js';
 
-function Orders({ dispatch, list: dataSource, loading, total, page: current ,skuProjectList ,skuPropsList , categoryMap,skuattributeIDs ,_list}) {
+function Orders({ dispatch, list: dataSource, loading, total, page: current ,skuPropsList , categoryMap,skuattributeIDs,_list}) {
+   // _list  这个属性要留着  
   console.log(dataSource);
-  console.log(skuProjectList);
   console.log(skuPropsList);
   console.log(skuattributeIDs);
   function deleteHandler(itm) {
@@ -26,101 +26,78 @@ function Orders({ dispatch, list: dataSource, loading, total, page: current ,sku
     }));
   }
 
-  function editHandler(e) {
-    let id = "545656546548321832";
+  function editHandler(e) {    // 添加doder 数据的方法
+    let id;
     let values = {
-      skuNumList : [{ skuNum: "58eef3004c6fc72a6f2c53d5", count: 1, price: 1000,stocks: "" }],
-      totalPrice: "666666",
-      userId : "7758521",
-      state : "待审核",
-      note : "业主要求只能设计师进场",
-      orderNum : "1314521",
-      projectInfoId : "59098cf239e76c12c8b87b95",
-      refuseInfo : "拒绝理由"
+      skus : [{ sku_num: "58f1860cbdc83d64e9288c0b", quantity : 1, price: 1000,stocks: "" }],
+      total_price: "666666",
+      customer_num : "7758521",
+      status : "待审核",
+      cnum : "1314521",
+      address_num : "5916b8b7e55e23359b0a7a37",
+      refuse_info : "拒绝理由"
     };
-    // if(id){
-    //   dispatch({
-    //     type: 'orders/patch',
-    //     payload: { id, values },
-    //   });
-    // }else {
-    //   dispatch({
-    //     type: 'orders/add',
-    //     payload: { id, values },
-    //   });
-    // }
     dispatch({
       type : "orders/add",
       payload : { id , values }
     })
   }
 
-  function addProject () {
-    let id = "123";
+  function addProject () {    // 添加address 表数据的方法
+    let id;
     let values = {
           name: "工程名称",
-          designerName: "设计师名称",
-          designerPhone: "18911337833",
-          designerDepartment: "设计部门",
-          address:"地址",
-          doorTime:"上门时间2017-5-5",
+          designer_name: "设计师名称",
+          designer_phone: "18911337833",
+          designer_department: "设计部门",
+          door_at:"上门时间2017-5-5",
           days:"天数",
           area:"面积",
-          schedule:"0", // 订单进度
-          note: "业主只许可4个人以下进入房间",
-          userId:"管理员ID"  // 来验证是否有审核资格
+          location: "北京市中南海1号门",
+          customer_num:"管理员ID"  // 来验证是否有审核资格
       };
-
       dispatch({
         type : "orders/addPerject",
         payload  : { id , values}
       })
   }
-
   const columns = [{
     title : "ID",
-    dataIndex : "orderNum",
-    key : "orderNum"
+    dataIndex : "cnum",
+    key : "cnum"
   },{
     title : "预约地址",
-    dataIndex : "address",
-    key : "address"
+    dataIndex : "addressProps.location",
+    key : "addressProps.location"
   },{
     title : "设计师",
-    dataIndex : "designerName",
-    key : "designerName"
+    dataIndex : "addressProps.designer_name",
+    key : "addressProps.designer_name"
   },{
     title: '上门时间',
-    dataIndex: 'doorTime',
-    key : "doorTime"
-  // specify the condition of filtering result
-  // here is that finding the name started with `value`
-  // onFilter: (value, record) => record.name.indexOf(value) === 0,
-    // filterDropdown : <TestDiv />,
-    // filterIcon : <Icon type="search" />
+    dataIndex: 'addressProps.door_at',
+    key : "addressProps.door_at"
 }, {
   title: '订单状态',
-  dataIndex: 'state',
-  key : "state",
-   // render : (text,data) => (<span>{projectMap[data.projectInfoId].state}</span>)
-
+  dataIndex: 'status',
+  key : "status",
 },{
     title : "备注",
-    dataIndex : "note",
-    key : "note"
+    dataIndex : "location",
+    key : "location"
   },
  {
   title: '操作',
   key : "_id",
+  dataIndex : "_id",
   render : (text,data) => (
       <span>
         <OrderEditModal text={text} 
                         projectData={data} 
-                        skuProjectList={skuProjectList} 
                         skuPropsList={skuPropsList} 
                         categoryMap={categoryMap}
                         skuattributeIDs={skuattributeIDs}
-                        dataSource={dataSource}
+                        dataSource={data}
                         dispatch={dispatch}
                         itemId={data._id}
                         _list={_list}>
@@ -166,17 +143,16 @@ return (
 
 function mapStateToProps(state) {
   console.log(state);
-  const { list, total, page ,skuPropsList ,skuProjectList , categoryMap ,skuattributeIDs ,_list} = state.orders;
+  const { list, total, page ,skuPropsList, categoryMap ,skuattributeIDs ,_list} = state.orders;
   return {
     loading: state.loading.models.orders,
     list,
-    _list,
     total,
     page,
     skuPropsList,
-    skuProjectList,
     categoryMap,
     skuattributeIDs,
+    _list
   };
 }
 

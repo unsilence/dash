@@ -25,7 +25,8 @@ class _Main extends Component {
   login = async (e) => {
       let phone = this.refs.phoneInput.refs.input.value
       let code = this.refs.codeInput.refs.input.value
-      let res = await UserModel.login({phone,code})
+      let password = this.refs.password.refs.input.value
+      let res = await UserModel.login({phone,code,password})
       console.log(res)
       if(res.status == 'success'){
           message.success('登录验证通过');
@@ -86,13 +87,17 @@ class _Main extends Component {
   render() {
       console.log('componnents:: login/content will render')
     return (
-        <Row type="flex" justify="space-around" align="middle" className={styles.login_wrap}>
-            <Col span={4} justify="space-around" align="middle">
+      <span >
+        <Row type="flex" justify="space-around" align="middle">
+            <Col span={4} >
                 <Row >
-                  <Col span={24}>尚层美家信息平台-财务系统</Col>
+                  <Col span={24} style={{fontSize : "16px"}}>美学管家-后台管理系统</Col>
                 </Row>
                 <Row>
                   <Col span={24}><Input addonBefore={<Icon type="phone" />}  placeholder="手机号"  ref="phoneInput"/></Col>
+                </Row>
+                <Row style={{ marginTop:15 }}>
+                  <Col span={24}><Input addonBefore={<Icon type="lock"/>} type="password" placeholder="密码"  ref="password"/></Col>
                 </Row>
                 <Row style={{ marginTop:15 }}>
                   <Col span={12}><Input  addonBefore={<Icon type="lock" />}  placeholder="验证码" ref="codeInput"/></Col>
@@ -104,6 +109,7 @@ class _Main extends Component {
                 </Row>
             </Col>
         </Row>
+      </span>
     );
   }
 }

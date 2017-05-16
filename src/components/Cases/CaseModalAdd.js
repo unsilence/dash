@@ -41,11 +41,12 @@ class CaseEditModalAdd extends Component {
       value: 1,
       tags: [],
       content: "",
-
+      beforefileList :  [],
       imageUrl: props.case.collocatImg,
       previewVisible: false,
       previewImage: '',
-      fileList: this.props.case.images || [],
+      afterfileList: [],
+      editor : "请输入文本"
     };
   }
 
@@ -73,7 +74,46 @@ class CaseEditModalAdd extends Component {
     })
     this.setState({ fileList })
   }
-
+  afterhandleImgChange = ({ fileList }) => {
+    // fileList.forEach(f => {
+    //   f.case_type = "after";
+      // if (f.status === 'done') {
+      //   if (f.url) {
+      //     this.images.push(f);
+      //   }
+      //   else {
+      //     this.images.push({ name: f.name, url: '/api/file/' + f.response.md5list[0], md5: f.response.md5list[0] ,case_type : "after"});
+      //   }
+      // }
+    // })
+    // this.state.afterfileList.forEach(v => {
+    //   if(v.case_type === "after"){
+    //       v = fileList[0]
+    //   }
+    // })
+    fileList[0].case_type = "after";
+    this.setState({ afterfileList :fileList })
+  }
+  beforehandleImgChange = ({ fileList }) => {
+    //   fileList.forEach(f => {
+    //     f.case_type = "before";
+    //     if (f.status === 'done') {
+    //       if (f.url) {
+    //         this.images.push(f);
+    //       }
+    //       else {
+    //         this.images.push({ name: f.name, url: '/api/file/' + f.response.md5list[0], md5: f.response.md5list[0] ,case_type : "before"});
+    //       }
+    //     }
+    //   })
+    //   this.state.beforefileList.forEach(v => {
+    //   if(v.case_type === "before"){
+    //       v = fileList[0]
+    //   }
+    // })
+      fileList[0].case_type = "before";
+      this.setState({ beforefileList : fileList })
+    }
   showModelHandler = (e) => {
     if (e) e.stopPropagation();
     this.setState({
@@ -83,11 +123,17 @@ class CaseEditModalAdd extends Component {
   hideModelHandler = () => {
     this.setState({
       visible: false,
+      tags : []
     });
-    this.props.form.resetFields(['headline','releaseTime','collocatImg','release_time','click_rate']);
+    this.props.form.resetFields();
   }
-  handleChangeInput(tags) {
+  handleChangeInput (tags) {
     this.setState({ tags });
+  }
+  tagsHandler = (value) => {
+    this.setState({
+      tags : value
+    })
   }
   okHandler = (e) => {
     const { onOk } = this.props;
@@ -95,7 +141,13 @@ class CaseEditModalAdd extends Component {
 
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        let imgs = this.state.beforefileList.concat(this.state.afterfileList);
+        imgs.forEach(v => {
+          this.images.push({name : v.name,url : "/api/file/"+v.response.md5list[0],md5 : v.response.md5list[0] ,case_type : v.case_type })
+        })
         values.images = this.images;
+        values.qtext = this.state.tags;
+        console.log(values);
         onOk(values);
         this.hideModelHandler();
       }
@@ -188,43 +240,57 @@ class CaseEditModalAdd extends Component {
           onCancel={this.hideModelHandler}
         >
           <Form horizontal onSubmit={this.okHandler}>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="URL" > {getFieldDecorator('urladdress', { rules: [{ required: true, message: '请输入URL!' }], initialValue: urladdress })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="项目名称" > {getFieldDecorator('projectName', { rules: [{ required: true, message: '请输入项目名称!' }], initialValue: projectName })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="标题" > {getFieldDecorator('headline', { rules: [{ required: true, message: '请输入标题!' }], initialValue: headline })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="URL" > {getFieldDecorator('url', { rules: [{ required: true, message: '请输入URL!' }]})(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="项目名称" > {getFieldDecorator('project_name', { rules: [{ required: true, message: '请输入项目名称!' }]})(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="标题" > {getFieldDecorator('title', { rules: [{ required: true, message: '请输入标题!' }]})(<Input size="small" />)}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >
-              {getFieldDecorator('key', { rules: [{ required: true, message: '请输入搜索关键字!' }], initialValue: [] })(<TagsInput value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v) }} />)}
+              {<TagsInput value={this.state.tags} {...{ 'onlyUnique': true }} onChange={this.tagsHandler} />}
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="案例介绍" >
-              {getFieldDecorator('caseNote', { rules: [{ required: true, message: '请输入案例介绍内容!' }], initialValue: caseNote })
-                (<Editor icons={icons} value={this.state.content} defaultValue="<p>提示文本</p>" onChange={this.handleAlter.bind(this)} plugins={plugins} />)}
+              {getFieldDecorator('note', {  rules: [{ required: true, message: '请输入案例介绍内容!' }]})
+                (<Editor icons={icons} onChange={this.handleAlter.bind(this)} plugins={plugins} />)}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="配图" >
+            <FormItem className={styles.FormItem} {...formItemLayout} label="添加软装后案例图(长X宽)" >
               <Upload
                 action="/api/file/upload"
                 listType="picture-card"
-                fileList={fileList}
+                fileList={this.state.afterfileList}
                 onPreview={this.handleImgPreview}
-                onChange={this.handleImgChange}
+                onChange={this.afterhandleImgChange}
               >
-                {(fileList || []).length >= 3 ? null : uploadButton}
+                {(fileList || []).length > 1  ? null : uploadButton}
               </Upload>
               <Modal visible={previewVisible} footer={null} onCancel={this.handleImgCancel}>
                 <img alt="example" style={{ width: '100%' }} src={previewImage} />
               </Modal>
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例户型" > {getFieldDecorator('caseDoormodel', { rules: [{ required: true, message: '请选择案例户型!' }], initialValue: caseDoormodel })(<RadioGroup  size="small">
+            <FormItem className={styles.FormItem} {...formItemLayout} label="添加软装前案例图(长X宽)" >
+              <Upload
+                action="/api/file/upload"
+                listType="picture-card"
+                fileList={this.state.beforefileList}
+                onPreview={this.handleImgPreview}
+                onChange={this.beforehandleImgChange}
+              >
+                {(fileList || []).length > 1 ? null : uploadButton}
+              </Upload>
+              <Modal visible={previewVisible} footer={null} onCancel={this.handleImgCancel}>
+                <img alt="example" style={{ width: '100%' }} src={previewImage} />
+              </Modal>
+            </FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例户型" > {getFieldDecorator('layout', { rules: [{ required: true, message: '请选择案例户型!' }]})(<RadioGroup  size="small">
               {casemodelButton}
             </RadioGroup>)}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例空间" > {getFieldDecorator('caseSpace', { rules: [{ required: true, message: '请选择案例空间!' }], initialValue: caseSpace })(<RadioGroup  size="small">
+            <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例空间" > {getFieldDecorator('space_node', { rules: [{ required: true, message: '请选择案例空间!' }]})(<RadioGroup  size="small">
               {casespaceButton}
             </RadioGroup>)}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例风格" > {getFieldDecorator('caseStyle', { rules: [{ required: true, message: '请选择案例风格!' }], initialValue: caseStyle })(<RadioGroup  size="small">
+            <FormItem className={styles.FormItem} {...formItemLayout} label="请选择案例风格" > {getFieldDecorator('style', { rules: [{ required: true, message: '请选择案例风格!' }]})(<RadioGroup  size="small">
               {casestyleButton}
             </RadioGroup>)}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="发布时间" style={_id ? { display: 'block' } : { display: 'none' }}>    {getFieldDecorator('createAt', { initialValue: moment(new Date(createAt)).format('YYYY-MM-DD HH:mm:ss') })(
+            <FormItem className={styles.FormItem} {...formItemLayout} label="发布时间" style={_id ? { display: 'block' } : { display: 'none' }}>    {getFieldDecorator('publish_at', { })(
               <Input size="small" />
             )}</FormItem>
           </Form>

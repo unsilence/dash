@@ -9,9 +9,9 @@ export var sendCode = async (values)=>{
     return codeRes
 }
 export var login = async (values)=>{
-    let {phone,code} = values
+    let {phone,code,password} = values
     console.log("models/user login",{phone,code})
-    var userRes = await api(`/api/auth/login?token=${localStorage.token}`,{phone,code})
+    var userRes = await api(`/api/auth/login_dash?token=${localStorage.token}`,{phone,code,password})
     localStorage.user = JSON.stringify(userRes.data.item)
     return userRes
 }

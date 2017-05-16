@@ -58,10 +58,13 @@ export default class NavManageRadio extends Component {
         isNull.push(v);
       }
     }
+    console.log(categoryMap);
     if(isNull.length > 0){
       if(navList){
         navList.forEach(v => {
-          parentList_.push(categoryMap[v.categoryId]);
+          if(categoryMap[v.categoryId]){
+            parentList_.push(categoryMap[v.categoryId]);
+          }
         })
       }
     }

@@ -10,7 +10,8 @@ import moment from 'moment';
 
 import RecommendNum from "./recommendNumComponent.js";
 import Propelling from "./propelling.js";
-function Cases({ dispatch, list: dataSource, loading, total, page: current }) {
+function Cases({ dispatch, list: dataSource, loading, total, page: current ,skuList}) {
+  console.log(dataSource);
   function deleteHandler(itm) {
       console.log('deleteHandler',itm)
     dispatch({
@@ -42,42 +43,41 @@ function Cases({ dispatch, list: dataSource, loading, total, page: current }) {
   }
   const columns = [
     {
-      title: 'id',
-      dataIndex: '_id',
-      key: '_id',
-      render: text => <a href="">{text}</a>,
+      title: 'ID',
+      dataIndex: 'cnum',
+      key: 'cnum',
+      render: text => <a href="">{text}</a>
     },
     {
       title: '名称',
-      dataIndex: 'projectName',
-      key: 'projectName',
+      dataIndex: 'project_name',
+      key: 'project_name',
     },
     {
       title: '创建时间',
-      dataIndex: 'createAt',
-      key: 'createAt',
-      render: text => <span>{moment(new Date(text)).format('YYYY-MM-DD HH:mm:ss')}</span>,
+      dataIndex: 'create_at',
+      key: 'create_at',
+      render: text => <span>{moment(new Date(text)).format('YYYY-MM-DD HH:mm:ss')}</span>
     },
     {
       title: '户型',
-      dataIndex: 'caseDoormodel',
-      key: 'caseDoormodel',
+      dataIndex: 'layout',
+      key: 'layout',
     },
     {
       title: '空间',
-      dataIndex: 'caseSpace',
-      key: 'caseSpace',
+      dataIndex: 'space_node',
+      key: 'space_node',
     },
     {
       title: '阅读量',
-      dataIndex: 'readNum',
-      key: 'readNum',
+      dataIndex: 'hot',
+      key: 'hot',
     },
     {
       title: '推荐系数',
-      dataIndex: 'updateAt',
-      key: 'updateAt',
-      render: text => <span>{moment(new Date(text)).format('YYYY-MM-DD HH:mm:ss')}</span>,
+      dataIndex: 'recommend_num',
+      key: 'recommend_num',
     },
     {
       title: '操作',
@@ -87,7 +87,7 @@ function Cases({ dispatch, list: dataSource, loading, total, page: current }) {
           <Row>
             <RecommendNum dispatch={dispatch} />
             <Propelling dispatch={dispatch} />
-            <CaseEditModal cases={cases} onOk={editHandler}>
+            <CaseEditModal cases={cases} onOk={editHandler} dispatch={dispatch} skuList={skuList}>
               <Button>编辑</Button>
             </CaseEditModal>
           </Row>
@@ -124,12 +124,13 @@ function Cases({ dispatch, list: dataSource, loading, total, page: current }) {
 }
 
 function mapStateToProps(state) {
-  const { list, total, page } = state.cases;
+  const { list, total, page ,skuList} = state.cases;
   return {
     loading: state.loading.models.cases,
     list,
     total,
     page,
+    skuList
   };
 }
 

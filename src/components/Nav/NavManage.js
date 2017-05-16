@@ -73,11 +73,8 @@ class NavManage extends  Component{    //{ dispatch, list: dataSource, loading, 
     }else{
       models.addNavList(id,values).then(v => {
         let recommeneds = v.data.data.list;
-         console.log(recommeneds,'000900909809098')
          this.setState({recommeneds})
       })
-     
-      // this.setState({recommeneds})
     }
 
   }

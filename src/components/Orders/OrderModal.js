@@ -4,6 +4,7 @@ import styles from '../item.less';
 
 import AuditModal from "./auditModal.js";
 import { getProductNum } from '../utils'
+
 const Step = Steps.Step;
 // const FormItem = Form.Item;
 
@@ -11,7 +12,7 @@ class OrderEditModal extends Component {
 
   constructor(props) {
     super(props);
-    const { _list , itemId } = this.props; 
+    const { dataSource } = props; 
 
     this.state = {
       visible: false,
@@ -26,9 +27,8 @@ class OrderEditModal extends Component {
       }
     };
 
-
-    if(_list[itemId].state.indexOf("失败") !== -1){
-      switch(_list[itemId].state){
+    if(dataSource.status.indexOf("失败") !== -1){
+      switch(dataSource.status){
         case "提交审核失败":
         this.state.status.status0 = "error";
         break;
@@ -50,7 +50,7 @@ class OrderEditModal extends Component {
 
       }
     }else{
-      switch(_list[itemId].state){
+      switch(dataSource.status){
         case "等待审核" :
         this.state.current = 0;
         break;
@@ -100,25 +100,30 @@ class OrderEditModal extends Component {
   };
 
   okHandler = () => {
-    // const { onOk } = this.props;
+    // // const { onOk } = this.props;
     // this.props.form.validateFields((err, values) => {
     //   if (!err) {
-    //     onOk(values);
+    //     // onOk(values);
+    //     console.log(values);
     //     this.hideModelHandler();
     //   }
     // });
-    // const current = this.state.current+1
-    // if(this.state.current < 7){
-    //   this.setState({
-    //     current : current
-    //   })
-    // }
+    // // const current = this.state.current+1
+    // // if(this.state.current < 7){
+    // //   this.setState({
+    // //     current : current
+    // //   })
+    // // }
   };
   passHandler = (values) => {
-    const { _list , dispatch , itemId } = this.props; 
-    console.log(values);
+    const { dispatch  , dataSource ,_list} = this.props; 
     console.log(_list);
-    console.log(dispatch);
+    let temp;
+    _list.forEach(v => {
+      if(v._id == dataSource._id){
+        temp = v;
+      }
+    })
     const current = this.state.current+1
     if(this.state.current < 6){
       this.setState({
@@ -127,36 +132,42 @@ class OrderEditModal extends Component {
     }
       switch(current){
         case 0 :
-        _list[itemId].state = "等待审核";
+        temp.status = "等待审核";
         break;
         case 1 :
-        _list[itemId].state = "等待物流确认";
+        temp.status = "等待物流确认";
         break;
         case 2 :
-        _list[itemId].state = "等待上门服务";
+        temp.status = "等待上门服务";
         break;
         case 3 :
-        _list[itemId].state = "等待点货确认";
+        temp.status = "等待点货确认";
         break;
         case 4 :
-        _list[itemId].state = "等待结算";
+        temp.status = "等待结算";
         break;
         case 5 :
-        _list[itemId].state = "结算完成";
+        temp.status = "结算完成";
         break;
       }
 
-    _list[itemId].refuseInfo = values;
+    temp.result_info = values;
+
     dispatch({
       type : "orders/patch",
-      payload : {id : itemId , values : _list[itemId]}
+      payload : {id : dataSource._id , values :temp}
     })
 
   }
   noPassHandler = (values) => {
-    console.log(values);
-    const { _list , dispatch , itemId } = this.props; 
-    // const current = this.state.current+1
+    const { dispatch  , dataSource ,_list} = this.props; 
+    console.log(_list);
+    let temp;
+    _list.forEach(v => {
+      if(v._id == dataSource._id){
+        temp = v;
+      }
+    })
     const current = this.state.current;
     const status = "status"+current;
     this.state.status[status] = "error";
@@ -172,127 +183,106 @@ class OrderEditModal extends Component {
 
     switch(num){
         case 0:
-        _list[itemId].state = "提交审核失败";
+        temp.status = "提交审核失败";
         break;
         case 1:
-        _list[itemId].state = "审核失败";
+        temp.status = "审核失败";
         break;
         case 2:
-        _list[itemId].state = "物流确认失败";
+        temp.status = "物流确认失败";
         break;
         case 3:
-        _list[itemId].state = "上门服务失败";
+        temp.status = "上门服务失败";
         break;
         case 4:
-        _list[itemId].state = "点货失败";
+        temp.status = "点货失败";
         break;
         case 5:
-        _list[itemId].state = "结算失败";
+        temp.status = "结算失败";
         break;
 
       }
-      _list[itemId].refuseInfo = values;
+      temp.result_info = values; 
 
       dispatch({
       type : "orders/patch",
-      payload : {id : itemId , values : _list[itemId]}
+      payload : {id : dataSource._id , values :temp}
     })
   }
 
-  sizeHandler = (skuPropsList , value) => {
-    let text = "";
-    let temp;
-    skuPropsList.forEach(v => {
-      v.attributes.forEach(t => {
-        if(t.attributeID === value._id && value.colors === undefined){
-          temp = t.value;
+/* 表格属性数据的解析方法*/
+  getPropsHandler = (data) => {
+    console.log(data);
+    let _data = [];
+    data.skuProps.attributes.map(v => {
+      let value = '';
+      if(v.dtype == "array"){
+        if(v.colorProps){
+          v.colorProps.forEach(k => {
+            value += k.name+"、";
+          })
         }
-      })
-    })
-    temp = JSON.parse(temp);
-    for(let a in temp){
-      text += temp[a]+"X";
-    }
-    text = text.substr(0,text.length-1);
-    return text;
-  }
-  colorHandler = (v) => {
-    let text = "";
-    v.forEach(p => {
-      if(p !== undefined){
-        text += p.name+"、";
+      }else if(v.dtype == "object"){
+        let a = JSON.parse(v.value.replace(/\\/g,""));
+        value = a.chang+"X"+a.kuan+"X"+a.gao;
       }
+ 
+      _data.push({"name" : v.attributeProps.name,"value" :value })
+
     })
-    text = text.substr(0,text.length-1);
-    return text;
+    console.log(_data);
+    return _data;
   }
+
   render() {
-    const { children , projectData , skuPropsList , skuProjectList ,categoryMap,skuattributeIDs ,dataSource } = this.props;
+    const { children , projectData , skuPropsList , skuProjectList ,categoryMap,skuattributeIDs ,dataSource } = this.props;  //.addressProps
     const { current } = this.state;
+    console.log(projectData);
     console.log(dataSource);
     console.log(skuPropsList);
     console.log(categoryMap);
     console.log(skuProjectList);
-    
-
+     //  得到 商品编号的数据的数据结构
     const columns = [{
       title : "商品编号",
       key : "skuNum",
-      dataIndex : "skuNum",
-      render : (text ,data) => <span>{getProductNum(data.categoryId,categoryMap)+data.spu.productNum+text}</span>
+      render : (text ,data) => {  
+        return (<span>{getProductNum(data.skuProps.category_num,categoryMap)+data.skuProps.spuProps.unique_num+data.skuProps.skuNum}</span>)
+      }
     },{
       title : "名称",
-      dataIndex : "name",
-      render : (text,data) => <span style={{display:"block",width:"100%",height:"100%",lineHeight:"60px"}}><img src={data.images[0].url} style={{width:"60px",height:"60px",float:"left",marginRight:"10px"}}/>{text}</span>
+      key : "name",
+      render : (text,data) => <span style={{display:"block",width:"100%",height:"100%",lineHeight:"60px"}}><img src={data.skuProps.images[0].url} style={{width:"60px",height:"60px",float:"left",marginRight:"10px"}}/>{data.skuProps.name}</span>
     },{
       title : "属性",
+      key : "attributes",
+      dataIndex : "skuProps.attributes",
       render : (text,data) => {
-        return skuattributeIDs.map(v => (
-          <p key={v.name}><label>{v.name+":"}</label><span>{v.colors !== undefined ? this.colorHandler(v.colors) : this.sizeHandler(skuPropsList,v)}</span></p>
-        ))
+        return  this.getPropsHandler(data).map(v => <p key={v.name}><label>{v.name+":"}</label><span>{v.value}</span></p>)
       }
     },{
       title : "单价(元)",
       key : "price",
-      render : (text,data) => {
-        let price ="";
-        dataSource.forEach(t => {
-          t.skuNumList.map(v => {
-            if(v.skuNum === data._id){
-                price = v.price;
-            }
-          })
-        })
-        return <span>{price}</span>
-      }
+      dataIndex : "skuProps.price"
+      
     },{
       title : "数量",
       key : "count",
-      render : (text,data) => {
-        let count = "";
-        dataSource.forEach(t => {
-          t.skuNumList.map(v => {
-            if(v.skuNum === data._id){
-                count = v.count;
-            }
-          })
-        })
-        return <span>{count}</span>
-      }
+      dataIndex : "skuProps.count"
     },{
       title : "优惠",
       key : "favourable",
       dataIndex : "favourable"
     },{
       title : "其他预约信息",
-      key : "outo",
-      render : (text,data) => {
-          return  skuProjectList.map(v => (<p key={v.createAt}>{v.createAt.split("T")[0]+"/"+v.designerName+"/"+v.name}</p>))
+      key : "messages",
+      render : (text ,data) => {
+        return data.addressProps.map(v => (<p key={v.create_at}>{v.create_at.split("T")[0]+"/"+v.designer_name+"/"+v.name}</p>))
       }
     },{
       title : "状态",
-      key : "state",
-      dataIndex : "state"
+      key : "skuProps.is_online",
+      dataIndex : "skuProps.is_online"
     }]
     return (
       <span>
@@ -319,14 +309,14 @@ class OrderEditModal extends Component {
           maskClosable={false}
         >
           <Row type="flex" justify="start" gutter={20} style={{marginTop : "10px" , marginBottom : "10px"}}>
-            <Col span={4}>订单编号:{projectData.orderNum}</Col>
-            <Col span={4}>联系人:{projectData.designerName}</Col>
-            <Col span={4}>联系电话:{projectData.designerPhone}</Col>
-            <Col>创建时间:{projectData.createAt}</Col>
-            <Col span={4}>上门时间:{projectData.doorTime}</Col>
+            <Col span={4}>订单编号:{projectData.cnum}</Col>
+            <Col span={4}>联系人:{projectData.addressProps.designer_name}</Col>
+            <Col span={4}>联系电话:{projectData.addressProps.designer_phone}</Col>
+            <Col>创建时间:{projectData.create_at}</Col>
+            <Col span={4}>上门时间:{projectData.addressProps.door_at}</Col>
           </Row>
           <Row type="flex" justify="start" gutter={20}>
-            <Col span={4}>上门地址:{projectData.address}</Col>
+            <Col span={4}>上门地址:{projectData.addressProps.location}</Col>
             <Col>备注信息:{projectData.note}</Col>
           </Row>
           <Row type="flex" justify="start" gutter={20} style={{marginTop : "20px" , marginBottom : "50px"}}>
@@ -341,7 +331,7 @@ class OrderEditModal extends Component {
           </Row>
           <Table
             columns={columns}
-            dataSource={skuPropsList}
+            dataSource={dataSource.skus}
             pagination={false}
           />
           <Row type="flex" justify="end" gutter={20} style={{marginTop : "20px"}}>

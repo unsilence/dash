@@ -71,15 +71,15 @@ exports['addNavList'] =  async function (id , value ) {
         value.itype = '5';
         await service.RecommendService.insert(value);
         let ocj = await service.fetchSystemPage("Recommend",{ "itype": "5" ,"category_num" : value.category_num },{page : 1});
-        console.log(ocj,'---0-09-09-09-09-0-08-98-9');
         return ocj;
         // const page = yield select(state => state['navmanages'].page);
         
 };
-exports['upDataList'] = function (id , value) { 
-        service.RecommendService.update(id,value);
+exports['upDataList'] = async function (id , value) { 
+        await service.RecommendService.update(id,value);
         // const page = yield select(state => state['navmanages'].page);
-        return service.fetchSystemPage("Recommend",{ "itype": "5" ,"category_num" : value.category_num  },{page : 1});
+        let obj = await service.fetchSystemPage("Recommend",{ "itype": "5" ,"category_num" : value.category_num  },{page : 1});
+        return obj;
 };
 exports["removeNavList"] = function ( id , num) {
         service.RecommendService.remove(id);

@@ -15,7 +15,7 @@ async function request(url, dt) {
     console.log(url, "RETRUN:", data)
     return ret;
 }
-['Projectinfo','Order','Nav','Recommend','Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test','System'].map(cls => {
+['Address','Order','Nav','Recommend','Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test','System'].map(cls => {
     exports[cls + 'Service'] = {
         fetch({ page = 1 }) {
             return request(`/api/${cls}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 10, startPos: 10 * (page - 1) });
@@ -63,7 +63,7 @@ function getMapByList(list) {
     return tempMap
 }
 
-['Color', 'Country', 'Brand', 'Serial', 'Category', 'Attribute','Recommend','Nav','Order','Case','System'].map(v => {
+['Color', 'Country', 'Brand', 'Serial', 'Category', 'Attribute','Recommend','Nav','Order','Case','System',"Sku"].map(v => {
     exports[`get${v}Map`] = async function (v) {
         let result = await request(`/api/${v}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 10000000, startPos: 0 })
         let list = result.data.data.list

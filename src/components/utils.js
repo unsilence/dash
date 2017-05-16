@@ -76,6 +76,7 @@ exports['getCategoryName'] = getCategoryName;
 
 function getProductNum(_ids, categoryMap) {
   let cids = _ids || [];
+  console.log(categoryMap);
   let cstr = cids.map(v => loop(v)).join('');
   function loop(_id) {
     let cd = '';
@@ -179,10 +180,24 @@ exports["trim"] = trim;
 
 // 生成图片跟随鼠标移动方法
 let points = [];  // 存储点的数组
-function imgMove(url,record){
-  if(!url) {
+// let upDataPoints = [];
+function imgMove(record,callback){
+  console.log(record);
+  if(!record) {
     return false;
   }
+
+  // 把每行的属性赋值给这个数组对象
+  // function isHas () {
+  //     upDataPoints.forEach(v => {
+  //       if(v.record._id === record._id){
+  //         return false;
+  //       }else{
+  //         return true;
+  //       }
+  //     })
+  // }
+  
   let body_ = document.querySelector("body");
   let img = document.createElement("img");
   img.setAttribute("style","width:30px;height:30px;position:absolute;z-index:9999999999;pointer-events:none;");
@@ -193,10 +208,11 @@ function imgMove(url,record){
   var point = [];
   var radio;
   const parentDiv = document.getElementById('addAffterParent');
+
   function moveHandler (e) {
     img.style.left = e.clientX+"px";
     img.style.top = e.clientY+"px";
-    img.src = "http://localhost:8000"+url;
+    img.src = record.images[0].url;
   }
   /*获取元素的纵坐标*/
 function getTop(e){
@@ -217,9 +233,13 @@ function getLeft(e){
 function mouseDownMoveHandler(me) {
   if(me.clientX - targetX >= 0 && me.clientX - targetX <= 200 && me.clientY - targetY >= 0 && me.clientY - targetY <= 200){
     points.forEach(v => {
-      if(v.childNodes[0].tagName === "INPUT" && v.childNodes[0].checked == true){
-        v.style.left = (me.clientX - targetX) + "px";
-        v.style.top = (me.clientY - targetY-10) + "px";
+      if(v.span.childNodes[0].tagName === "INPUT" && v.span.childNodes[0].checked == true){
+        v.span.style.left = (me.clientX - targetX) + "px";
+        v.span.style.top = (me.clientY - targetY-10) + "px";
+        // 第一次生成点的位置  把位置信息赋值给数组
+        // if(!has()){
+        //   upDataPoints.push({ image_md5 : record.images[0].md5 , sku_num : record.cnum , position_x : (me.clientX - targetX) , position_y : (me.clientX - targetX)})
+        // }
       }
     })
   }
@@ -244,19 +264,21 @@ function mouseDownMoveHandler(me) {
                 if(e.keyCode == 46){
                   let self = this;
                   points.forEach((v,index) => {
-                    if(v.childNodes[0].checked == true){
+                    if(v.span.childNodes[0].checked == true){
                       points.splice(index,1);
                     }
                   })
                   console.log(points);
                   parentDiv.removeChild(this.parentNode);
+                  callback(points);
                 }
               },false);
               _point.appendChild(radio);
-              points.push(_point);
+              points.push({prop : record, span : _point});
               console.log(points);
               // point.id  = record._id;
               parentDiv.appendChild(_point);
+              callback(points);
               console.log((x-targetX) +"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +(y-targetY));
               console.log(record);
 
@@ -274,6 +296,27 @@ function mouseDownMoveHandler(me) {
   },false);
   document.addEventListener("mousemove",moveHandler,false);
   addAfterImg.addEventListener("click",_click,false);
+
 }
 
 exports["imgMove"] = imgMove;
+
+
+function initalPoints (points) {
+  if( !points || points.length <= 0 ){
+    return false;
+  }
+  let parent = document.getElementById('addAffterParent');
+  points.forEach(v => {
+    let _span = document.createElement("span");
+    let _radio = document.createElement("input");
+    _radio.type = "radio";
+    _span.appendChild(_radio);
+    _span.setAttribute("style","position:absolute;left:"+(v.position_x)+";top:"+(v.position_y)+";display :block;z-index : 1000;")
+    if(parent){
+      parent.appendChild(_span);
+    }
+  })
+}
+
+exports["initalPoints"] = initalPoints;

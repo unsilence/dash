@@ -28,7 +28,9 @@ function Categorys({ dispatch, list: dataSource, loading, total, page: current ,
     if (_id === '' || !_id) {
       return '';
     }
-    return categoryMap[_id].name ||'';
+    if(categoryMap[_id]){
+      return categoryMap[_id].name ||'';
+    }
   }
 
   function editHandler(id, values) {
