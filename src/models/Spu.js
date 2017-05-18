@@ -16,11 +16,31 @@ export var addSpuOption = function (spu) {
             return p._id;
         });
 
-        const skus = yield call(service['getDataService'], 'Sku', { "spuId": { "$in": pids } })
+        const skus = yield call(service['getDataService'], 'Sku', { "spu_num": { "$in": pids } });
+
+        let skuNums = new Set();
+        skus.data.data.list.forEach(s => {
+                skuNums.add(s._id);
+            })
+
+        skuNums = Array.from(skuNums);
+
+        const stocks = yield call(service['getDataService'], 'Stock', { "sku_num": { "$in": skuNums } });
+
+        let numContent = {}
+        //会进行状态过滤
+        stocks.data.data.list.forEach( v => {
+            if(!numContent.hasOwnProperty(v._id)){
+                numContent[v.sku_num] = 0;
+            }
+            numContent[v.sku_num] ++;
+        });
+
+        console.log(numContent);
 
         products.data.data.list.forEach(p => {
             skus.data.data.list.forEach(s => {
-                if (s.spuId === p._id) {
+                if (s.spu_num === p._id) {
                     p.doneSkus ? p.doneSkus.push(s) : p.doneSkus = [s];
                 }
             })
@@ -47,17 +67,17 @@ export var addSpuOption = function (spu) {
 
         skus.forEach((sku, index) => {
             sku.name = spu.data.data.item.name;
-            sku.spuId = spu.data.data.item._id;
-            sku.skuNum = pad(index + 1, 2);
+            sku.spu_num = spu.data.data.item._id;
+            sku.unique_num = pad(index + 1, 2);
         })
         let skusRet = yield call(service['insertSkuData'], 'Sku', skus);
         let stocks = [];
 
         skusRet.map(sku => { return sku.data.data.item })
-            .map(v => { return { name: v.name, skuId: v._id, tempNum: v.count } })
+            .map((v,index) => { return { name: v.name, sku_num: v._id, tempNum: v.count } })
             .forEach(item => {
-                for (let i = 0; i < item.tempNum; i++) {
-                    item.stockNum = pad((i + 1), 3);
+                for (let i = 0; i < skus[index].count; i++) {
+                    item.unique_num= pad((i + 1), 3);
                     stocks.push(item);
                 }
             });

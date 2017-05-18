@@ -7,6 +7,7 @@ import { getFormatData, getColorSerialFormatData } from '../utils';
 import NumericInput from './NumericInput';
 import SizeInput from './SizeInput';
 import {doExchange,keysrt} from '../utils'
+import Editor from 'react-umeditor';
 const FormItem = Form.Item;
 var pinyin = require("pinyin");
 import EditableTable from './EditableTable';
@@ -26,8 +27,9 @@ class SpuEditModal extends Component {
       tableFormatData: [],
       columnsDatas: [],
       key: [],
-      categoryId: [],
-      product: {}
+      category_num: [],
+      product: {},
+      content :''
     };
   }
 
@@ -35,8 +37,9 @@ class SpuEditModal extends Component {
     console.log(this.props.product, '-----------componentWillMount');
   }
   componentDidMount() {
-    if (this.props.product.categoryId) {
-      this.cascaderOnChange(this.props.product.categoryId, 1);
+    if (this.props.product.category_num) {
+      // let nums = typeof(this.props.product.category_num) != "string" ? this.props.product.category_num : [this.props.product.category_num];
+      this.cascaderOnChange(this.props.product.category_num, 1);
       this.sellChange('');
       this.forceUpdate();
     }
@@ -80,20 +83,22 @@ class SpuEditModal extends Component {
   }
 
   handleAttr = (_cascader, fromWhere) => {
+    console.log(fromWhere);
     let cas = _cascader.toString();
     let keyAttr = [];
     let sellAttr = [];
     let otherAttr = [];
     let arr = Object.values(this.props.product.attributeMap)
       .filter(v => {
-        return v.categoryId.toString() === cas;
+        return v.category_num.toString() === cas;
       }).forEach(v => {
-        if (v.type === '1') {
+        console.log(v,"dsddddddddddddddddddddddddddddddddddddddddddddddd");
+        if (v.vital_type === '1') {
           keyAttr.push(v);
-        } else if (v.type === '2') {
+        } else if (v.vital_type === '2') {
           v.sellId = v._id + "_" + (this.uuid++);
           sellAttr.push(v);
-        } else if (v.type === '3') {
+        } else if (v.vital_type === '3') {
           otherAttr.push(v);
         }
       })
@@ -117,7 +122,7 @@ class SpuEditModal extends Component {
     this.keysValue = [];
     for (let item of attributes) {
       for (let sell of sellAttr) {
-        if (item.attributeID === sell._id) {
+        if (item.attribute_num === sell._id) {
           let tempValue;
           let sellObj;
           if (item.value.indexOf('@......@') !== -1) {
@@ -141,6 +146,7 @@ class SpuEditModal extends Component {
               tempValue = JSON.parse(item.value);
             }
             let sellObj = Object.assign({ dtype: item.dtype }, sell);
+            console.log(sellObj);
             sellObj.sellId = sell._id + '_' + (this.uuid++);
             sellObj.id = sell._id;
             sellObj['selfValue'] = tempValue;
@@ -179,7 +185,7 @@ class SpuEditModal extends Component {
       else {
         fromWhere = this.props.product.attributes;
         for (let item of fromWhere) {
-          if (item.attributeID === _id) {
+          if (item.attribute_num === _id) {
             value = item.value === 'undefined' ? '' : item.value;
             break;
           }
@@ -209,6 +215,7 @@ class SpuEditModal extends Component {
         console.log(this.state.tableFormatData, '--------------this.state.tableFormatData');
         values.skus = [];//this.formatSkusData(this.state.tableFormatData);
         this.formatAttributesData(values);
+        console.log(values);
         onOk(values);
         this.hideModelHandler();
       }
@@ -228,7 +235,7 @@ class SpuEditModal extends Component {
           } else if (typeof entry.value === 'object') {
             dtype = 'object';
           }
-          sku.attributes ? sku.attributes.push({ 'attributeID': id, 'dtype': dtype, 'value': JSON.stringify(entry.value) }) : sku.attributes = [{ 'attributeID': id, 'dtype': 'array', 'value': JSON.stringify(entry.value) }];
+          sku.attributes ? sku.attributes.push({ 'attribute_num': id, 'dtype': dtype, 'value': JSON.stringify(entry.value) }) : sku.attributes = [{ 'attribute_num': id, 'dtype': 'array', 'value': JSON.stringify(entry.value) }];
         } else {
           if (key === 'jiage') {
             sku.price = parseInt(entry.value);
@@ -244,6 +251,41 @@ class SpuEditModal extends Component {
     return skus;
   }
 
+  getIcons = () => {
+    var icons = [
+      "source | undo redo | bold italic underline strikethrough fontborder emphasis | ",
+      "paragraph fontfamily fontsize | superscript subscript | ",
+      "forecolor backcolor | removeformat | insertorderedlist insertunorderedlist | selectall | ",
+      "cleardoc  | indent outdent | justifyleft justifycenter justifyright | touppercase tolowercase | ",
+      "horizontal date time  | image emotion spechars | inserttable"
+    ];
+    return icons;
+  }
+
+  getQiniuUploader = () => {
+    return {
+      url: 'http://upload.qiniu.com',
+      type: 'qiniu',
+      name: "file",
+      request: "image_src",
+      qiniu: {
+        app: {
+          Bucket: "liuhong1happy",
+          AK: "l9vEBNTqrz7H03S-SC0qxNWmf0K8amqP6MeYHNni",
+          SK: "eizTTxuA0Kq1YSe2SRdOexJ-tjwGpRnzztsSrLKj"
+        },
+        domain: "http://o9sa2vijj.bkt.clouddn.com",
+        genKey: function (options) {
+          return options.file.type + "-" + options.file.size + "-" + options.file.lastModifiedDate.valueOf() + "-" + new Date().valueOf() + "-" + options.file.name;
+        }
+      }
+    }
+  }
+  handleAlter = (content) => {
+    this.setState({
+      content: content
+    })
+  }
   formatAttributesData = (values) => {
     for (let [key, value] of Object.entries(values)) {
       if (key.length > 23) {
@@ -256,7 +298,7 @@ class SpuEditModal extends Component {
             dtype = 'object';
             value = JSON.stringify(value);
           }
-          values.attributes ? values.attributes.push({ 'attributeID': key, 'value': value, 'dtype': dtype }) : values.attributes = [{ 'attributeID': key, 'value': value, 'dtype': dtype }]
+          values.attributes ? values.attributes.push({ 'attribute_num': key, 'value': value, 'dtype': dtype }) : values.attributes = [{ 'attribute_num': key, 'value': value, 'dtype': dtype }]
         }
         else {
           let tempId = key.split('_')[0];
@@ -273,7 +315,7 @@ class SpuEditModal extends Component {
               dtype = 'object';
               value = JSON.stringify(value);
             }
-            values.attributes ? values.attributes.push({ 'attributeID': tempId, 'value': value, 'dtype': dtype }) : values.attributes = [{ 'attributeID': tempId, 'value': value, 'dtype': dtype }]
+            values.attributes ? values.attributes.push({ 'attribute_num': tempId, 'value': value, 'dtype': dtype }) : values.attributes = [{ 'attribute_num': tempId, 'value': value, 'dtype': dtype }]
           }
         }
       }
@@ -285,7 +327,7 @@ class SpuEditModal extends Component {
     let atts = values.attributes;
     let ret = null;
     for (let item of atts) {
-      if (_id.indexOf(item.attributeID) !== -1) {
+      if (_id.indexOf(item.attribute_num) !== -1) {
         ret = item;
       }
     }
@@ -300,7 +342,7 @@ class SpuEditModal extends Component {
   render() {
     const { children } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { _id, name, note, key, categoryId } = this.props.product;
+    const { _id, name, note, key, category_num ,description } = this.props.product;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -308,8 +350,15 @@ class SpuEditModal extends Component {
     let data = [];
     (this.props.product.categoryList || []).forEach(v => data.unshift(v));
     let cascaderOptions = getFormatData(data);
+    console.log(cascaderOptions);
     let [keyOptions, otherOption, sellOptions] = this.createAttrOption(getFieldDecorator, getFieldValue, formItemLayout)
-
+    let icons = this.getIcons();
+    var uploader = this.getQiniuUploader();
+    var plugins = {
+      image: {
+        uploader: uploader
+      }
+    }
     return (
       <span>
         <span onClick={this.showModelHandler}>
@@ -323,15 +372,23 @@ class SpuEditModal extends Component {
         >
           <Form horizontal onSubmit={this.okHandler} key={"alkdkdkdk"}>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >    {getFieldDecorator('key', { initialValue: key })(<TagsInput  {...{ 'onlyUnique': true }} onChange={v => { console.log(v); this.props.form.setFieldsValue({ key: v }) }} />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >    {getFieldDecorator('key')(<TagsInput  value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v); this.props.form.setFieldsValue({ key: v }) }} />)}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品分类" >
-              {getFieldDecorator('categoryId', { initialValue: categoryId })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange.bind(this)} expandTrigger="hover" placeholder='Please select' />)}
+              {getFieldDecorator('category_num', { initialValue: typeof(category_num) !== "string" ? category_num : [category_num] })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange.bind(this)} expandTrigger="hover" placeholder='Please select' />)}
             </FormItem>
             {keyOptions}
             {otherOption}
             {sellOptions}
             {/*{sellOptions.length > 0 ? this.createTable() : ''}*/}
           </Form>
+          <FormItem className={styles.FormItem} {...formItemLayout} label="产品介绍" >
+              {getFieldDecorator('description', { rules: [{ required: true, message: '请输入产品介绍内容!' }], initialValue: description })
+              (<Editor icons={icons} onChange={this.handleAlter.bind(this)} plugins={plugins} />)}
+          </FormItem>
+          <FormItem className={styles.FormItem} {...formItemLayout} label="产品备注" >
+              {getFieldDecorator('note', { rules: [{ required: true, message: '请输入产品备注内容!' }], initialValue: note })
+              (<textarea style={{width : "100%",height : "100px" , outline : "none"}}>{note}</textarea>)}
+          </FormItem>
         </Modal>
       </span>
     );
@@ -406,7 +463,7 @@ class SpuEditModal extends Component {
       let outer = nextData[next];
       for (let index = 0; index < data.length; index++) {
         let inner = data[index];
-        if (inner.uniqueId === outer.uniqueId) {
+        if (inner.unique_num === outer.unique_num) {
           for (let item in outer) {
             if (outer[item].comType === '1' || outer[item].comType === '2') {
               outer[item].value = inner[item].value;
@@ -419,7 +476,7 @@ class SpuEditModal extends Component {
   }
 
   getSellHandle = (ko, keys) => {
-    return (ko.type === "2" ?
+    return (ko.vital_type === "2" ?
       <div>
         <Icon
           className="dynamic-delete-button"
@@ -437,25 +494,25 @@ class SpuEditModal extends Component {
   getComponentByType(ko, formItemLayout, getFieldDecorator, keys) {
     let options;
     let coms;
-    if (ko.etype === '0') {
-      if (ko.stype === '3') {//下拉选项
-        options = ko.svalue.map(v => { return <Select.Option key={v} value={v}>{v}</Select.Option> });
+    if (ko.extends_type === '0') {
+      if (ko.select_type === '3') {//下拉选项
+        options = ko.select_value.split(",").map(v => { return <Select.Option key={v} value={v}>{v}</Select.Option> });
         return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko._id} >
-          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(ko.type === '2' ? <Select size="small" onChange={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
+          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(ko.vital_type === '2' ? <Select size="small" onChange={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
           {
             this.getSellHandle(ko, keys)
           }
         </FormItem>
       }
-      else if (ko.stype === '1') {//运营输入
+      else if (ko.select_type === '1') {//运营输入
         return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko._id} >
-          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(ko.type === '2' ? <Input size="small" onChange={this.sellChange.bind(this)} /> : <Input size="small" />)}
+          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(ko.vital_type === '2' ? <Input size="small" onChange={this.sellChange.bind(this)} /> : <Input size="small" />)}
           {
             this.getSellHandle(ko, keys)
           }
         </FormItem>
       }
-      else if (ko.stype === '2') {
+      else if (ko.select_type === '2') {
         return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko._id} >
           {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(<span>使用SKU配图</span>)}
           {
@@ -480,7 +537,7 @@ class SpuEditModal extends Component {
         options = getColorSerialFormatData(Object.values(this.props.product.serialMap), Object.values(this.props.product.colorMap));
         // coms = ko.type === '2' ? <Cascader options={options} onChange={this.sellChange.bind(this)} placeholder='选择颜色' /> : <Cascader options={options} placeholder='Please select' />
         return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId || ko._id} >
-          {getFieldDecorator(ko.sellId || ko._id, { initialValue: this.getInitialValue(ko, 'sell') })(ko.type === '2' ? <Cascader options={options} expandTrigger="hover" onChange={this.sellChange.bind(this)} placeholder='选择颜色' /> : <Cascader options={options} placeholder='Please select' />)}
+          {getFieldDecorator(ko.sellId || ko._id, { initialValue: this.getInitialValue(ko, 'sell') })(ko.vital_type === '2' ? <Cascader options={options} expandTrigger="hover" onChange={this.sellChange.bind(this)} placeholder='选择颜色' /> : <Cascader options={options} placeholder='Please select' />)}
           {
             this.getSellHandle(ko, keys)
           }
@@ -494,7 +551,7 @@ class SpuEditModal extends Component {
             initialValue: this.getInitialValue(ko, 'sell'),
             validateTrigger: ['onChange', 'onBlur'],
             trigger: 'onChange',
-          })(ko.type === '2' ? <Select size="small" onBlur={this.sellChange.bind(this)}  {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
+          })(ko.vital_type === '2' ? <Select size="small" onBlur={this.sellChange.bind(this)}  {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
           {
             this.getSellHandle(ko, keys)
           }
@@ -503,7 +560,7 @@ class SpuEditModal extends Component {
       else if (ko.name === '品牌') { //取值范围，在品牌当前分类对应的品牌中获取
         options = Object.values(this.props.product.brandMap).map(v => { return <Select.Option key={v._id} value={v._id}>{v.name}</Select.Option> });
         return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId || ko._id} >
-          {getFieldDecorator(ko.sellId || ko._id, { initialValue: this.getInitialValue(ko, 'sell') })(ko.type === '2' ? <Select size="small" onBlur={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
+          {getFieldDecorator(ko.sellId || ko._id, { initialValue: this.getInitialValue(ko, 'sell') })(ko.vital_type === '2' ? <Select size="small" onBlur={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
           {
             this.getSellHandle(ko, keys)
           }

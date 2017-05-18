@@ -29,8 +29,9 @@ class SpuToSkuModal extends Component {
       tableFormatData: [],
       columnsDatas: [],
       key: [],
-      categoryId: [],
-      product: {}
+      category_num: [],
+      product: {},
+      content : ""
     };
   }
 
@@ -41,8 +42,8 @@ class SpuToSkuModal extends Component {
     console.log(this.props.product, '-----------componentWillMount');
   }
   componentDidMount() {
-    if (this.props.product.categoryId) {
-      this.cascaderOnChange(this.props.product.categoryId, 1);
+    if (this.props.product.category_num) {
+      this.cascaderOnChange(this.props.product.category_num, 1);
       this.sellChange('');
       this.forceUpdate();
     }
@@ -91,14 +92,14 @@ class SpuToSkuModal extends Component {
     let otherAttr = [];
     let arr = Object.values(this.props.product.attributeMap)
       .filter(v => {
-        return v.categoryId.toString() === cas;
+        return v.category_num.toString() === cas;
       }).forEach(v => {
-        if (v.type === '1') {
+        if (v.vital_type === '1') {
           keyAttr.push(v);
-        } else if (v.type === '2') {
+        } else if (v.vital_type === '2') {
           v.sellId = v._id + "_" + (this.uuid++);
           sellAttr.push(v);
-        } else if (v.type === '3') {
+        } else if (v.vital_type === '3') {
           otherAttr.push(v);
         }
       })
@@ -122,7 +123,7 @@ class SpuToSkuModal extends Component {
     this.keysValue = [];
     for (let item of attributes) {
       for (let sell of sellAttr) {
-        if (item.attributeID === sell._id) {
+        if (item.attribute_num === sell._id) {
           let tempValue;
           let sellObj;
           if (item.value.indexOf('@......@') !== -1) {
@@ -184,7 +185,7 @@ class SpuToSkuModal extends Component {
       else {
         fromWhere = this.props.product.attributes;
         for (let item of fromWhere) {
-          if (item.attributeID === _id) {
+          if (item.attribute_num === _id) {
             value = item.value === 'undefined' ? '' : item.value;
             break;
           }
@@ -219,7 +220,6 @@ class SpuToSkuModal extends Component {
       }
     });
   };
-
   formatSkusData = (datas) => {
     let skus = [];
     datas.forEach(v => {
@@ -235,7 +235,7 @@ class SpuToSkuModal extends Component {
           } else if (typeof entry.value === 'object') {
             dtype = 'object';
           }
-          sku.attributes ? sku.attributes.push({ 'attributeID': id, 'dtype': dtype, 'value': JSON.stringify(entry.value) }) : sku.attributes = [{ 'attributeID': id, 'dtype': 'array', 'value': JSON.stringify(entry.value) }];
+          sku.attributes ? sku.attributes.push({ 'attribute_num': id, 'dtype': dtype, 'value': JSON.stringify(entry.value) }) : sku.attributes = [{ 'attribute_num': id, 'dtype': 'array', 'value': JSON.stringify(entry.value) }];
         } else {
           if (key === 'jiage') {
             sku.price = parseInt(entry.value);
@@ -263,7 +263,7 @@ class SpuToSkuModal extends Component {
             dtype = 'object';
             value = JSON.stringify(value);
           }
-          values.attributes ? values.attributes.push({ 'attributeID': key, 'value': value, 'dtype': dtype }) : values.attributes = [{ 'attributeID': key, 'value': value, 'dtype': dtype }]
+          values.attributes ? values.attributes.push({ 'attribute_num': key, 'value': value, 'dtype': dtype }) : values.attributes = [{ 'attribute_num': key, 'value': value, 'dtype': dtype }]
         }
         else {
           let tempId = key.split('_')[0];
@@ -280,7 +280,7 @@ class SpuToSkuModal extends Component {
               dtype = 'object';
               value = JSON.stringify(value);
             }
-            values.attributes ? values.attributes.push({ 'attributeID': tempId, 'value': value, 'dtype': dtype }) : values.attributes = [{ 'attributeID': tempId, 'value': value, 'dtype': dtype }]
+            values.attributes ? values.attributes.push({ 'attribute_num': tempId, 'value': value, 'dtype': dtype }) : values.attributes = [{ 'attribute_num': tempId, 'value': value, 'dtype': dtype }]
           }
         }
       }
@@ -292,7 +292,7 @@ class SpuToSkuModal extends Component {
     let atts = values.attributes;
     let ret = null;
     for (let item of atts) {
-      if (_id.indexOf(item.attributeID) !== -1) {
+      if (_id.indexOf(item.attribute_num) !== -1) {
         ret = item;
       }
     }
@@ -307,7 +307,8 @@ class SpuToSkuModal extends Component {
   render() {
     const { children } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { _id, name, note, key, categoryId, productNum, doneSkus } = this.props.product;
+    const { _id, name, note, key, category_num, productNum, doneSkus ,description} = this.props.product;
+    console.log(category_num);
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -317,7 +318,6 @@ class SpuToSkuModal extends Component {
     (this.props.product.categoryList || []).forEach(v => data.unshift(v));
     let cascaderOptions = getFormatData(data);
     let [keyOptions, otherOption, sellOptions] = this.createAttrOption(getFieldDecorator, getFieldValue, formItemLayout)
-
     return (
       <span>
         <span onClick={this.showModelHandler}>
@@ -328,9 +328,10 @@ class SpuToSkuModal extends Component {
           visible={this.state.visible}
           onOk={this.okHandler}
           onCancel={this.hideModelHandler}
+          width={1000}
         >
           <Form horizontal onSubmit={this.okHandler} key={"alkdkdkdk"}>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="SPU编号" >    {getFieldDecorator('name', { initialValue: getProductNum(categoryId, this.props.product.categoryMap) + this.props.product.productNum })(<Input size="small" disabled={true} />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="SPU编号" >    {getFieldDecorator('name', { initialValue: getProductNum(category_num, this.props.product.categoryMap) + this.props.product.unique_num })(<Input size="small" disabled={true} />)}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" disabled={true} />)}</FormItem>
             {sellOptions.length > 0 ? this.createTable() : ''}
           </Form>
@@ -385,7 +386,7 @@ class SpuToSkuModal extends Component {
       }
       //保持uniqueId 排序一致
       uniques.sort();
-      obj['uniqueId'] = uniques.join('');
+      obj['unique_num'] = uniques.join('');
 
       ['价格', '数量', '产品型号'].forEach((v, index) => {
         let dataIndex = pinyin(v, {
@@ -440,7 +441,7 @@ class SpuToSkuModal extends Component {
       let outer = nextData[next];
       for (let index = 0; index < data.length; index++) {
         let inner = data[index];
-        if (inner.uniqueId === outer.uniqueId) {
+        if (inner.unique_num === outer.unique_num) {
           for (let item in outer) {
             if (outer[item].comType === '1' || outer[item].comType === '2') {
               outer[item].value = inner[item].value;
@@ -453,7 +454,7 @@ class SpuToSkuModal extends Component {
   }
 
   getSellHandle = (ko, keys) => {
-    return (ko.type === "2" ?
+    return (ko.vital_type === "2" ?
       <div>
         <Icon
           className="dynamic-delete-button"
@@ -471,25 +472,25 @@ class SpuToSkuModal extends Component {
   getComponentByType(ko, formItemLayout, getFieldDecorator, keys) {
     let options;
     let coms;
-    if (ko.etype === '0') {
-      if (ko.stype === '3') {//下拉选项
-        options = ko.svalue.map(v => { return <Select.Option key={v} value={v}>{v}</Select.Option> });
+    if (ko.extends_type === '0') {
+      if (ko.select_type === '3') {//下拉选项
+        options = ko.select_value.split(",").map(v => { return <Select.Option key={v} value={v}>{v}</Select.Option> });
         return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko._id} >
-          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(ko.type === '2' ? <Select size="small" onChange={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
+          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(ko.vital_type === '2' ? <Select size="small" onChange={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
           {
             this.getSellHandle(ko, keys)
           }
         </FormItem>
       }
-      else if (ko.stype === '1') {//运营输入
+      else if (ko.select_type === '1') {//运营输入
         return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko._id} >
-          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(ko.type === '2' ? <Input size="small" onChange={this.sellChange.bind(this)} /> : <Input size="small" />)}
+          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(ko.vital_type === '2' ? <Input size="small" onChange={this.sellChange.bind(this)} /> : <Input size="small" />)}
           {
             this.getSellHandle(ko, keys)
           }
         </FormItem>
       }
-      else if (ko.stype === '2') {
+      else if (ko.select_type === '2') {
         return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko._id} >
           {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(<span>使用SKU配图</span>)}
           {
@@ -514,7 +515,7 @@ class SpuToSkuModal extends Component {
         options = getColorSerialFormatData(Object.values(this.props.product.serialMap), Object.values(this.props.product.colorMap));
         // coms = ko.type === '2' ? <Cascader options={options} onChange={this.sellChange.bind(this)} placeholder='选择颜色' /> : <Cascader options={options} placeholder='Please select' />
         return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId || ko._id} >
-          {getFieldDecorator(ko.sellId || ko._id, { initialValue: this.getInitialValue(ko, 'sell') })(ko.type === '2' ? <Cascader options={options} expandTrigger="hover" onChange={this.sellChange.bind(this)} placeholder='选择颜色' /> : <Cascader options={options} placeholder='Please select' />)}
+          {getFieldDecorator(ko.sellId || ko._id, { initialValue: this.getInitialValue(ko, 'sell') })(ko.vital_type === '2' ? <Cascader options={options} expandTrigger="hover" onChange={this.sellChange.bind(this)} placeholder='选择颜色' /> : <Cascader options={options} placeholder='Please select' />)}
           {
             this.getSellHandle(ko, keys)
           }
@@ -528,7 +529,7 @@ class SpuToSkuModal extends Component {
             initialValue: this.getInitialValue(ko, 'sell'),
             validateTrigger: ['onChange', 'onBlur'],
             trigger: 'onChange',
-          })(ko.type === '2' ? <Select size="small" onBlur={this.sellChange.bind(this)}  {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
+          })(ko.vital_type === '2' ? <Select size="small" onBlur={this.sellChange.bind(this)}  {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
           {
             this.getSellHandle(ko, keys)
           }
@@ -537,7 +538,7 @@ class SpuToSkuModal extends Component {
       else if (ko.name === '品牌') { //取值范围，在品牌当前分类对应的品牌中获取
         options = Object.values(this.props.product.brandMap).map(v => { return <Select.Option key={v._id} value={v._id}>{v.name}</Select.Option> });
         return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId || ko._id} >
-          {getFieldDecorator(ko.sellId || ko._id, { initialValue: this.getInitialValue(ko, 'sell') })(ko.type === '2' ? <Select size="small" onBlur={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
+          {getFieldDecorator(ko.sellId || ko._id, { initialValue: this.getInitialValue(ko, 'sell') })(ko.vital_type === '2' ? <Select size="small" onBlur={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
           {
             this.getSellHandle(ko, keys)
           }

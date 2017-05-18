@@ -10,7 +10,8 @@ import moment from 'moment';
 import {getCategoryName,getProductNum} from '../utils'
 
 function Spu({ dispatch, list: dataSource, loading, total, page: current, serialMap, categoryMap, brandMap, colorMap, countryMap,attributeMap }) {
-
+  console.log(dataSource);
+  console.log(categoryMap);
   function deleteHandler(itm) {
     console.log('deleteHandler', itm)
     dispatch({
@@ -54,7 +55,7 @@ function Spu({ dispatch, list: dataSource, loading, total, page: current, serial
       title: 'SPU编号',
       dataIndex: 'unique_num',
       key: 'unique_num',
-      render: (text,product) => <span>{getProductNum(product.categoryId,categoryMap)+product.productNum}</span>,
+      render: (text,product) => <span>{getProductNum(product.category_num,categoryMap)+product.unique_num}</span>,
     },
     {
       title: '名字',
@@ -63,14 +64,14 @@ function Spu({ dispatch, list: dataSource, loading, total, page: current, serial
     },
     {
       title: '分类',
-      dataIndex: 'categoryId',
-      key: 'categoryId',
+      dataIndex: 'category_num',
+      key: 'category_num',
       render: text => <span>{getCategoryName(text,categoryMap)}</span>,
     },
     {
       title: '创建日期',
-      dataIndex: 'createAt',
-      key: 'createAt',
+      dataIndex: 'create_at',
+      key: 'create_at',
       render: text => <span>{moment(new Date(text)).format('YYYY-MM-DD HH:mm')}</span>
     },
     {

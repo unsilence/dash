@@ -43,8 +43,8 @@ function Stock({ dispatch, list: dataSource, loading, total, page: current, seri
   const columns = [
     {
       title: '单品编号',
-      dataIndex: 'stockNum',
-      key: 'stockNum',
+      dataIndex: 'unique_num',
+      key: 'unique_num',
       render: (text,product) => <span>{text}</span>,
     },
     {

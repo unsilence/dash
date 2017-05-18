@@ -9,7 +9,7 @@ import moment from 'moment';
 import { getCategoryName, getProductNum } from '../utils'
 
 function Sku({ dispatch, list: dataSource, loading, total, page: current, serialMap, categoryMap, brandMap, colorMap, countryMap, attributeMap }) {
-
+  console.log(dataSource);
   function deleteHandler(itm) {
     console.log('deleteHandler', itm)
     dispatch({
@@ -17,6 +17,7 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
       payload: { id: itm._id },
     });
   }
+
 
   function pageChangeHandler(page) {
     dispatch(routerRedux.push({
@@ -42,9 +43,9 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
   const columns = [
     {
       title: 'SKU编号',
-      dataIndex: 'skuNum',
-      key: 'skuNum',
-      render: (text,product) => <span>{getProductNum(product.categoryId,categoryMap)+product.spu.productNum+text}</span>,
+      dataIndex: 'unique_num',
+      key: 'unique_num',
+      render: (text,product) => <span>{getProductNum(product.categoryId,categoryMap)+product.spu_num+text}</span>,
     },
     {
       title: '名字',
@@ -71,14 +72,14 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
     },
     {
       title: '创建日期',
-      dataIndex: 'createAt',
-      key: 'createAt',
+      dataIndex: 'create_at',
+      key: 'create_at',
       render: text => <span>{moment(new Date(text)).format('YYYY-MM-DD HH:mm')}</span>
     },
     {
       title: '推荐系数',
-      dataIndex: 'xishu',
-      key: 'xishu',
+      dataIndex: 'hot',
+      key: 'hot',
       render: text => <span>{text}</span>,
     },
     {

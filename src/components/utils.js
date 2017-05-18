@@ -59,8 +59,12 @@ exports['getColorSerialFormatData'] = getColorSerialFormatData;
 
 
 function getCategoryName(_ids, categoryMap) {
-  let cids = _ids || []
-
+  let cids = [];
+  if(_ids && typeof(_ids) == "string"){
+    cids.push(_ids);
+  }else if(_ids){
+    cids = _ids ;
+  }
   let cstr = cids.map(v => loop(v)).join('/');
   function loop(_id) {
     if (_id === '' || !_id) {
@@ -75,8 +79,12 @@ exports['getCategoryName'] = getCategoryName;
 
 
 function getProductNum(_ids, categoryMap) {
-  let cids = _ids || [];
-  console.log(categoryMap);
+  let cids = [];
+  if(_ids && typeof(_ids) == "string"){
+    cids.push(_ids);
+  }else if(_ids){
+    cids = _ids ;
+  }
   let cstr = cids.map(v => loop(v)).join('');
   function loop(_id) {
     let cd = '';
