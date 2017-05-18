@@ -8,9 +8,9 @@ export var editOrderOption = function (orders) {
         const categoryMap = yield call(service["getCategoryMap"], 'Category');  // 得到所有的分类
         let list = orders_.data.data.list;  // 请求回来订单的数组列表
         const _list = list;
-        let projectIns = list.map(v => v.address_num); 
+        let projectIns = list.map(v => v.address_num).filter(v =>{return v !== ""}); 
         console.log(projectIns);
-        let projectList = yield call(service["getDataService"],"Address",{"_id" : {"$in" : projectIns}});  // 得到order列表里显示的address属性
+        let projectList = yield call(service["getDataService"],"Address",{"cnum" : {"$in" : projectIns}});  // 得到order列表里显示的address属性
         console.log(projectList);
         let skuIds = new Array();
         list.forEach(v => {v.skus.forEach(t => {skuIds.push(t.sku_num)})});  // 得到suk列表的id数组

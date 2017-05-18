@@ -92,8 +92,6 @@ class CaseEditModal extends Component {
       
       this.setState({
         points : this.state.points,
-        addBefore : this.state.addBefore,
-        addAfter : this.state.addAfter
       })
   }
 
@@ -147,9 +145,9 @@ class CaseEditModal extends Component {
   }
   hideModelHandler = () => {
     this.setState({
-      addAfter: [],
-      addBefore : [],
-      points : [],
+      // addAfter: [],
+      // addBefore : [],
+      // points : [],
       visible: false,
     });
     this.props.form.resetFields();
@@ -253,6 +251,7 @@ class CaseEditModal extends Component {
   render() {
     const { children ,cases } = this.props;
     const { getFieldDecorator } = this.props.form;
+    console.log(this.state.points);
     console.log(cases);
     const formItemLayout = {
       labelCol: { span: 6 },
@@ -347,6 +346,7 @@ class CaseEditModal extends Component {
     }
     
     const { previewVisible, previewImage, fileList } = this.state;
+    console.log(this.state.addAfter);
     const uploadButton = (
       <div>
         <Icon type="plus" />

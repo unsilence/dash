@@ -41,6 +41,9 @@ function Cases({ dispatch, list: dataSource, loading, total, page: current ,skuL
       }
 
   }
+  function callback(index) {
+    return index++
+  }
   const columns = [
     {
       title: 'ID',

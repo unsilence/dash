@@ -36,6 +36,7 @@ class SkuEditModal extends Component {
   }
   handleImgCancel = () => this.setState({ previewVisible: false })
 
+
   handleImgPreview = (file) => {
     this.setState({
       previewImage: file.url || file.thumbUrl,
@@ -95,9 +96,9 @@ class SkuEditModal extends Component {
         values.images = this.images;
         console.log(values);
         onOk(values);
-        this.setState({
-          note : values.note
-        })
+        // this.setState({
+        //   note : values.note
+        // })
         this.hideModelHandler();
       }else{
         console.log("提交出现错误！");
@@ -130,12 +131,12 @@ class SkuEditModal extends Component {
         <div className="ant-upload-text">Upload</div>
       </div>
     );
-    var  files = [];
-    this.state.fileList.map( (v,index) => {
-      v.uid = 'asdf'+ index;
-      v.url = "/api/file/"+v.md5;
-      files.push(v);
-    });
+    // var  files = [];
+    // console.log(fileList);
+    // if(fileList)
+    // fileList.map( (v,index) => {
+    //   v.url = "/api/file/"+v.md5;
+    // });
     return (
       <span>
         <span onClick={this.showModelHandler}>
