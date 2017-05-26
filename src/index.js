@@ -18,8 +18,16 @@ try {
             localStorage.setItem("token", "");
             localStorage.setItem("user", "{}");
             (async function () {
+                browserHistory.push('/login')
+            })();
+        }
+        else {
+            if (rt.data.data.item.role === "cryptonym") {
+                (async function () {
                     browserHistory.push('/login')
                 })();
+
+            }
         }
         const app = dva(opt);
         app.use(createLoading());
