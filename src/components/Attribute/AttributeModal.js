@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Modal, Form, Input, Select, Cascader, Radio, Checkbox } from 'antd';
 const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
+import getFormatData from '../utils'
 import styles from '../item.less';
 import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
@@ -50,36 +51,6 @@ class AttributeModalEditModal extends Component {
         this.hideModelHandler();
       }
     });
-  };
-
-  /**
-   * 格式化服务端数据
-   * @param {*} data 
-   */
-  getFormatData(data) {
-    let rst = [];
-    if (data) {
-      data.forEach(v => {
-        !v.father_num && rst.push({ "value": v._id, "label": v.name, "_id": v._id });
-      })
-
-      data.forEach(v => {
-        v.father_num && getParent(v, rst);
-      })
-      function getParent(item, elems) {
-        if (!elems) {
-          return;
-        }
-        elems.forEach(v => {
-          if (v._id === item.parentId) {
-            v.children ? v.children.push({ "value": item._id, "label": item.name, "_id": item._id }) : (v.children = [{ "value": item._id, "label": item.name, "_id": item._id }]);
-          } else {
-            return getParent(item, v.children);
-          }
-        })
-      }
-    }
-    return rst;
   };
 
 
@@ -157,7 +128,7 @@ class AttributeModalEditModal extends Component {
     let data = [];
 
     (this.props.record.categoryList || []).forEach(v => data.unshift(v));
-    let cascaderOptions = this.getFormatData(data);
+    let cascaderOptions = getFormatData(data);
     console.log(cascaderOptions);
     const formItemLayout = {
       labelCol: { span: 6 },
