@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Modal, Form, Input, Select, Cascader, Radio, Checkbox } from 'antd';
 const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
-import getFormatData from '../utils'
+import {getFormatData} from '../utils'
 import styles from '../item.less';
 import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
