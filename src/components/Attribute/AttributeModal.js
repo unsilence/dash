@@ -60,11 +60,11 @@ class AttributeModalEditModal extends Component {
     let rst = [];
     if (data) {
       data.forEach(v => {
-        !v.parentId && rst.push({ "value": v._id, "label": v.name, "_id": v._id });
+        !v.father_num && rst.push({ "value": v._id, "label": v.name, "_id": v._id });
       })
 
       data.forEach(v => {
-        v.parentId && getParent(v, rst);
+        v.father_num && getParent(v, rst);
       })
       function getParent(item, elems) {
         if (!elems) {
