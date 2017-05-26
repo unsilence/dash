@@ -17,13 +17,9 @@ try {
             console.log('你没有登录')
             localStorage.setItem("token", "");
             localStorage.setItem("user", "{}");
-        } else {
-            if (rt.data.data.item.role === "cryptonym") {
-                (async function () {
+            (async function () {
                     browserHistory.push('/login')
                 })();
-                
-            }
         }
         const app = dva(opt);
         app.use(createLoading());

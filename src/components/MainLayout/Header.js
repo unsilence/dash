@@ -60,9 +60,9 @@ function Header({ location }) {
       <Menu.Item key="cases">
         <Link to="/cases"><Icon type="flag" />案例</Link>
       </Menu.Item>
-      <Menu.Item key="recommend">
+      {/*<Menu.Item key="recommend">
         <Link to="/recommends"><Icon type="flag" />案例</Link>
-      </Menu.Item>
+      </Menu.Item>*/}
       <Menu.Item key="tests">
         <Link to="/tests"><Icon type="smile" />测试</Link>
       </Menu.Item>
