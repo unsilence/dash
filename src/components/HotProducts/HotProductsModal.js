@@ -52,7 +52,7 @@ constructor(props) {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         values.image = this.state.imageUrl;
-        values.category_num = addId;
+        values.category_num = [addId];
         console.log(values);
         onOk(null,values);
         this.hideModelHandler();
