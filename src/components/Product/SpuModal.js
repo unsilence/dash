@@ -92,7 +92,6 @@ class SpuEditModal extends Component {
       .filter(v => {
         return v.category_num.toString() === cas;
       }).forEach(v => {
-        console.log(v,"dsddddddddddddddddddddddddddddddddddddddddddddddd");
         if (v.vital_type === '1') {
           keyAttr.push(v);
         } else if (v.vital_type === '2') {
@@ -342,7 +341,7 @@ class SpuEditModal extends Component {
   render() {
     const { children } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { _id, name, note, key, category_num ,description } = this.props.product;
+    const { _id, name, note, qtext, category_num ,description } = this.props.product;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -372,7 +371,7 @@ class SpuEditModal extends Component {
         >
           <Form horizontal onSubmit={this.okHandler} key={"alkdkdkdk"}>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >    {getFieldDecorator('key')(<TagsInput  value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v); this.props.form.setFieldsValue({ key: v }) }} />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >    {getFieldDecorator('qtext')(<TagsInput  value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v); this.props.form.setFieldsValue({ key: v }) }} />)}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品分类" >
               {getFieldDecorator('category_num', { initialValue: typeof(category_num) !== "string" ? category_num : [category_num] })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange.bind(this)} expandTrigger="hover" placeholder='Please select' />)}
             </FormItem>
@@ -402,11 +401,11 @@ class SpuEditModal extends Component {
 
   /**获得格式化好的表数据 */
   getTableFormatData = (tableData) => {
-    let filterData = Object.keys(tableData)
-      .filter(k => { return k.indexOf('_') !== -1 })
-      .map(v => { return { key: v, value: tableData[v] } });
+    // let filterData = Object.keys(tableData)
+    //   .filter(k => { return k.indexOf('_') !== -1 })
+    //   .map(v => { return { key: v, value: tableData[v] } });
     let replace = true;
-    if (filterData.length === 0 && Array.isArray(this.keysValue)) {
+    if ( Array.isArray(this.keysValue)) {
       replace = false;
     }
     let keyObject = {};
@@ -558,7 +557,7 @@ class SpuEditModal extends Component {
         </FormItem>
       }
       else if (ko.name === '品牌') { //取值范围，在品牌当前分类对应的品牌中获取
-        options = Object.values(this.props.product.brandMap).map(v => { return <Select.Option key={v._id} value={v._id}>{v.name}</Select.Option> });
+        options = Object.values(this.props.product.brandMap).map(v => { return <Select.Option key={v._id} value={v._id}>{v.name_cn}</Select.Option> });
         return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId || ko._id} >
           {getFieldDecorator(ko.sellId || ko._id, { initialValue: this.getInitialValue(ko, 'sell') })(ko.vital_type === '2' ? <Select size="small" onBlur={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
           {

@@ -45,23 +45,23 @@ function Attributes({ dispatch, list: dataSource, loading, total, page: current,
   }
 
   function getCategoryName(_id) {
-    // let cids = _ids || []
+    let cids = _id || []
 
-    // let cstr = cids.map(v => loop(v)).join('/');
-    // function loop(_id) {
-    //   if (_id === '' || !_id) {
-    //     return '';
-    //   }
-    //   return categoryMap[_id] ?categoryMap[_id].name :'';
-    // }
-    // return cstr;
-    let name_ = "";
-    if(!_id || !categoryMap[_id]){
-      return ;
-    }else{
-      categoryMap[_id].name ? name_ = categoryMap[_id].name : name_ = "";
+    let cstr = cids.map(v => loop(v)).join('/');
+    function loop(_id) {
+      if (_id === '' || !_id) {
+        return '';
+      }
+      return categoryMap[_id] ?categoryMap[_id].name :'';
     }
-    return name_;
+    return cstr;
+    // let name_ = "";
+    // if(!_id || !categoryMap[_id]){
+    //   return ;
+    // }else{
+    //   categoryMap[_id].name ? name_ = categoryMap[_id].name : name_ = "";
+    // }
+    // return name_;
   }
 
   const columns = [

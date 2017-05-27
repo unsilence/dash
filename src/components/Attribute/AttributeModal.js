@@ -150,7 +150,7 @@ class AttributeModalEditModal extends Component {
         >
           <Form horizontal onSubmit={this.okHandler}>
             <FormItem className={styles.FormItem} {...formItemLayout} label="所属分类" >
-              {getFieldDecorator('category_num', {rules:[{required: true, message: '请选择所属分类!'}], initialValue: category_num })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange} placeholder='Please select' />)}
+              {getFieldDecorator('category_num', {rules:[{required: true, message: '请选择所属分类!'}], initialValue: category_num })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange} expandTrigger="hover"placeholder='Please select' />)}
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="属性分类" >    {getFieldDecorator('vital_type', { initialValue: vital_type || '3'})(
               <RadioGroup key='typeSelect' onChange={this.typeOnChange}>

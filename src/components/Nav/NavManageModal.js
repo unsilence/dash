@@ -52,7 +52,7 @@ class AddNavManageModal extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         values.image = this.state.imageUrl;
-        values.category_num = fetchId;
+        values.category_num = [fetchId];
         console.log(fetchId);
         onOk(values);
         this.hideModelHandler();

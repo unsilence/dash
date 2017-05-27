@@ -46,7 +46,7 @@ function getColorSerialFormatData(serials, colors) {
   });
   function getParent(item, elems) {
     elems.forEach(v => {
-      if (v._id === item.seriesId) {
+      if (v._id === item.serial_num) {
         v.children ? v.children.push({ "value": item._id, "label": item.name, "_id": item._id, 'key': item._id }) : (v.children = [{ "value": item._id, "label": item.name, "_id": item._id, 'key': item._id }]);
       }
     })
