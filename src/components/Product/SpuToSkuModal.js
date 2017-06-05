@@ -226,7 +226,7 @@ class SpuToSkuModal extends Component {
       let sku = {};
       for (let [key, entry] of Object.entries(v)) {
         if(key === 'yanse')
-          sku.distinctWords = JSON.stringify(entry.value);
+          sku.distinct_words = JSON.stringify(entry.value);
         if (entry.sellId) {
           let id = entry.sellId.split('_')[0];
           let dtype;
