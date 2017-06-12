@@ -6,7 +6,7 @@ export default class RecommendNum extends Component {
 		super(props);
 
 		this.state={
-			recommendNum : "",
+			recommendNum : 0,
 			visible : false,
 			PopoverText : "设置推荐系数"
 		}
