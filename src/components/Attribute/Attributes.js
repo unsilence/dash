@@ -8,7 +8,7 @@ import AttributeModal from './AttributeModal';
 import moment from 'moment';
 
 const extendsObject = {"0":'不继承','1':'尺寸','2':'颜色','3':'原产地','4':'品牌'};
-const stypeObject = {'1':'运营输入','2':'使用SKU配图','3':'下拉选项'};
+const stypeObject = {'1':'运营输入','2':'使用SKU配图','3':'下拉选项','4':'多选'};
 const typeObject = {'1':'关键属性','2':'销售属性','3':'其他属性'};
 
 

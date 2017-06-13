@@ -43,7 +43,14 @@ function Cases({
         page
       }}));
   }
- 
+function deleteHandler(itm) {
+  dispatch({
+    type: 'cases/remove',
+    payload: {
+      id: itm._id
+    }
+  });
+}
   function editHandler(id, values) {
     if (id) {
       dispatch({
@@ -109,6 +116,7 @@ function Cases({
             <CaseEditModal
               cases={cases}
               onOk={editHandler}
+              onDeleteHandler={deleteHandler}
               dispatch={dispatch}
               skuList={skuList}>
               <Button>编辑</Button>

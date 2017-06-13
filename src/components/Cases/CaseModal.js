@@ -279,10 +279,9 @@ class CaseEditModal extends Component {
   }
 
   deleteHandler = (e) => {
-    const {onOk, cases} = this.props;
-    if (onOk) {
-      cases.valid = false;
-      onOk(cases._id, cases);
+    const {onDeleteHandler, cases} = this.props;
+    if (onDeleteHandler) {
+      onDeleteHandler(cases);
       this.hideModelHandler();
     }
   }

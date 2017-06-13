@@ -79,7 +79,12 @@ function Spu({ dispatch, list: dataSource, loading, total, page: current, serial
       key: 'operation',
       render: (text, product) => (
         <span className={styles.operation2}>
-          <SpuModal product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap,brandMap:brandMap }} onOk={editHandler.bind(null, product._id)}>
+< SpuModal product = {{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap,brandMap:brandMap }} onDeleteHandler = {
+  deleteHandler.bind(null, product)
+}
+onOk = {
+  editHandler.bind(null, product._id)
+} >
             <Icon type='edit' style={{marginRight:"10px"}}>spu</Icon>
           </SpuModal>
           <SpuToSkuModal product={{ ...product, categoryMap: categoryMap, serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap,brandMap:brandMap }} onOk={spuToSkuHandler.bind(this)}>

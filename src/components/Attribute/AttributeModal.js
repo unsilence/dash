@@ -4,7 +4,7 @@ const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
 import {getFormatData} from '../utils'
 import styles from '../item.less';
-import TagsInput from 'react-tagsinput'
+import TagsInput from '../Product/TagsInput'
 import 'react-tagsinput/react-tagsinput.css'
 import moment from 'moment';
 
@@ -60,7 +60,7 @@ class AttributeModalEditModal extends Component {
 
   stypeOnChange = (e) => {
     let stype = e.target.value;
-    if(stype === '3')
+    if (stype === '3' || stype === '4')
     {
       this.setState({ tagsInputDisabled:false});
     }
@@ -124,7 +124,8 @@ class AttributeModalEditModal extends Component {
   render() {
     const { children } = this.props;
     const { getFieldDecorator, setFieldsValue } = this.props.form;
-    const { _id, name, category_num, vital_type, extends_type, select_type, is_null, select_value, create_at, update_at, sizes,rank,is_show} = this.props.record;
+    const { _id, name, category_num, vital_type, extends_type, select_type, is_null, create_at, update_at, sizes,rank,is_show} = this.props.record;
+    let select_value = this.props.record;
     let data = [];
 
     (this.props.record.categoryList || []).forEach(v => data.unshift(v));
@@ -134,6 +135,9 @@ class AttributeModalEditModal extends Component {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
+
+select_value = typeof(select_value) === 'string'
+? select_value.split(','): select_value
 
     let checkOptions = getFieldDecorator('size', { initialValue: ['长', '宽', '高', '半径']})(<CheckboxGroup  disabled={true} options={this.state.extendsOption} />);
     let tagsInput = <TagsInput disabled={this.state.tagsInputDisabled} value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v) }} />;
@@ -178,6 +182,7 @@ class AttributeModalEditModal extends Component {
                 <Radio value={'3'}>下拉使用</Radio>
                 <Radio value={'1'} >运营输入</Radio>
                 <Radio value={'2'} disabled={this.state.useSkuImg}>使用SKU配图</Radio>
+                <Radio value={'4'}>多选</Radio>
               </RadioGroup>
             )
             }
