@@ -69,7 +69,7 @@ class CategoryEditModal extends Component {
               <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>
             )}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="备注" >       {getFieldDecorator('note', {rules:[{required: true, message: '请输入备注内容!'}], initialValue: note })(<Input size="small" />)}</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="备注" >       {getFieldDecorator('note', {initialValue: note })(<Input size="small" />)}</FormItem>
           </Form>
         </Modal>
       </span>

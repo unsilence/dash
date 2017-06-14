@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Table, Pagination ,Popconfirm ,Row ,Col ,Button ,Icon ,Input } from 'antd';
+import { Table, Pagination ,Popconfirm ,Row ,Col ,Button ,Icon ,Input ,message} from 'antd';
 import TestDiv from "./TestDiv.js";
 import { routerRedux } from 'dva/router';
 import styles from '../list.less';
@@ -27,20 +27,23 @@ function Orders({ dispatch, list: dataSource, loading, total, page: current ,sku
   }
 
   function editHandler(e) {    // 添加doder 数据的方法
-    let id;
-    let values = {
-      skus : [{ sku_num: "58f1860cbdc83d64e9288c0b", quantity : 1, price: 1000,stocks: "" }],
-      total_price: "666666",
-      customer_num : "7758521",
-      status : "待审核",
-      cnum : "1314521",
-      address_num : "5916b8b7e55e23359b0a7a37",
-      refuse_info : "拒绝理由"
-    };
-    dispatch({
-      type : "orders/add",
-      payload : { id , values }
-    })
+    
+    console.log(this);
+    // let id;
+    // let values = {
+    //   skus : [{ sku_num: "58f1860cbdc83d64e9288c0b", quantity : 1, price: 1000,stocks: "" }],
+    //   total_price: "666666",
+    //   customer_num : "7758521",
+    //   status : "待审核",
+    //   cnum : "1314521",
+    //   address_num : "5916b8b7e55e23359b0a7a37",
+    //   refuse_info : "拒绝理由"
+    // };
+    // dispatch({
+    //   type : "orders/add",
+    //   payload : { id , values }
+    // })
+    message.warn('未完成！');
   }
 
   function addProject () {    // 添加address 表数据的方法

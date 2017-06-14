@@ -59,7 +59,7 @@ class CountryEditModal extends Component {
         >
           <Form horizontal onSubmit={this.okHandler}>
             <FormItem className={styles.FormItem} {...formItemLayout} label="国家名字" >    {getFieldDecorator('name',             {rules:[{required: true, message: '请输入国家名字!'}],initialValue: name})(<Input size="small" />)  }</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="备注" >       {getFieldDecorator('note',             {rules:[{required: true, message: '请填写备注内容!'}],initialValue: note})(<Input size="small" />) }</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="备注" >       {getFieldDecorator('note',             {initialValue: note})(<Input size="small" />) }</FormItem>
           </Form>
         </Modal>
       </span>
