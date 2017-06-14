@@ -6,8 +6,8 @@ import styles from '../list.less';
 let PAGE_SIZE = 10
 import BrandModal from './BrandModal';
 
-function Brands({ dispatch, list: dataSource, loading, total, page: current,categoryMap }) {
-console.log("ta laizi nali!",dataSource)
+function Brands({ dispatch, list: dataSource, loading, total, page: current,categoryMap ,countryMap}) {
+console.log("ta laizi nali!-------------", countryMap)
   function deleteHandler(itm) {
       console.log('deleteHandler',itm)
     dispatch({
@@ -76,7 +76,7 @@ console.log("ta laizi nali!",dataSource)
       key: 'operation',
       render: (text, record) => (
         <span className={styles.operation2}>
-          <BrandModal record={{ ...record, categoryList: Object.values((categoryMap||{})) }} onOk={editHandler.bind(null, record._id)}>
+          <BrandModal record={{ ...record, countryList:Object.values(countryMap||{}) ,categoryList: Object.values((categoryMap||{})) }} onOk={editHandler.bind(null, record._id)}>
             <Icon type="edit" className={styles.icon}/>
           </BrandModal>
           <Popconfirm title={"确定要删除品牌【"+record.name+"】吗？"} onConfirm={deleteHandler.bind(null, record)}>
@@ -91,7 +91,7 @@ console.log("ta laizi nali!",dataSource)
     <div className={styles.normal}>
       <div>
         <Row type="flex" justify="end">
-            <BrandModal record={{ categoryList: Object.values((categoryMap||{})) }} onOk={editHandler.bind(null,'')}>
+            <BrandModal record={{ countryList:Object.values(countryMap||{}) ,categoryList: Object.values((categoryMap||{})) }} onOk={editHandler.bind(null,'')}>
                 <Button  icon="plus-circle-o">添加</Button>
             </BrandModal>
         </Row>
@@ -116,13 +116,14 @@ console.log("ta laizi nali!",dataSource)
 
 function mapStateToProps(state) {
 
-  const { list, total, page ,categoryMap} = state.brands;
+  const { list, total, page ,categoryMap,countryMap} = state.brands;
   return {
     loading: state.loading.models.brands,
     list,
     total,
     page,
-    categoryMap
+    categoryMap,
+    countryMap
   };
 }
 

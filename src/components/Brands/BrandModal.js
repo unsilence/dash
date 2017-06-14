@@ -96,27 +96,7 @@ const brandLetter = [
     value: "Z"
   }
 ];
-const brandcounty = [
-  {
-    key: "1",
-    value: "中国"
-  }, {
-    key: "2",
-    value: "美国"
-  }, {
-    key: "3",
-    value: "日本"
-  }, {
-    key: "4",
-    value: "德国"
-  }, {
-    key: "5",
-    value: "法国"
-  }, {
-    key: "6",
-    value: "英国"
-  }
-];
+
 class BrandEditModal extends Component {
 
   constructor(props) {
@@ -128,7 +108,8 @@ class BrandEditModal extends Component {
       value: "58c8f5cf1c74a5278ad3e404",
       imageUrl: this.props.banner
         ? this.props.banner.image
-        : null
+        : null,
+      country:this.props.record.countryList
     };
   }
 
@@ -184,10 +165,10 @@ class BrandEditModal extends Component {
 
   render() {
     const {children} = this.props;
-    const brandCountry = brandcounty.map(t =><Option value = {
-      t.value
+    const brandCountry = this.props.record.countryList.map(t =><Option value = {
+      t._id
     } > {
-      t.value
+      t.name
     } </Option>);
     const brandFirstletter = brandLetter.map(a=><Option value={a.value}>{a.value}</Option >);
     const {getFieldDecorator} = this.props.form;

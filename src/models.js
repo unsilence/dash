@@ -9,6 +9,7 @@ import {hotProductsOption} from './models/HotProduct';
 import {navRecomOption} from "./models/NavRecom";
 import {editOrderOption} from "./models/Order.js";
 import {casesOption} from "./models/Cases.js";
+import {brandOption} from './models/Brand'
 
 
 ['ProjectInfo','NavManage','HotProduct','CaseManage','Banner', 'Recom','Recommend', 'Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
@@ -19,11 +20,12 @@ addSpuOption(exports['SpuModel']);
 addSkuOption(exports['SkuModel']);
 recommendOption(exports["RecomModel"]);
 addBannerOption(exports['BannerModel']);
-hotProductsOption(exports['HotProductModel'])
-caseManageOption(exports["CaseManageModel"])
-navRecomOption(exports["NavManageModel"])
-editOrderOption(exports["OrderModel"])
-casesOption(exports["CaseModel"])
+hotProductsOption(exports['HotProductModel']);
+caseManageOption(exports["CaseManageModel"]);
+navRecomOption(exports["NavManageModel"]);
+editOrderOption(exports["OrderModel"]);
+casesOption(exports["CaseModel"]);
+brandOption(exports["BrandModel"]);
 
 exports['login'] = function () { return service.login() }
 exports['checkAccount'] = function () { return service.checkAccount() }
@@ -58,12 +60,12 @@ exports["CategoryModel"].effects.fetch = function* ({ payload: { page } }, { cal
   yield put({ type: 'save22', payload: rd });
 }
 
-exports["BrandModel"].effects.fetch = function* ({ payload: { page } }, { call, put }) {
-  const categoryMap = yield call(service["getCategoryMap"], 'Category');
-  const brands = yield call(service["BrandService"].fetch, { page });
-  const rd = { data: brands.data.data.list, total: brands.data.data.count, page: parseInt(page), categoryMap: categoryMap }
-  yield put({ type: 'save22', payload: rd });
-}
+// exports["BrandModel"].effects.fetch = function* ({ payload: { page } }, { call, put }) {
+//   const categoryMap = yield call(service["getCategoryMap"], 'Category');
+//   const brands = yield call(service["BrandService"].fetch, { page });
+//   const rd = { data: brands.data.data.list, total: brands.data.data.count, page: parseInt(page), categoryMap: categoryMap }
+//   yield put({ type: 'save22', payload: rd });
+// }
 
 exports['getCategory'] = function ({page,id}) { return service.fetchSystemPage("Recommend",{ "itype": "5" ,"category_num" : id },{page})};
 
