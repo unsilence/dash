@@ -35,19 +35,12 @@ class SpuToSkuModal extends Component {
     };
   }
 
-
-
-
-  componentWillMount() {
-    console.log(this.props.product, '-----------componentWillMount');
-  }
   componentDidMount() {
     if (this.props.product.category_num) {
       this.cascaderOnChange(this.props.product.category_num, 1);
       this.sellChange('');
       this.forceUpdate();
     }
-    console.log('-----------componentDidMount');
   }
 
   cascaderOnChange = (value, fromWhere) => {

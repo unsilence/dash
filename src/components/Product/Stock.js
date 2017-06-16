@@ -111,7 +111,7 @@ function Stock({ dispatch, list: dataSource, loading, total, page: current, seri
 }
 
 function mapStateToProps(state) {
-  const { list, total, page, serialMap, categoryMap, brandMap, colorMap, countryMap, attributeMap } = state.stocks;
+  const { list, total, page, serialMap, categoryMap, brandMap, colorMap, countryMap, attributeMap ,skusMap,spusMap} = state.stocks;
   return {
     loading: state.loading.models.stocks,
     list,
@@ -122,7 +122,9 @@ function mapStateToProps(state) {
     brandMap,
     colorMap,
     countryMap,
-    attributeMap
+    attributeMap,
+    skusMap,
+    spusMap
   };
 }
 

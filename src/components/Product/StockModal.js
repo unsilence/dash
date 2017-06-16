@@ -31,9 +31,8 @@ class StockEditModal extends Component {
       product: {}
     };
   }
-  componentWillMount() {
-    console.log(this.props.product, '-----------componentWillMount');
-  }
+
+
   componentDidMount() {
     if (this.props.product.categoryId) {
       this.cascaderOnChange(this.props.product.categoryId, 1);

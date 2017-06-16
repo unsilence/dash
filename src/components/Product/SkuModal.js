@@ -119,7 +119,7 @@ class SkuEditModal extends Component {
   render() {
     const { children } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { _id, name, note, key, categoryId ,name_prefix ,description ,spu ,images} = this.props.product;
+    const { _id, name, note, key, categoryId ,name_prefix ,description ,spu ,images,store} = this.props.product;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -166,8 +166,8 @@ class SkuEditModal extends Component {
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品前缀" >    
               {getFieldDecorator('name_prefix', { initialValue: name_prefix })(<Input size="small" />)}
             </FormItem>
-            {/*<FormItem className={styles.FormItem} {...formItemLayout} label="仓库位置" >    
-              {getFieldDecorator('name_prefix', { initialValue: "请选择仓库位置" })
+            <FormItem className={styles.FormItem} {...formItemLayout} label="仓库位置" >    
+              {getFieldDecorator('store', { initialValue: store })
               (<Select style={{ width: "200px" }} onChange={this.minusHandleChange}>
                 <Option value="武汉体验馆">武汉体验馆</Option>
                 <Option value="北京体验馆">北京体验馆</Option>
@@ -175,27 +175,27 @@ class SkuEditModal extends Component {
               </Select >)}
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品促销" >    
-              {getFieldDecorator('jianman', { initialValue: "请选择减满条件" })
-              (<Select style={{ width: "200px" }} onChange={this.minusHandleChange}>
+              {getFieldDecorator('jianman', { initialValue: "" })
+              (<Select style={{ width: "200px" }} onChange={this.minusHandleChange} placeholder="请选择减满条件">
                 <Option value="请选择减满条件">请选择减满条件</Option>
                 <Option value="无">无</Option>
                 <Option value="满1000减500">满1000减500</Option>
               </Select >)}
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品促销" >    
-              {getFieldDecorator('zhekou', { initialValue: "请选择折扣条件" })
-              (<Select style={{ width: "200px" }} onChange={this.discountHandleChange}>
+              {getFieldDecorator('zhekou', { initialValue: "" })
+              (<Select style={{ width: "200px" }} onChange={this.discountHandleChange} placeholder="请选择折扣条件">
                 <Option value="请选择减满条件">请选择减满条件</Option>
-                <Option value="无">无</Option>
-                <Option value="2件9折">2件9折</Option>
-                <Option value="3件8折">3件8折</Option>
+                <Option value="100">无</Option>
+                <Option value="38">3件8折</Option>
+                <Option value="29">2件9折</Option>
               </Select >)}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label=" " >    
-              <Checkbox onChange={this.onfavorableChange}>可使用优惠券</Checkbox>
-            </FormItem>*/}
+            <FormItem className={styles.FormItem} {...formItemLayout} label="可使用优惠券" >    
+              <Checkbox onChange={this.onfavorableChange}></Checkbox>
+            </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品介绍" >    
-              <p>{spu.description}</p>
+              <div dangerouslySetInnerHTML={{__html:spu.description}}/>
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品备注" >
               {getFieldDecorator('note', { initialValue: spu.note })

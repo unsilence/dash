@@ -1,5 +1,5 @@
 import * as service from './../services';
-import {pad} from './utils';
+import { pad } from './utils';
 
 export var addSkuOption = function (sku) {
     sku.effects.add = function* ({ payload: { product, values, message } }, { call, put, select }) {
@@ -74,9 +74,9 @@ export var addSkuOption = function (sku) {
         filterToData.forEach((sku, index) => {
             sku.name = product.name;
             sku.spu_num = product._id;
-sku.distinct_words = (sku.distinct_words.indexOf(product._id) !== -1)
-    ? sku.distinct_words
-: sku.distinct_words + sku.spu_num;
+            sku.distinct_words = (sku.distinct_words.indexOf(product._id) !== -1)
+                ? sku.distinct_words
+                : sku.distinct_words + sku.spu_num;
             sku.category_num = product.category_num
             sku.unique_num = pad(modifySkus.length + index + 1, 2);
         })

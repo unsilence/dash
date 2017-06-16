@@ -45,9 +45,7 @@ class SpuEditModal extends Component {
     };
   }
 
-  componentWillMount() {
-    console.log(this.props.product, '-----------componentWillMount');
-  }
+
   componentDidMount() {
     if (this.props.product.category_num) {
       // let nums = typeof(this.props.product.category_num) != "string" ? this.props.product.category_num : [this.props.product.category_num];
@@ -55,7 +53,6 @@ class SpuEditModal extends Component {
       this.sellChange('');
       this.forceUpdate();
     }
-    console.log('-----------componentDidMount');
   }
 
   cascaderOnChange = (value, fromWhere) => {

@@ -10,6 +10,7 @@ import {navRecomOption} from "./models/NavRecom";
 import {editOrderOption} from "./models/Order.js";
 import {casesOption} from "./models/Cases.js";
 import {brandOption} from './models/Brand'
+import {stockOption } from './models/Stock'
 
 
 ['ProjectInfo','NavManage','HotProduct','CaseManage','Banner', 'Recom','Recommend', 'Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
@@ -26,6 +27,7 @@ navRecomOption(exports["NavManageModel"]);
 editOrderOption(exports["OrderModel"]);
 casesOption(exports["CaseModel"]);
 brandOption(exports["BrandModel"]);
+stockOption(exports["StockModel"]);
 
 exports['login'] = function () { return service.login() }
 exports['checkAccount'] = function () { return service.checkAccount() }
