@@ -95,7 +95,7 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
             <Icon type="export" style={{marginRight:"10px"}}>推荐至</Icon>
           </Popconfirm>
 
-          <SkuModal product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap, brandMap: brandMap }} onOk={editHandler.bind(null, product._id)}>
+          <SkuModal onDeleteHandler={deleteHandler} product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap, brandMap: brandMap }} onOk={editHandler}>
             <Icon type="edit">编辑</Icon>
           </SkuModal>
           

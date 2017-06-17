@@ -4,12 +4,13 @@ import { Table, Pagination, Popconfirm, Row, Col, Button, Icon } from 'antd';
 import { routerRedux } from 'dva/router';
 import StockModal from './StockModal';
 import moment from 'moment';
-import {getCategoryName,getProductNum} from '../utils'
+import { getCategoryName, getProductNum } from '../utils'
 import styles from '../list.less';
 let PAGE_SIZE = 10
 
 
-function Stock({ dispatch, list: dataSource, loading, total, page: current, serialMap, categoryMap, brandMap, colorMap, countryMap,attributeMap }) {
+function Stock({ dispatch, list: dataSource, loading, total, page: current, serialMap, categoryMap, brandMap, colorMap, countryMap, attributeMap, skusMap,
+  spusMap }) {
 
   function deleteHandler(itm) {
     console.log('deleteHandler', itm)
@@ -40,12 +41,18 @@ function Stock({ dispatch, list: dataSource, loading, total, page: current, seri
     }
 
   }
+
+  function getNum(product) {
+    console.log(product, '----------------------');
+    let num = getProductNum(skusMap[product.sku_num]['category_num'], categoryMap) + spusMap[skusMap[product.sku_num].spu_num].unique_num+skusMap[product.sku_num].unique_num ;
+    return num;
+  }
   const columns = [
     {
       title: '单品编号',
       dataIndex: 'unique_num',
       key: 'unique_num',
-      render: (text,product) => <span>{text}</span>,
+      render: (text, product) => <span>{getNum(product) + text}</span>,
     },
     {
       title: '名字',
@@ -56,7 +63,7 @@ function Stock({ dispatch, list: dataSource, loading, total, page: current, seri
       title: '价格',
       dataIndex: 'price',
       key: 'price',
-      render: text => <span>{text}</span>,
+      render: (text,product) => <span>{skusMap[product.sku_num].price}</span>,
     },
     {
       title: '厂库',
@@ -75,13 +82,14 @@ function Stock({ dispatch, list: dataSource, loading, total, page: current, seri
       key: 'operation',
       render: (text, product) => (
         <span className={styles.operation2}>
-          <StockModal product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap,brandMap:brandMap }} onOk={editHandler.bind(null, product._id)}>
+          <StockModal product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap, brandMap: brandMap }} onOk={editHandler.bind(null, product._id)}>
             <Icon type="edit" className={styles.icon} />
           </StockModal>
         </span>
       ),
     },
   ];
+
 
   return (
     <div className={styles.normal}>
@@ -111,7 +119,7 @@ function Stock({ dispatch, list: dataSource, loading, total, page: current, seri
 }
 
 function mapStateToProps(state) {
-  const { list, total, page, serialMap, categoryMap, brandMap, colorMap, countryMap, attributeMap ,skusMap,spusMap} = state.stocks;
+  const { list, total, page, serialMap, categoryMap, brandMap, colorMap, countryMap, attributeMap, skusMap, spusMap } = state.stocks;
   return {
     loading: state.loading.models.stocks,
     list,

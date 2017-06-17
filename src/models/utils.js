@@ -7,9 +7,11 @@ export var generate = (name, serviceName) => {
             total: null,
         },
         reducers: {
-            save22(state, { payload: { data: list, total, page, serialMap, categoryMap, colorMap, countryMap, brandMap, attributeMap ,isHasId,skuPropsList,skuattributeIDs ,hotList ,navList ,_list,fetchSku,skuList} }) {
+            save22(state, { payload: { data: list, total, page, serialMap, categoryMap, colorMap, countryMap, brandMap, attributeMap ,isHasId,skuPropsList,skuattributeIDs ,hotList ,navList ,_list,fetchSku,skuList,skusMap,
+    spusMap} }) {
                 page = page || 1
-                return { ...state, list, total, page, serialMap, categoryMap, colorMap, countryMap, brandMap, attributeMap ,isHasId,skuPropsList,skuattributeIDs,hotList,navList,_list,fetchSku,skuList};
+                return { ...state, list, total, page, serialMap, categoryMap, colorMap, countryMap, brandMap, attributeMap ,isHasId,skuPropsList,skuattributeIDs,hotList,navList,_list,fetchSku,skuList,skusMap,
+    spusMap};
             },
         },
         effects: {

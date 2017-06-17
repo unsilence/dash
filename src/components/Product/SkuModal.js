@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, Select, Cascader, Icon, Button, Upload , Checkbox } from 'antd';
+import { Modal, Form, Input, Select, Cascader, Icon, Button, Upload, Checkbox } from 'antd';
 import styles from '../item.less';
 import TagsInput from './TagsInput';
 import 'react-tagsinput/react-tagsinput.css';
@@ -30,8 +30,8 @@ class SkuEditModal extends Component {
       previewVisible: false,
       previewImage: '',
       fileList: this.props.product.images,
-      note : this.props.product.spu.note || "",
-      onfavorable :false
+      note: this.props.product.spu.note || "",
+      onfavorable: false
     };
   }
   handleImgCancel = () => this.setState({ previewVisible: false })
@@ -100,7 +100,7 @@ class SkuEditModal extends Component {
         //   note : values.note
         // })
         this.hideModelHandler();
-      }else{
+      } else {
         console.log("提交出现错误！");
       }
     });
@@ -113,13 +113,38 @@ class SkuEditModal extends Component {
   }
   onfavorableChange = (e) => {  // 是否使用优惠券的回调
     this.setState({
-      onfavorable : e.target.checked
+      onfavorable: e.target.checked
     })
+  }
+
+  offlineHandler = (e) => {
+    const { onOk, product } = this.props;
+    if (onOk) {
+      product.is_online = false;
+      onOk(product._id, product);
+      this.hideModelHandler();
+    }
+  }
+  onlineHandler = (e) => {
+    const { onOk, product } = this.props;
+    if (onOk) {
+      product.is_online = true;
+      onOk(product._id, product);
+      this.hideModelHandler();
+    }
+  }
+
+  deleteHandler = (e) => {
+    const { onDeleteHandler, product } = this.props;
+    if (onDeleteHandler) {
+      onDeleteHandler(product);
+      this.hideModelHandler();
+    }
   }
   render() {
     const { children } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { _id, name, note, key, categoryId ,name_prefix ,description ,spu ,images,store} = this.props.product;
+    const { _id, name, note, key, categoryId, name_prefix, description, spu, images, store } = this.props.product;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -131,12 +156,14 @@ class SkuEditModal extends Component {
         <div className="ant-upload-text">Upload</div>
       </div>
     );
-    // var  files = [];
-    // console.log(fileList);
-    // if(fileList)
-    // fileList.map( (v,index) => {
-    //   v.url = "/api/file/"+v.md5;
-    // });
+
+    let footer = [];
+    if (this.props.product.is_online) {
+      footer = [< Button key="delete" size="large" onClick={this.deleteHandler} > 删除 </Button>, <Button key="offline" size="large" loading={this.state.loading} onClick={this.offlineHandler}> 下架 </Button >, <Button key="submit" type="primary" size="large" loading={this.state.loading} onClick={this.okHandler}> 保存 </Button >]
+    } else {
+      footer = [< Button key="delete" size="large" onClick={this.deleteHandler} > 删除 </Button>, <Button key="offline" size="large" loading={this.state.loading} onClick={this.onlineHandler}> 上架 </Button >, <Button key="submit" type="primary" size="large" loading={this.state.loading} onClick={this.okHandler}> 保存 </Button >]
+    }
+
     return (
       <span>
         <span onClick={this.showModelHandler}>
@@ -147,9 +174,11 @@ class SkuEditModal extends Component {
           visible={this.state.visible}
           onOk={this.okHandler}
           onCancel={this.hideModelHandler}
+          footer=
+          {footer}
         >
           <Form horizontal onSubmit={this.okHandler} key={"alkdkdkdk"}>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >    
+            <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >
               {getFieldDecorator('name', { initialValue: name })(<Input size="small" />)}
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="图片" >
@@ -163,43 +192,44 @@ class SkuEditModal extends Component {
                 {(fileList || []).length >= 3 ? null : uploadButton}
               </Upload>
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="商品前缀" >    
+            <FormItem className={styles.FormItem} {...formItemLayout} label="商品前缀" >
               {getFieldDecorator('name_prefix', { initialValue: name_prefix })(<Input size="small" />)}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="仓库位置" >    
+            <FormItem className={styles.FormItem} {...formItemLayout} label="仓库位置" >
               {getFieldDecorator('store', { initialValue: store })
-              (<Select style={{ width: "200px" }} onChange={this.minusHandleChange}>
-                <Option value="武汉体验馆">武汉体验馆</Option>
-                <Option value="北京体验馆">北京体验馆</Option>
-                <Option value="北京仓库">北京仓库</Option>
-              </Select >)}
+                (<Select style={{ width: "200px" }} onChange={this.minusHandleChange}>
+                  <Option value="武汉体验馆">武汉体验馆</Option>
+                  <Option value="北京体验馆">北京体验馆</Option>
+                  <Option value="北京仓库">北京仓库</Option>
+                </Select >)}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="商品促销" >    
-              {getFieldDecorator('jianman', { initialValue: "" })
-              (<Select style={{ width: "200px" }} onChange={this.minusHandleChange} placeholder="请选择减满条件">
-                <Option value="请选择减满条件">请选择减满条件</Option>
-                <Option value="无">无</Option>
-                <Option value="满1000减500">满1000减500</Option>
-              </Select >)}
+            <FormItem className={styles.FormItem} {...formItemLayout} label="商品促销" >
+              {getFieldDecorator('full_cut', { initialValue: "" })
+                (<Select style={{ width: "200px" }} onChange={this.minusHandleChange} placeholder="请选择减满条件">
+                  <Option value="请选择减满条件">请选择减满条件</Option>
+                  <Option value="无">无</Option>
+                  <Option value="满1000减500">满1000减500</Option>
+                </Select >)}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="商品促销" >    
-              {getFieldDecorator('zhekou', { initialValue: "" })
-              (<Select style={{ width: "200px" }} onChange={this.discountHandleChange} placeholder="请选择折扣条件">
-                <Option value="请选择减满条件">请选择减满条件</Option>
-                <Option value="100">无</Option>
-                <Option value="38">3件8折</Option>
-                <Option value="29">2件9折</Option>
-              </Select >)}
+            <FormItem className={styles.FormItem} {...formItemLayout} label="商品促销" >
+              {getFieldDecorator('discount', { initialValue: "" })
+                (<Select style={{ width: "200px" }} onChange={this.discountHandleChange} placeholder="请选择折扣条件">
+                  <Option value="请选择减满条件">请选择减满条件</Option>
+                  <Option value="100">无</Option>
+                  <Option value="38">3件8折</Option>
+                  <Option value="29">2件9折</Option>
+                </Select >)}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="可使用优惠券" >    
-              <Checkbox onChange={this.onfavorableChange}></Checkbox>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="可使用优惠券" >
+              {getFieldDecorator('can_coupon', { initialValue: "",valuePropName:"checked" })
+                (<Checkbox onChange={this.onfavorableChange}></Checkbox>)}
             </FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="商品介绍" >    
-              <div dangerouslySetInnerHTML={{__html:spu.description}}/>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="商品介绍" >
+              <div dangerouslySetInnerHTML={{ __html: spu.description }} />
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品备注" >
               {getFieldDecorator('note', { initialValue: spu.note })
-              (<textarea style={{width : "100%",height : "100px" , outline : "none"}}>{this.state.note ? this.state.note : spu.note}</textarea>)}    
+                (<textarea style={{ width: "100%", height: "100px", outline: "none" }}>{this.state.note ? this.state.note : spu.note}</textarea>)}
             </FormItem>
           </Form>
         </Modal>
@@ -207,6 +237,7 @@ class SkuEditModal extends Component {
     );
   }
 }
+
 export default Form.create()(SkuEditModal);
 
 /**

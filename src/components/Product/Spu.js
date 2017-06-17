@@ -7,9 +7,9 @@ let PAGE_SIZE = 10
 import SpuModal from './SpuModal';
 import SpuToSkuModal from './SpuToSkuModal'
 import moment from 'moment';
-import {getCategoryName,getProductNum} from '../utils'
+import { getCategoryName, getProductNum } from '../utils'
 
-function Spu({ dispatch, list: dataSource, loading, total, page: current, serialMap, categoryMap, brandMap, colorMap, countryMap,attributeMap }) {
+function Spu({ dispatch, list: dataSource, loading, total, page: current, serialMap, categoryMap, brandMap, colorMap, countryMap, attributeMap }) {
   console.log(dataSource);
   console.log(categoryMap);
   function deleteHandler(itm) {
@@ -41,21 +41,21 @@ function Spu({ dispatch, list: dataSource, loading, total, page: current, serial
     }
   }
 
-   function spuToSkuHandler(product, values,message) {
-      dispatch({
-        type: 'skus/add',
-        payload: { product, values ,message},
-      });
+  function spuToSkuHandler(product, values, message) {
+    dispatch({
+      type: 'skus/add',
+      payload: { product, values, message },
+    });
   }
 
 
-  
+
   const columns = [
     {
       title: 'SPU编号',
       dataIndex: 'unique_num',
       key: 'unique_num',
-      render: (text,product) => <span>{getProductNum(product.category_num,categoryMap)+product.unique_num}</span>,
+      render: (text, product) => <span>{getProductNum(product.category_num, categoryMap) + product.unique_num}</span>,
     },
     {
       title: '名字',
@@ -66,7 +66,7 @@ function Spu({ dispatch, list: dataSource, loading, total, page: current, serial
       title: '分类',
       dataIndex: 'category_num',
       key: 'category_num',
-      render: text => <span>{getCategoryName(text,categoryMap)}</span>,
+      render: text => <span>{getCategoryName(text, categoryMap)}</span>,
     },
     {
       title: '创建日期',
@@ -79,19 +79,19 @@ function Spu({ dispatch, list: dataSource, loading, total, page: current, serial
       key: 'operation',
       render: (text, product) => (
         <span className={styles.operation2}>
-< SpuModal product = {{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap,brandMap:brandMap }} onDeleteHandler = {
-  deleteHandler.bind(null, product)
-}
-onOk = {
-  editHandler.bind(null, product._id)
-} >
-            <Icon type='edit' style={{marginRight:"10px"}}>spu</Icon>
+          < SpuModal product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap, brandMap: brandMap }} onDeleteHandler={
+            deleteHandler.bind(null, product)
+          }
+            onOk={
+              editHandler.bind(null, product._id)
+            } >
+            <Icon type='edit' style={{ marginRight: "10px" }}>spu</Icon>
           </SpuModal>
-          <SpuToSkuModal product={{ ...product, categoryMap: categoryMap, serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap,brandMap:brandMap }} onOk={spuToSkuHandler.bind(this)}>
-            <Icon type='edit' style={{marginRight:"10px"}}>sku</Icon>
+          <SpuToSkuModal product={{ ...product, categoryMap: categoryMap, serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap, brandMap: brandMap }} onOk={spuToSkuHandler.bind(this)}>
+            <Icon type='edit' style={{ marginRight: "10px" }}>sku</Icon>
           </SpuToSkuModal>
           <Popconfirm title={"确定要删除Spu【" + product.name + "】吗？"} onConfirm={deleteHandler.bind(null, product)}>
-            <Icon type='delete' style={{marginRight:"10px"}}>删除</Icon>
+            <Icon type='delete' style={{ marginRight: "10px" }}>删除</Icon>
           </Popconfirm>
         </span>
       ),
@@ -102,7 +102,7 @@ onOk = {
     <div className={styles.normal}>
       <div>
         <Row type="flex" justify="end">
-          <SpuModal product={{ categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap ,brandMap:brandMap}} onOk={editHandler.bind(null, '')}>
+          <SpuModal product={{ categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap, brandMap: brandMap }} onOk={editHandler.bind(null, '')}>
             <Button icon="plus-circle-o">添加</Button>
           </SpuModal>
         </Row>
