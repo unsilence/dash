@@ -22,4 +22,17 @@ export var stockOption = function (stock) {
         const rd = { data: stocks.data.data.list, total: stocks.data.data.count, skusMap,spusMap, countryMap:countryMap,categoryMap: categoryMap ,page: parseInt(page) }
         yield put({ type: 'save22', payload: rd });
     }
+
+     stock.effects.remove = function* ({ payload: { id } }, { call, put, select }) {
+
+        const stocks = yield call(service['getDataService'], 'Stock', { "sku_num": { "$in": [id] } });
+        let statusStocks = stocks.data.data.list.filter(v => { return v.status !== '' })
+        if (statusStocks.length === 0) {
+            yield call(service['StockService'].remove, id);
+            const page = yield select(state => state['stocks'].page);
+            yield put({ type: 'fetch', payload: { page } });
+        }
+
+
+    }
 }

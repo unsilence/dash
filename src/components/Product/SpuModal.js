@@ -412,7 +412,7 @@ this.onDeleteHandler
         
           <Form horizontal onSubmit={this.okHandler} key={"alkdkdkdk"}>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >    <TagsInput  value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v); this.props.form.setFieldsValue({ key: v }) }} />)</FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >    <TagsInput  value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v); this.props.form.setFieldsValue({ key: v }) }} /></FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品分类" >
               {getFieldDecorator('category_num', { initialValue: typeof(category_num) !== "string" ? category_num : [category_num] })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange.bind(this)} expandTrigger="hover" placeholder='Please select' />)}
             </FormItem>

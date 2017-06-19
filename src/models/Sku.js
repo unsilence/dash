@@ -138,4 +138,18 @@ export var addSkuOption = function (sku) {
         }
         yield put({ type: 'save22', payload: rd });
     }
+
+
+    sku.effects.remove = function* ({ payload: { id } }, { call, put, select }) {
+
+        const stocks = yield call(service['getDataService'], 'Stock', { "sku_num": { "$in": [id] } });
+        let statusStocks = stocks.data.data.list.filter(v => { return v.status !== '' })
+        if (statusStocks.length === 0) {
+            yield call(service['SkuService'].remove, id);
+            const page = yield select(state => state['skus'].page);
+            yield put({ type: 'fetch', payload: { page } });
+        }
+
+
+    }
 }

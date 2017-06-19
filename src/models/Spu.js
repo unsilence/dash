@@ -20,8 +20,8 @@ export var addSpuOption = function (spu) {
 
         let skuNums = new Set();
         skus.data.data.list.forEach(s => {
-                skuNums.add(s._id);
-            })
+            skuNums.add(s._id);
+        })
 
         skuNums = Array.from(skuNums);
 
@@ -29,11 +29,11 @@ export var addSpuOption = function (spu) {
 
         let numContent = {}
         //会进行状态过滤
-        stocks.data.data.list.forEach( v => {
-            if(!numContent.hasOwnProperty(v._id)){
+        stocks.data.data.list.forEach(v => {
+            if (!numContent.hasOwnProperty(v._id)) {
                 numContent[v.sku_num] = 0;
             }
-            numContent[v.sku_num] ++;
+            numContent[v.sku_num]++;
         });
 
         console.log(numContent);
@@ -74,10 +74,10 @@ export var addSpuOption = function (spu) {
         let stocks = [];
 
         skusRet.map(sku => { return sku.data.data.item })
-            .map((v,index) => { return { name: v.name, sku_num: v._id, tempNum: v.count } })
+            .map((v, index) => { return { name: v.name, sku_num: v._id, tempNum: v.count } })
             .forEach(item => {
                 for (let i = 0; i < skus[index].count; i++) {
-                    item.unique_num= pad((i + 1), 3);
+                    item.unique_num = pad((i + 1), 3);
                     stocks.push(item);
                 }
             });
@@ -87,6 +87,20 @@ export var addSpuOption = function (spu) {
         //生成skus
         const page = yield select(state => state['spus'].page);
         yield put({ type: 'fetch', payload: { page } });
+    }
+
+    spu.effects.remove = function* ({ payload: { id } }, { call, put, select }) {
+
+        const skus = yield call(service['getDataService'], 'Sku', { "spu_num": { "$in": [id] } });
+        let skuIds = skus.data.data.list.map(v => { return v._id });
+        const stocks = yield call(service['getDataService'], 'Stock', { "sku_num": { "$in": skuIds } });
+
+        let statusStocks = stocks.data.data.list.filter(v => { return v.status !== '' })
+        if (statusStocks.length === 0) {
+            yield call(service['SpuService'].remove, id);
+            const page = yield select(state => state['spus'].page);
+            yield put({ type: 'fetch', payload: { page } });
+        }
     }
 
 }
