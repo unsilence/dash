@@ -43,7 +43,7 @@ exports["ColorModel"].effects.fetch = function* ({ payload: { page } }, { call, 
   cids = Array.from(cids);
 
   // const serialMap = yield call(service['getDataService'], 'Serial', { "_id": { "$in": cids } })
-  const serialMap = yield call(service["getSerialMap"], 'Serial');
+  const serialMap = yield call(service["getSerialMapCnum"], 'Serial');
   const rd = { data: colors.data.data.list, total: colors.data.data.count, page: parseInt(page), serialMap: serialMap };
   yield put({ type: 'save22', payload: rd });
 }

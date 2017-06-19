@@ -40,7 +40,7 @@ exports['getDataService'] = async (v,opt)=> {
 
 exports['checkAccount'] = async () => {
     console.log('check', localStorage)
-    var rt = await request(`/api/auth/account?token=${localStorage.token}`, {})
+    var rt = await request(`/api/auth/account_dash?token=${localStorage.token}`, {})
     return rt
 }
 exports['login'] = async () => {
@@ -72,6 +72,29 @@ function getMapByList(list) {
         return map;
     }
 });
+
+// 这里在接口层面可以加本地存储
+function getMapByListCnum(list) {
+    let tempMap = {}
+    list.map(item => {
+        tempMap[item.cnum.toString()] = item;
+    })
+    return tempMap
+}
+
+['Color', 'Country', 'Brand', 'Serial', 'Category', 'Attribute','Recommend','Nav','Order','Case','System',"Sku"].map(v => {
+    exports[`get${v}MapCnum`] = async function (v) {
+        let result = await request(`/api/${v}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 10000000, startPos: 0 })
+        let list = result.data.data.list
+        let map = getMapByListCnum(list)
+        window.sessionStorage.brandMap = JSON.stringify(map)
+        return map;
+    }
+});
+
+
+
+
 //带分页 有条件查询
 ['Recommend','Banner','CaseManage','HotProduct','Nav','Order','Projectinfo','Case','System'].map(v => {
     exports[`fetch${v}Page`] = async function (v,filter,page) {

@@ -24,7 +24,6 @@ export var stockOption = function (stock) {
     }
 
      stock.effects.remove = function* ({ payload: { id } }, { call, put, select }) {
-
         const stocks = yield call(service['getDataService'], 'Stock', { "sku_num": { "$in": [id] } });
         let statusStocks = stocks.data.data.list.filter(v => { return v.status !== '' })
         if (statusStocks.length === 0) {
