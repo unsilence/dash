@@ -98,7 +98,7 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
           <SkuModal onDeleteHandler={deleteHandler} product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap, brandMap: brandMap }} onOk={editHandler}>
             <Icon type="edit">编辑</Icon>
           </SkuModal>
-          
+
         </span>
       )
     }
@@ -108,7 +108,7 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
     <div className={styles.normal}>
       <div>
         {/*<Row type="flex" justify="end">
-          <SkuModal product={{ categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap, brandMap: brandMap }} onOk={editHandler.bind(null, '')}>
+          <SkuModal product={{ categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap, brandMap: brandMap }} onOk={editHandler}>
             <Button icon="plus-circle-o">添加</Button>
           </SkuModal>
         </Row>*/}
