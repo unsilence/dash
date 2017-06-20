@@ -244,12 +244,12 @@ class SpuEditModal extends Component {
         this.formatAttributesData(values);
         console.log(values);
         values.qtext = this.state.tags;
-        if( this.props.product && this.props.product.category_num.toString() === values.category_num.toString())
+        if( this.props.product.category_num && this.props.product.category_num.toString() === values.category_num.toString())
         {
           onOk(this.props.product._id,values);
         }
         else{
-          onOk(null,values);
+          onOk(values);
         }
 
         this.hideModelHandler();
