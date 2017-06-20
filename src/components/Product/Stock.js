@@ -69,7 +69,7 @@ function Stock({ dispatch, list: dataSource, loading, total, page: current, seri
       title: '厂库',
       dataIndex: 'store',
       key: 'store',
-      render: text => <span>{text}</span>
+      render: (text,product) => <span>{skusMap[product.sku_num].store}</span>
     },
     {
       title: '状态',
