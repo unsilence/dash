@@ -35,6 +35,7 @@ class _Main extends Component {
         }else{
             message.error('登录失败，请重新输入');
         }
+        clearInterval(this.timer)
   }
   sendCode = async (e) => {
       let phone = this.refs.phoneInput.refs.input.value
