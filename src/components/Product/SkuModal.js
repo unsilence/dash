@@ -158,7 +158,7 @@ class SkuEditModal extends Component {
   render() {
     const { children } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { _id, name, note, key, categoryId, name_prefix, description, spu, images, store } = this.props.product;
+    const { _id, name, note, key, categoryId, name_prefix, description, spu, images, store , sales_promotion} = this.props.product;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -218,7 +218,7 @@ class SkuEditModal extends Component {
                 </Select >)}
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品促销" >
-              {getFieldDecorator('full_cut', { initialValue: "" })
+              {getFieldDecorator('full_cut', { initialValue: sales_promotion.length > 0 ?  sales_promotion[0].full_cut : "" })
                 (<Select style={{ width: "200px" }} onChange={this.minusHandleChange} placeholder="请选择减满条件">
                   <Option value="请选择减满条件">请选择减满条件</Option>
                   <Option value="无">无</Option>
@@ -226,7 +226,7 @@ class SkuEditModal extends Component {
                 </Select >)}
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品促销" >
-              {getFieldDecorator('discount', { initialValue: "" })
+              {getFieldDecorator('discount', { initialValue: sales_promotion.length > 0 ? sales_promotion[0].discount : "" })
                 (<Select style={{ width: "200px" }} onChange={this.discountHandleChange} placeholder="请选择折扣条件">
                   <Option value="请选择减满条件">请选择减满条件</Option>
                   <Option value="100">无</Option>
@@ -235,7 +235,7 @@ class SkuEditModal extends Component {
                 </Select >)}
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="可使用优惠券" >
-              {getFieldDecorator('can_coupon', { initialValue: "",valuePropName:"checked" })
+              {getFieldDecorator('can_coupon', { initialValue: sales_promotion.length > 0 ? sales_promotion[0].can_coupon : "",valuePropName:"checked" })
                 (<Checkbox onChange={this.onfavorableChange}></Checkbox>)}
             </FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品介绍" >

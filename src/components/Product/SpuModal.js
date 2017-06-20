@@ -233,6 +233,9 @@ class SpuEditModal extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log(this.state.tableFormatData, '--------------this.state.tableFormatData');
+
+
+
         for(let key in this.state.checkOpts){
             values[key] = this.state.checkOpts[key];
         }
@@ -241,7 +244,14 @@ class SpuEditModal extends Component {
         this.formatAttributesData(values);
         console.log(values);
         values.qtext = this.state.tags;
-        onOk(values);
+        if( this.props.product.category_num && this.props.product.category_num.toString() === values.category_num.toString())
+        {
+          onOk(this.props.product._id,values);
+        }
+        else{
+          onOk(values);
+        }
+
         this.hideModelHandler();
       }
     });
@@ -392,7 +402,7 @@ this.onDeleteHandler
     }
     onClick = {
       this.okHandler
-    } > 保存 </Button > ]) 
+    } > 保存 </Button > ])
 : ([ <Button key="offline" size="large" loading={this.state.loading} onClick={this.hideModelHandler}> 取消 </Button >, <Button key = "submit" type = "primary" size = "large" loading = {
     this.state.loading
   }
@@ -410,7 +420,7 @@ this.onDeleteHandler
           onOk={this.okHandler}
           onCancel={this.hideModelHandler}
           footer = {foot}>
-        
+
           <Form horizontal onSubmit={this.okHandler} key={"alkdkdkdk"}>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" />)}</FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >    <TagsInput  value={this.state.tags} {...{ 'onlyUnique': true }} onChange={v => { this.setState({tags:v}) }} /></FormItem>
@@ -470,7 +480,7 @@ this.onDeleteHandler
     temps && temps.forEach((v, index) => {
       let obj = { key: index };
       let uniques = [];
-      //comType 0 不能输入 1数字输入框，2 文本输入框 
+      //comType 0 不能输入 1数字输入框，2 文本输入框
       if (Array.isArray(v)) {
         v.forEach(c => {
           uniques.push(c.sellId);
@@ -674,4 +684,3 @@ checkChangeHandler(_id,v){
 }
 
 export default Form.create()(SpuEditModal);
-
