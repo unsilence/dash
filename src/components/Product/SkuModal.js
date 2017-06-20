@@ -93,9 +93,23 @@ class SkuEditModal extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log(this.images);
-        values.images = this.images;
+        if(this.images.length !== 0){
+            values.images = this.images;
+        }
+        let prot = {discount:'',full_cut:'','can_coupon':false};
+        if(values.discount){
+          prot['discount'] = values.discount;
+        }
+        if(values.full_cut){
+          prot['full_cut'] = values.full_cut;
+        }
+        if(values.can_coupon){
+          prot['can_coupon'] = values.can_coupon;
+        }
+
+        values.sales_promotion = [prot];
         console.log(values);
-        onOk(values);
+        onOk(this.props.product._id,values);
         // this.setState({
         //   note : values.note
         // })
