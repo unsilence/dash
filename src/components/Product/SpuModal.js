@@ -307,9 +307,7 @@ class SpuEditModal extends Component {
     }
   }
   handleAlter = (content) => {
-    this.setState({
-      content: content
-    })
+    this.setState({"content": content})
   }
   formatAttributesData = (values) => {
     for (let [key, value] of Object.entries(values)) {
