@@ -557,7 +557,8 @@ checkChangeHandler(_id,v){
     let coms;
     if (ko.extends_type === '0') {
       if (ko.select_type === '3') {//下拉选项
-        options = ko.select_value.split(",").map(v => { return <Select.Option key={v} value={v}>{v}</Select.Option> });
+        let temp_values = typeof ko.select_value === 'string' ?ko.select_value.split(",") :ko.select_value;
+        options = temp_values.map(v => { return <Select.Option key={v} value={v}>{v}</Select.Option> });
         return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko._id} >
           {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(ko.vital_type === '2' ? <Select size="small" onChange={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
           {
