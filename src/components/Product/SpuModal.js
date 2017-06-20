@@ -195,9 +195,9 @@ class SpuEditModal extends Component {
         fromWhere = this.props.product.attributes;
         for (let item of fromWhere) {
           if (item.attribute_num === _id) {
-            if(item.select_type === '4'){
-              console.log('item----',item);
-            }
+            // if(item.select_type === '4'){
+            //   console.log('item----',item);
+            // }
             value = item.value === 'undefined' ? '' : item.value;
             break;
           }
@@ -428,7 +428,7 @@ this.onDeleteHandler
               (<Editor icons={icons} onChange={this.handleAlter.bind(this)} plugins={plugins} />)}
           </FormItem>
           <FormItem className={styles.FormItem} {...formItemLayout} label="产品备注" >
-              {getFieldDecorator('note', { rules: [{ required: true, message: '请输入产品备注内容!' }], initialValue: note })
+              {getFieldDecorator('note', { initialValue: note })
               (<textarea style={{width : "100%",height : "100px" , outline : "none"}}>{note}</textarea>)}
           </FormItem>
         </Modal>
