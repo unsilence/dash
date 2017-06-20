@@ -38,7 +38,7 @@ exports['getFormatData'] = getFormatData;
 function getColorSerialFormatData(serials, colors) {
   let rst = [];
   serials.forEach(v => {
-    rst.push({ "value": v._id, "label": v.name, "cnum": v.cnum, 'key': v._id });
+    rst.push({ "value": v.cnum, "label": v.name, "cnum": v.cnum, 'key': v._id });
   })
 
   colors.forEach(c => {
@@ -47,7 +47,7 @@ function getColorSerialFormatData(serials, colors) {
   function getParent(item, elems) {
     elems.forEach(v => {
       if (v.cnum === item.serial_num) {
-        v.children ? v.children.push({ "value": item._id, "label": item.name, "_id": item._id, 'key': item._id }) : (v.children = [{ "value": item._id, "label": item.name, "_id": item._id, 'key': item._id }]);
+        v.children ? v.children.push({ "value": item.cnum, "label": item.name, "cnum": item.cnum, 'key': item.cnum }) : (v.children = [{ "value": item.cnum, "label": item.name, "cnum": item.cnum, 'key': item.cnum }]);
       }
     })
   };
