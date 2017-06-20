@@ -83,7 +83,7 @@ function Spu({ dispatch, list: dataSource, loading, total, page: current, serial
             deleteHandler.bind(null, product)
           }
             onOk={
-              editHandler.bind(null, product._id)
+              editHandler
             } >
             <Icon type='edit' style={{ marginRight: "10px" }}>spu</Icon>
           </SpuModal>
