@@ -301,7 +301,6 @@ class SpuToSkuModal extends Component {
     const { children } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
     const { _id, name, note, key, category_num, productNum, doneSkus ,description} = this.props.product;
-    console.log(category_num);
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -392,8 +391,6 @@ class SpuToSkuModal extends Component {
     })
 
     data = this.addSkuCountPriceAndImodel(data);
-    console.log(data, '---------getTableFormatData---------')
-
     this.setState({ tableFormatData: this.checkArray(this.state.tableFormatData, data), columnsDatas: columnsDatas })
     return data;
   }

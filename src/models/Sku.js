@@ -57,7 +57,7 @@ export var addSkuOption = function (sku) {
             {
                 //删除 sku.count - tempStocks.length 个数据
                 for (let i = 0; i < optionNum; i++) {
-                    stocks.push({ name: sku.name, sku_num: sku._id, unique_num: pad((i + sku.count), 3) });
+                    stocks.push({ name: sku.name, sku_num: sku._id, unique_num: pad((i + parseInt(sku.count)), 3) });
                 }
             }
             else if (optionNum < 0) {//需要删除

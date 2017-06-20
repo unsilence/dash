@@ -7,12 +7,12 @@ function checkStatus(response) {
     throw error;
 }
 async function request(url, dt) {
-    console.log("POST", url, dt)
+    // console.log("POST", url, dt)
     const response = await fetch(url, { method: "POST", body: JSON.stringify(dt) });
     checkStatus(response);
     const data = await response.json();
     const ret = { data };
-    console.log(url, "RETRUN:", data)
+    // console.log(url, "RETRUN:", data)
     return ret;
 }
 ['Address','Order','Nav','Recommend','Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test','System'].map(cls => {

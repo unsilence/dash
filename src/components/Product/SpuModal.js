@@ -307,7 +307,8 @@ class SpuEditModal extends Component {
     }
   }
   handleAlter = (content) => {
-    this.setState({"content": content})
+    // this.setState({"content": content})
+    this.props.setFieldsValue({description:content})
   }
   formatAttributesData = (values) => {
     for (let [key, value] of Object.entries(values)) {
@@ -422,8 +423,8 @@ this.onDeleteHandler
             {/*{sellOptions.length > 0 ? this.createTable() : ''}*/}
           </Form>
           <FormItem className={styles.FormItem} {...formItemLayout} label="产品介绍" >
-              {getFieldDecorator('description', { rules: [{ required: true, message: '请输入产品介绍内容!' }], initialValue: description })
-              (<Editor icons={icons} onChange={this.handleAlter.bind(this)} plugins={plugins} />)}
+              {/* {getFieldDecorator('description', { rules: [{ required: true, message: '请输入产品介绍内容!' }], initialValue: description }) */}
+              <Editor key="description" icons={icons} onChange={this.handleAlter.bind(this)} plugins={plugins} value={this.state.content}/>
           </FormItem>
           <FormItem className={styles.FormItem} {...formItemLayout} label="产品备注" >
               {getFieldDecorator('note', { initialValue: note })
@@ -530,7 +531,6 @@ this.onDeleteHandler
       : '')
   }
 componentWiiReceiveProps(nextProps){
-  console.log('----====nextProps=======-----', nextProps);
   this.setState({checkOpts:this.getCheckOpts(nextProps)})
 }
 
@@ -557,7 +557,7 @@ checkChangeHandler(_id,v){
       if (ko.select_type === '3') {//下拉选项
         let temp_values = typeof ko.select_value === 'string' ?ko.select_value.split(",") :ko.select_value;
         options = temp_values.map(v => { return <Select.Option key={v} value={v}>{v}</Select.Option> });
-        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko._id} >
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId ||ko._id} >
           {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(ko.vital_type === '2' ? <Select size="small" onChange={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
           {
             this.getSellHandle(ko, keys)
@@ -565,16 +565,16 @@ checkChangeHandler(_id,v){
         </FormItem>
       }
       else if (ko.select_type === '1') {//运营输入
-        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko._id} >
-          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(ko.vital_type === '2' ? <Input size="small" onChange={this.sellChange.bind(this)} /> : <Input size="small" />)}
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId ||ko._id} >
+          {getFieldDecorator(ko.sellId || ko._id, { initialValue: ko.sellId ? this.getInitialValue(ko,'sell'):this.getInitialValue(ko) })(ko.vital_type === '2' ? <Input size="small" onChange={this.sellChange.bind(this)} /> : <Input size="small" />)}
           {
             this.getSellHandle(ko, keys)
           }
         </FormItem>
       }
       else if (ko.select_type === '2') {
-        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko._id} >
-          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(<span>使用SKU配图</span>)}
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId ||ko._id} >
+          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko)  })(<span>使用SKU配图</span>)}
           {
             this.getSellHandle(ko, keys)
           }
@@ -584,7 +584,7 @@ checkChangeHandler(_id,v){
         console.log(ko._id,'--------------------------------------');
         const temp = typeof ko.select_value === 'string' ? ko.select_value.split(','):ko.select_value;
         let value = this.state.checkOpts[ko._id] ? this.state.checkOpts[ko._id] : [];
-        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko._id} >
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId ||ko._id} >
             <CheckboxGroup key={ko._id} options={temp} value={this.state.checkOpts[ko._id]} onChange={this.checkChangeHandler.bind(this,ko._id)}/>
           {
             this.getSellHandle(ko, keys)
@@ -629,7 +629,7 @@ checkChangeHandler(_id,v){
         </FormItem>
       }
       else if (ko.name === '品牌') { //取值范围，在品牌当前分类对应的品牌中获取
-        options = Object.values(this.props.product.brandMap).map(v => { return <Select.Option key={v._id} value={v._id}>{v.name_cn}</Select.Option> });
+        options = Object.values(this.props.product.brandMap).map(v => { return <Select.Option key={ko.sellId ||v._id} value={v._id}>{v.name_cn}</Select.Option> });
         return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId || ko._id} >
           {getFieldDecorator(ko.sellId || ko._id, { initialValue: this.getInitialValue(ko, 'sell') })(ko.vital_type === '2' ? <Select size="small" onBlur={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
           {
