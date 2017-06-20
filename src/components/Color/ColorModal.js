@@ -41,16 +41,16 @@ class ColorEditModal extends Component {
   render() {
     const { children } = this.props;
     const { getFieldDecorator } = this.props.form;
-    let { _id, name, seriesId } = this.props.record;
+    let { _id, name, serial_num } = this.props.record;
     const serialList = this.props.record.serialList || [];
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
 
-    if (typeof seriesId === 'undefined') {
+    if (typeof serial_num === 'undefined') {
       if (serialList.length !== 0) {
-        seriesId = serialList[0]._id;
+        serial_num = serialList[0]._id;
       }
     }
     const options = serialList.map(v => <Select.Option key={v._id} value={v._id}>{v.name}</Select.Option>);
@@ -68,7 +68,7 @@ class ColorEditModal extends Component {
         >
           <Form horizontal onSubmit={this.okHandler}>
             <FormItem className={styles.FormItem} {...formItemLayout} label="名字" > {getFieldDecorator('name', {rules:[{required: true, message: '请输入颜色名称!'}], initialValue: name })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="色系" > {getFieldDecorator('serial_num', {rules:[{required: true, message: '请选择所属色系!'}], initialValue: seriesId })(
+            <FormItem className={styles.FormItem} {...formItemLayout} label="色系" > {getFieldDecorator('serial_num', {rules:[{required: true, message: '请选择所属色系!'}], initialValue: serial_num })(
               <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>
             )}
             </FormItem>
