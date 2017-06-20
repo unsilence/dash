@@ -40,7 +40,8 @@ class SpuEditModal extends Component {
       category_num: [],
       product: {},
       content :'',
-      checkOpts:this.getCheckOpts(this.props.product)
+      checkOpts:this.getCheckOpts(this.props.product),
+      tags:this.props.product.qtext||[]
 
     };
   }
@@ -239,6 +240,7 @@ class SpuEditModal extends Component {
         values.skus = [];//this.formatSkusData(this.state.tableFormatData);
         this.formatAttributesData(values);
         console.log(values);
+        values.qtext = this.state.tags;
         onOk(values);
         this.hideModelHandler();
       }
@@ -412,7 +414,7 @@ this.onDeleteHandler
         
           <Form horizontal onSubmit={this.okHandler} key={"alkdkdkdk"}>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >    <TagsInput  value={[]} {...{ 'onlyUnique': true }} onChange={v => { console.log(v); this.props.form.setFieldsValue({ key: v }) }} /></FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >    <TagsInput  value={this.state.tags} {...{ 'onlyUnique': true }} onChange={v => { this.setState({tags:v}) }} /></FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品分类" >
               {getFieldDecorator('category_num', { initialValue: typeof(category_num) !== "string" ? category_num : [category_num] })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange.bind(this)} expandTrigger="hover" placeholder='Please select' />)}
             </FormItem>
