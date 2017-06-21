@@ -32,7 +32,7 @@ class OrderEditModal extends Component {
         case "提交审核失败":
         this.state.status.status0 = "error";
         break;
-        case "审核失败":
+        case "运营审核失败":
         this.state.status.status1 = "error";
         break;
         case "物流确认失败":
@@ -51,7 +51,7 @@ class OrderEditModal extends Component {
       }
     }else{
       switch(dataSource.status){
-        case "等待审核" :
+        case "等待运营审核" :
         this.state.current = 0;
         break;
         case "等待物流确认" :
@@ -132,7 +132,7 @@ class OrderEditModal extends Component {
     }
       switch(current){
         case 0 :
-        temp.status = "等待审核";
+        temp.status = "等待运营审核";
         break;
         case 1 :
         temp.status = "等待物流确认";
@@ -186,7 +186,7 @@ class OrderEditModal extends Component {
         temp.status = "提交审核失败";
         break;
         case 1:
-        temp.status = "审核失败";
+        temp.status = "运营审核失败";
         break;
         case 2:
         temp.status = "物流确认失败";
@@ -247,7 +247,7 @@ class OrderEditModal extends Component {
       title : "商品编号",
       key : "skuNum",
       render : (text ,data) => {  
-        return (<span>{getProductNum(data.skuProps.category_num,categoryMap)+data.skuProps.spuProps.unique_num+data.skuProps.skuNum}</span>)
+        return (<span>{getProductNum(data.skuProps.category_num,categoryMap)+data.skuProps.spuProps.unique_num+data.skuProps.unique_num}</span>)
       }
     },{
       title : "名称",
@@ -322,7 +322,7 @@ class OrderEditModal extends Component {
           <Row type="flex" justify="start" gutter={20} style={{marginTop : "20px" , marginBottom : "50px"}}>
               <Steps current={current}>
                 <Step title="提交审核" status={this.state.status.status0}/>
-                <Step title="等待审核" status={this.state.status.status1}/>
+                <Step title="运营审核" status={this.state.status.status1}/>
                 <Step title="物流确认" status={this.state.status.status2}/>
                 <Step title="上门服务" status={this.state.status.status3}/>
                 <Step title="点货确认" status={this.state.status.status4}/>

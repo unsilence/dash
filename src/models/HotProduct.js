@@ -8,16 +8,20 @@ export var hotProductsOption = function (hotProduct) {
         let hotList = {};
         let ids;
         Object.values(hotCategory).forEach(v => {
-            if(v.key == "hot"){
+            if(v.key === "hot"){
                 hotList[v._id] = JSON.parse(v.value);
                 ids = JSON.parse(v.value);
             }
         })
         console.log(hotList);
         let _id ;
-        id ? _id = id : _id = ids[0];
+        id ? _id = id : _id = (ids&&ids.length > 0 ? ids[0] : null);
         console.log(_id);
-        const hotproducts = yield call(service["fetchHotProductPage"], 'Recommend', { itype: '4' , category_num : _id},{page});
+        let filter = { itype: '4'};
+        if(_id){
+            filter['category_num'] = _id;
+        }
+        const hotproducts = yield call(service["fetchHotProductPage"], 'Recommend', filter,{page});
         const categoryMap = yield call(service["getCategoryMap"],"Category");
         console.log(categoryMap);
         console.log(hotproducts);
@@ -44,7 +48,7 @@ export var hotProductsOption = function (hotProduct) {
         console.log('patch', { id })
         yield call(service['RecommendService'].update, id, values);
         const page = yield select(state => state['recommends'].page);
-        yield put({ type: 'fetch', payload: { page } });
+        yield put({ type: 'fetch', payload: { id : values.category_num,page } });
     }
     hotProduct.effects.addCategory = function* ({ payload: { id, values } }, { call, put, select }) {
         // let recommendRes = yield call(service['getRecommendMap'], 'Recommend');

@@ -133,7 +133,7 @@ class HotProducts extends Component{    //({ dispatch, list: dataSource, loading
             <Col span={8}>
               <Button style={{marginRight : "16px"}}>历史热品</Button>
               <Button style={{marginRight : "16px"}}>操作日志</Button>
-              <HotProductsModal hotproduct={{}} onOk={this.editHandler} addId={this.state.tempAddId == null ? this.state.addId : this.state.tempAddId}>
+              <HotProductsModal hotproduct={{}} onOk={this.editHandler.bind(null,'')} addId={this.state.tempAddId == null ? this.state.addId : this.state.tempAddId}>
                 <Button>添加热品</Button>
               </HotProductsModal>
             </Col>

@@ -7,7 +7,7 @@ export var navRecomOption = function (nav) {
         let navList = [];
         let isHasId = {};
         Object.values(navCategory).forEach(v => {
-            if(v.key == "nav"){
+            if(v.key === "nav"){
                 navList = JSON.parse(v.value);
                 isHasId["isHasId"] = v._id;
             }

@@ -39,7 +39,7 @@ class SpuEditModal extends Component {
       key: [],
       category_num: [],
       product: {},
-      content :'',
+      content :this.props.product.description || '',
       checkOpts:this.getCheckOpts(this.props.product),
       tags:this.props.product.qtext||[]
 
@@ -53,6 +53,7 @@ class SpuEditModal extends Component {
       this.cascaderOnChange(this.props.product.category_num, 1);
       this.sellChange('');
       this.forceUpdate();
+      this.props.form.setFieldsValue({description:this.props.product?this.props.product.description:''})
     }
   }
 
@@ -124,6 +125,7 @@ class SpuEditModal extends Component {
       tableFormatData: [],
     })
   }
+
 
   //获取多少个keys
   getSellKeys = (sellAttr, attributes) => {
@@ -234,12 +236,12 @@ class SpuEditModal extends Component {
       if (!err) {
         console.log(this.state.tableFormatData, '--------------this.state.tableFormatData');
 
-
-
         for(let key in this.state.checkOpts){
             values[key] = this.state.checkOpts[key];
         }
-
+        if(this.state.content){
+          values.description = this.state.content;
+        }
         values.skus = [];//this.formatSkusData(this.state.tableFormatData);
         this.formatAttributesData(values);
         console.log(values);
@@ -317,8 +319,8 @@ class SpuEditModal extends Component {
     }
   }
   handleAlter = (content) => {
-    // this.setState({"content": content})
-    this.props.setFieldsValue({description:content})
+    this.setState({"content": content})
+    this.props.form.setFieldsValue({description:content})
   }
   formatAttributesData = (values) => {
     for (let [key, value] of Object.entries(values)) {
@@ -372,7 +374,6 @@ class SpuEditModal extends Component {
   getTableData = (td) => {
     this.setState({ tableFormatData: td });
   }
-
   render() {
     const { children } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;

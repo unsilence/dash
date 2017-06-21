@@ -10,9 +10,7 @@ import OrderEditModal from './OrderModal.js';
 
 function Orders({ dispatch, list: dataSource, loading, total, page: current ,skuPropsList , categoryMap,skuattributeIDs,_list}) {
    // _list  这个属性要留着  
-  console.log(dataSource);
-  console.log(skuPropsList);
-  console.log(skuattributeIDs);
+
   function deleteHandler(itm) {
     dispatch({
       type: 'orders/remove',
