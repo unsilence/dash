@@ -53,7 +53,7 @@ class SpuEditModal extends Component {
       this.cascaderOnChange(this.props.product.category_num, 1);
       this.sellChange('');
       this.forceUpdate();
-      this.props.form.setFieldsValue({description:this.props.product?this.props.product.description:''})
+      // this.props.form.setFieldsValue({description:this.props.product?this.props.product.description:''})
     }
   }
 

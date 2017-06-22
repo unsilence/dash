@@ -38,14 +38,30 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
         payload: { id, values },
       });
     }
+  }
+
+  function getImg(images) {
+    if (Array.isArray(images) && images.length > 0) {
+      return <img src={"/api/file/"+images[0].md5} style={{width:"30px",height:"30px"}}/>
+    } else {
+      return '无图';
+    }
+
 
   }
+
   const columns = [
     {
       title: 'SKU编号',
       dataIndex: 'unique_num',
       key: 'unique_num',
-      render: (text, product) => <span>{getProductNum(product.category_num, categoryMap) + product.unique_num+text}</span>,
+      render: (text, product) => <span>{getProductNum(product.category_num, categoryMap) + product.unique_num + text}</span>,
+    },
+    {
+      title: '图片',
+      dataIndex: 'images',
+      key: 'images',
+      render: text => <span>{getImg(text)}</span>
     },
     {
       title: '名字',
@@ -76,6 +92,7 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
       key: 'create_at',
       render: text => <span>{moment(new Date(text)).format('YYYY-MM-DD HH:mm')}</span>
     },
+
     {
       title: '推荐系数',
       dataIndex: 'hot',
@@ -88,16 +105,19 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
       render: (text, product) => (
         <span className={styles.operation2} >
           <Popconfirm title={"推荐"} key='asdf'>
-            <Icon type="export" style={{marginRight:"10px"}}>推荐</Icon>
+            <Icon type="export" style={{ marginRight: "10px" }}>推荐</Icon>
           </Popconfirm>
 
           <Popconfirm title={"推荐至"} key='asdf111'>
-            <Icon type="export" style={{marginRight:"10px"}}>推荐至</Icon>
+            <Icon type="export" style={{ marginRight: "10px" }}>推荐至</Icon>
           </Popconfirm>
 
           <SkuModal onDeleteHandler={deleteHandler} product={{ ...product, categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap, brandMap: brandMap }} onOk={editHandler}>
-            <Icon type="edit">编辑</Icon>
+            <Icon type="edit" style={{ marginRight: "10px" }}>编辑</Icon>
           </SkuModal>
+          {
+            product.is_online ? <Icon type="arrow-down" key="arrow-down" onClick={() => { product.is_online = false; editHandler(product._id, product) }} style={{ marginRight: "10px" }}>下线</Icon> : <Icon type="arrow-up" key="arrow-up" onClick={() => { product.is_online = true; editHandler(product._id, product) }} style={{ marginRight: "10px" }}>上线</Icon>
+          }
 
         </span>
       )
@@ -118,6 +138,7 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
           loading={loading}
           rowKey={sku => sku._id}
           pagination={false}
+          scroll={{ y: 500 }}
         />
         <Pagination
           className="ant-table-pagination"
