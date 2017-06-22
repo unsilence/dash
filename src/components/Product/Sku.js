@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Table, Pagination, Popconfirm, Row, Col, Button, Icon } from 'antd';
+import { Table, Pagination, Popconfirm, Row, Col, Button, Icon ,Input} from 'antd';
 import { routerRedux } from 'dva/router';
 import styles from '../list.less';
 let PAGE_SIZE = 10
@@ -9,7 +9,6 @@ import moment from 'moment';
 import { getCategoryName, getProductNum } from '../utils'
 
 function Sku({ dispatch, list: dataSource, loading, total, page: current, serialMap, categoryMap, brandMap, colorMap, countryMap, attributeMap }) {
-  console.log(dataSource);
   function deleteHandler(itm) {
     console.log('deleteHandler', itm)
     dispatch({
@@ -42,7 +41,7 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
 
   function getImg(images) {
     if (Array.isArray(images) && images.length > 0) {
-      return <img src={"/api/file/"+images[0].md5} style={{width:"30px",height:"30px"}}/>
+      return <img src={"/api/file/" + images[0].md5} style={{ width: "30px", height: "30px" }} />
     } else {
       return '无图';
     }
@@ -50,11 +49,11 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
 
   }
 
-  function getFilters(){
+  function getFilters() {
     let ret = [];
 
-    dataSource.forEach(v =>{
-      ret.push({text:v.name,value:v.name});
+    dataSource.forEach(v => {
+      ret.push({ text: v.name, value: v.name });
     })
 
     return ret;
@@ -73,7 +72,7 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
       key: 'unique_num',
       render: (text, product) => <span>{getProductNum(product.category_num, categoryMap) + product.unique_num + text}</span>,
     },
-    
+
     {
       title: '名字',
       dataIndex: 'name',
@@ -101,7 +100,7 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
       dataIndex: 'categoryId',
       key: 'categoryId',
       render: text => <span>{0}</span>,
-      
+
     },
     {
       title: '创建日期',
@@ -116,7 +115,6 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
       key: 'hot',
       render: text => <span>{text}</span>,
     },
-    
     {
       title: '操作',
       key: 'operation',
@@ -136,7 +134,6 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
           {
             product.is_online ? <Icon type="arrow-down" key="arrow-down" onClick={() => { product.is_online = false; editHandler(product._id, product) }} style={{ marginRight: "10px" }}>下线</Icon> : <Icon type="arrow-up" key="arrow-up" onClick={() => { product.is_online = true; editHandler(product._id, product) }} style={{ marginRight: "10px" }}>上线</Icon>
           }
-
         </span>
       )
     }
@@ -144,12 +141,21 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
 
   return (
     <div className={styles.normal}>
+      <Row type="flex" justify="space-between" gutter={16}>
+            <Col span={16}>
+              <Input
+              type = "text"
+              placeholder="搜索"
+              size = "default"
+              />
+            </Col>
+            <Col span={8}>
+              <Button style={{
+                marginRight: "16px"
+              }}>查询</Button>
+            </Col>
+          </Row>
       <div>
-        {/*<Row type="flex" justify="end">
-          <SkuModal product={{ categoryList: Object.values((categoryMap || {})), serialMap: serialMap, colorMap: colorMap, countryMap: countryMap, attributeMap: attributeMap, brandMap: brandMap }} onOk={editHandler}>
-            <Button icon="plus-circle-o">添加</Button>
-          </SkuModal>
-        </Row>*/}
         <Table
           columns={columns}
           dataSource={dataSource}
