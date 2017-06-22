@@ -50,13 +50,17 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
 
   }
 
+  function getFilters(){
+    let ret = [];
+
+    dataSource.forEach(v =>{
+      ret.push({text:v.name,value:v.name});
+    })
+
+    return ret;
+  }
+
   const columns = [
-    {
-      title: 'SKU编号',
-      dataIndex: 'unique_num',
-      key: 'unique_num',
-      render: (text, product) => <span>{getProductNum(product.category_num, categoryMap) + product.unique_num + text}</span>,
-    },
     {
       title: '图片',
       dataIndex: 'images',
@@ -64,41 +68,55 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
       render: text => <span>{getImg(text)}</span>
     },
     {
+      title: 'SKU编号',
+      dataIndex: 'unique_num',
+      key: 'unique_num',
+      render: (text, product) => <span>{getProductNum(product.category_num, categoryMap) + product.unique_num + text}</span>,
+    },
+    
+    {
       title: '名字',
       dataIndex: 'name',
       key: 'name',
+      sorter: (a, b) => a.name.length - b.name.length,
+      filters: getFilters(),
+      onFilter: (value, product) => product.name.includes(value),
     },
     {
       title: '价格',
       dataIndex: 'price',
       key: 'price',
       render: text => <span>{text}</span>,
+      sorter: (a, b) => a.price - b.price,
     },
     {
       title: '库存',
       dataIndex: 'count',
       key: 'count',
       render: text => <span>{text}</span>,
+      sorter: (a, b) => a.count - b.count,
     },
     {
       title: '销量',
       dataIndex: 'categoryId',
       key: 'categoryId',
       render: text => <span>{0}</span>,
+      
     },
     {
       title: '创建日期',
       dataIndex: 'create_at',
       key: 'create_at',
-      render: text => <span>{moment(new Date(text)).format('YYYY-MM-DD HH:mm')}</span>
+      render: text => <span>{moment(new Date(text)).format('YYYY-MM-DD HH:mm')}</span>,
+      sorter: (a, b) => moment(new Date(a.create_at)).format('X') - moment(new Date(b.create_at)).format('X'),
     },
-
     {
       title: '推荐系数',
       dataIndex: 'hot',
       key: 'hot',
       render: text => <span>{text}</span>,
     },
+    
     {
       title: '操作',
       key: 'operation',
@@ -138,7 +156,6 @@ function Sku({ dispatch, list: dataSource, loading, total, page: current, serial
           loading={loading}
           rowKey={sku => sku._id}
           pagination={false}
-          scroll={{ y: 500 }}
         />
         <Pagination
           className="ant-table-pagination"
