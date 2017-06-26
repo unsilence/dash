@@ -77,80 +77,87 @@ export var addSkuOption = function (sku) {
             if (sku.distinct_words.indexOf(sku.spu_num) === -1) {
                 sku.distinct_words = sku.distinct_words + sku.spu_num;
             }
-            console.log('sku.distinct_words:   ',sku.distinct_words)
+            console.log('sku.distinct_words:   ', sku.distinct_words)
             sku.category_num = product.category_num;
-        sku.unique_num = pad(modifySkus.length + index + 1, 2);
-    })
-    let skusRet = yield call(service['insertSkuData'], 'Sku', filterToData);
-
-    skusRet.length && message.success(`插入Sku${skusRet.length}条`);
-
-    skusRet.map(sku => { return sku.data.data.item })
-        .map(v => { return { name: v.name, sku_num: v._id, tempNum: v.count } })
-        .forEach(item => {
-            for (let i = 0; i < item.tempNum; i++) {
-                let obj = Object.assign({}, item);
-                obj.unique_num = pad((i + 1), 3);
-                stocks.push(obj);
-            }
-        });
-
-    let retStock = yield call(service['insertStockData'], 'Stock', stocks);
-    retStock.length && message.success(`插入Stock${retStock.length}条`);
-    //生成skus
-    const page = yield select(state => state['spus'].page);
-    yield put({ type: 'fetch', payload: { page } });
-}
-
-sku.effects.fetch = function* ({ payload: { page } }, { call, put }) {
-    const categoryMap = yield call(service["getCategoryMap"], 'Category');
-    const serialMap = yield call(service["getSerialMap"], 'Serial');
-    const colorMap = yield call(service["getColorMap"], 'Color');
-    const countryMap = yield call(service["getCountryMap"], 'Country');
-    const brandMap = yield call(service["getBrandMap"], 'Brand');
-    const attributeMap = yield call(service["getAttributeMap"], 'Attribute');
-    const skus = yield call(service["SkuService"].fetch, { page });
-    let skuList = skus.data.data.list;
-    let setIds = new Set();
-    skuList.forEach(p => {
-        setIds.add(p.spu_num);
-    });
-    const pids = Array.from(setIds);
-
-    const spus = yield call(service['getDataService'], 'Spu', { "_id": { "$in": pids } })
-
-    skuList.forEach(p => {
-        spus.data.data.list.forEach(s => {
-            if (p.spu_num === s._id) {
-                p.spu = s;
-            }
+            sku.unique_num = pad(modifySkus.length + index + 1, 2);
         })
-    })
-    const rd = {
-        data: skuList,
-        total: skus.data.data.count,
-        page: parseInt(page),
-        categoryMap: categoryMap,
-        serialMap: serialMap,
-        colorMap: colorMap,
-        countryMap: countryMap,
-        brandMap: brandMap,
-        attributeMap: attributeMap,
-    }
-    yield put({ type: 'save22', payload: rd });
-}
+        let skusRet = yield call(service['insertSkuData'], 'Sku', filterToData);
 
+        skusRet.length && message.success(`插入Sku${skusRet.length}条`);
 
-sku.effects.remove = function* ({ payload: { id } }, { call, put, select }) {
+        skusRet.map(sku => { return sku.data.data.item })
+            .map(v => { return { name: v.name, sku_num: v._id, tempNum: v.count } })
+            .forEach(item => {
+                for (let i = 0; i < item.tempNum; i++) {
+                    let obj = Object.assign({}, item);
+                    obj.unique_num = pad((i + 1), 3);
+                    stocks.push(obj);
+                }
+            });
 
-    const stocks = yield call(service['getDataService'], 'Stock', { "sku_num": { "$in": [id] } });
-    let statusStocks = stocks.data.data.list.filter(v => { return v.status !== '' })
-    if (statusStocks.length === 0) {
-        yield call(service['SkuService'].remove, id);
-        const page = yield select(state => state['skus'].page);
+        let retStock = yield call(service['insertStockData'], 'Stock', stocks);
+        retStock.length && message.success(`插入Stock${retStock.length}条`);
+        //生成skus
+        const page = yield select(state => state['spus'].page);
         yield put({ type: 'fetch', payload: { page } });
     }
 
+    sku.effects.fetch = function* ({ payload: { page,searchWords } }, { call, put }) {
+        const categoryMap = yield call(service["getCategoryMap"], 'Category');
+        const serialMap = yield call(service["getSerialMap"], 'Serial');
+        const colorMap = yield call(service["getColorMap"], 'Color');
+        const countryMap = yield call(service["getCountryMap"], 'Country');
+        const brandMap = yield call(service["getBrandMap"], 'Brand');
+        const attributeMap = yield call(service["getAttributeMap"], 'Attribute');
 
-}
+        let filter = {};
+        if(searchWords && searchWords !== ''){
+            filter["$or"] = [{"name":{"$regex":searchWords}}];
+        }
+
+        const skus = yield call(service["SkuService"].fetch, { page,filter});
+        let skuList = skus.data.data.list;
+        
+        let setIds = new Set();
+        skuList.forEach(p => {
+            setIds.add(p.spu_num);
+        });
+        const pids = Array.from(setIds);
+
+        const spus = yield call(service['getDataService'], 'Spu', { "_id": { "$in": pids } })
+
+        skuList.forEach(p => {
+            spus.data.data.list.forEach(s => {
+                if (p.spu_num === s._id) {
+                    p.spu = s;
+                }
+            })
+        })
+        const rd = {
+            data: skuList,
+            total: skus.data.data.count,
+            page: parseInt(page),
+            categoryMap: categoryMap,
+            serialMap: serialMap,
+            colorMap: colorMap,
+            countryMap: countryMap,
+            brandMap: brandMap,
+            attributeMap: attributeMap,
+            searchWords:searchWords
+        }
+        yield put({ type: 'save22', payload: rd });
+    }
+
+
+    sku.effects.remove = function* ({ payload: { id } }, { call, put, select }) {
+
+        const stocks = yield call(service['getDataService'], 'Stock', { "sku_num": { "$in": [id] } });
+        let statusStocks = stocks.data.data.list.filter(v => { return v.status !== '' })
+        if (statusStocks.length === 0) {
+            yield call(service['SkuService'].remove, id);
+            const page = yield select(state => state['skus'].page);
+            yield put({ type: 'fetch', payload: { page } });
+        }
+    }
+
 }

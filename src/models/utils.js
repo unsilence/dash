@@ -8,10 +8,10 @@ export var generate = (name, serviceName) => {
         },
         reducers: {
             save22(state, { payload: { data: list, total, page, serialMap, categoryMap, colorMap, countryMap, brandMap, attributeMap ,isHasId,skuPropsList,skuattributeIDs ,hotList ,navList ,_list,fetchSku,skuList,skusMap,
-    spusMap} }) {
+    spusMap,searchWords} }) {
                 page = page || 1
                 return { ...state, list, total, page, serialMap, categoryMap, colorMap, countryMap, brandMap, attributeMap ,isHasId,skuPropsList,skuattributeIDs,hotList,navList,_list,fetchSku,skuList,skusMap,
-    spusMap};
+    spusMap,searchWords};
             },
         },
         effects: {
