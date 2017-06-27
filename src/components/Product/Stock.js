@@ -43,7 +43,6 @@ function Stock({ dispatch, list: dataSource, loading, total, page: current, seri
   }
 
   function getNum(product) {
-    console.log(product, '----------------------');
     let num = getProductNum(skusMap[product.sku_num]['category_num'], categoryMap) + spusMap[skusMap[product.sku_num].spu_num].unique_num+skusMap[product.sku_num].unique_num ;
     return num;
   }
@@ -52,7 +51,7 @@ function Stock({ dispatch, list: dataSource, loading, total, page: current, seri
       title: '单品编号',
       dataIndex: 'unique_num',
       key: 'unique_num',
-      render: (text, product) => <span>{getNum(product) + text}</span>,
+      render: (text, product) => <span>{text}</span>,
     },
     {
       title: '名字',

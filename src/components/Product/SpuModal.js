@@ -16,11 +16,12 @@ import 'react-tagsinput/react-tagsinput.css';
 import { getFormatData, getColorSerialFormatData } from '../utils';
 import NumericInput from './NumericInput';
 import SizeInput from './SizeInput';
-import {doExchange,keysrt} from '../utils'
+import { doExchange, keysrt } from '../utils'
 import Editor from 'react-umeditor';
 const FormItem = Form.Item;
 var pinyin = require("pinyin");
 import EditableTable from './EditableTable';
+import { getProductNum } from '../utils'
 
 class SpuEditModal extends Component {
 
@@ -39,9 +40,9 @@ class SpuEditModal extends Component {
       key: [],
       category_num: [],
       product: {},
-      content :this.props.product.description || '',
-      checkOpts:this.getCheckOpts(this.props.product),
-      tags:this.props.product.qtext||[]
+      content: this.props.product.description || '',
+      checkOpts: this.getCheckOpts(this.props.product),
+      tags: this.props.product.qtext || []
 
     };
   }
@@ -222,10 +223,10 @@ class SpuEditModal extends Component {
     this.props.form.resetFields(['name', 'note']);
   };
 
-  onDeleteHandler = (e) =>{
-    const {onDeleteHandler} = this.props;
+  onDeleteHandler = (e) => {
+    const { onDeleteHandler } = this.props;
 
-    if(onDeleteHandler){
+    if (onDeleteHandler) {
       onDeleteHandler(this.props.product);
     }
   }
@@ -236,21 +237,24 @@ class SpuEditModal extends Component {
       if (!err) {
         console.log(this.state.tableFormatData, '--------------this.state.tableFormatData');
 
-        for(let key in this.state.checkOpts){
-            values[key] = this.state.checkOpts[key];
+        for (let key in this.state.checkOpts) {
+          values[key] = this.state.checkOpts[key];
         }
-        if(this.state.content){
+        if (this.state.content) {
           values.description = this.state.content;
         }
         values.skus = [];//this.formatSkusData(this.state.tableFormatData);
         this.formatAttributesData(values);
         console.log(values);
         values.qtext = this.state.tags;
-        if( this.props.product.category_num && this.props.product.category_num.toString() === values.category_num.toString())
-        {
-          onOk(this.props.product._id,values);
+
+        if (this.props.product.category_num && this.props.product.category_num.toString() === values.category_num.toString()) {
+          onOk(this.props.product._id, values);
         }
-        else{
+        else {
+          let categoryMap = {};
+          this.props.product.categoryList.forEach(v => { categoryMap[v._id] = v });
+          values.productNum = getProductNum(values.category_num, categoryMap);
           onOk(values);
         }
 
@@ -319,8 +323,8 @@ class SpuEditModal extends Component {
     }
   }
   handleAlter = (content) => {
-    this.setState({"content": content})
-    this.props.form.setFieldsValue({description:content})
+    this.setState({ "content": content })
+    this.props.form.setFieldsValue({ description: content })
   }
   formatAttributesData = (values) => {
     for (let [key, value] of Object.entries(values)) {
@@ -377,7 +381,7 @@ class SpuEditModal extends Component {
   render() {
     const { children } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { _id, name, note, qtext, category_num ,description } = this.props.product;
+    const { _id, name, note, qtext, category_num, description } = this.props.product;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -395,21 +399,21 @@ class SpuEditModal extends Component {
       }
     }
 
-let foot = _id
-? ([ <Button key = "delete" size = "large" onClick = {
-this.onDeleteHandler
-    } > 删除 </Button>, < Button key = "submit" type = "primary" size = "large" loading = {
-      this.state.loading
-    }
-    onClick = {
-      this.okHandler
-    } > 保存 </Button > ])
-: ([ <Button key="offline" size="large" loading={this.state.loading} onClick={this.hideModelHandler}> 取消 </Button >, <Button key = "submit" type = "primary" size = "large" loading = {
-    this.state.loading
-  }
-  onClick = {
-    this.okHandler
-  } > 保存 </Button > ])
+    let foot = _id
+      ? ([<Button key="delete" size="large" onClick={
+        this.onDeleteHandler
+      } > 删除 </Button>, < Button key="submit" type="primary" size="large" loading={
+        this.state.loading
+      }
+        onClick={
+          this.okHandler
+        } > 保存 </Button >])
+      : ([<Button key="offline" size="large" loading={this.state.loading} onClick={this.hideModelHandler}> 取消 </Button >, <Button key="submit" type="primary" size="large" loading={
+        this.state.loading
+      }
+        onClick={
+          this.okHandler
+        } > 保存 </Button >])
     return (
       <span>
         <span onClick={this.showModelHandler}>
@@ -420,13 +424,13 @@ this.onDeleteHandler
           visible={this.state.visible}
           onOk={this.okHandler}
           onCancel={this.hideModelHandler}
-          footer = {foot}>
+          footer={foot}>
 
           <Form horizontal onSubmit={this.okHandler} key={"alkdkdkdk"}>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品名字" >    {getFieldDecorator('name', { initialValue: name })(<Input size="small" />)}</FormItem>
-            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >    <TagsInput  value={this.state.tags} {...{ 'onlyUnique': true }} onChange={v => { this.setState({tags:v}) }} /></FormItem>
+            <FormItem className={styles.FormItem} {...formItemLayout} label="搜索关键字" >    <TagsInput value={this.state.tags} {...{ 'onlyUnique': true }} onChange={v => { this.setState({ tags: v }) }} /></FormItem>
             <FormItem className={styles.FormItem} {...formItemLayout} label="商品分类" >
-              {getFieldDecorator('category_num', { initialValue: typeof(category_num) !== "string" ? category_num : [category_num] })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange.bind(this)} expandTrigger="hover" placeholder='Please select' />)}
+              {getFieldDecorator('category_num', { initialValue: typeof (category_num) !== "string" ? category_num : [category_num] })(<Cascader options={cascaderOptions} onChange={this.cascaderOnChange.bind(this)} expandTrigger="hover" placeholder='Please select' />)}
             </FormItem>
             {keyOptions}
             {otherOption}
@@ -434,12 +438,12 @@ this.onDeleteHandler
             {/*{sellOptions.length > 0 ? this.createTable() : ''}*/}
           </Form>
           <FormItem className={styles.FormItem} {...formItemLayout} label="产品介绍" >
-              {/* {getFieldDecorator('description', { rules: [{ required: true, message: '请输入产品介绍内容!' }], initialValue: description }) */}
-              <Editor key="description" icons={icons} onChange={this.handleAlter.bind(this)} plugins={plugins} value={this.state.content}/>
+            {/* {getFieldDecorator('description', { rules: [{ required: true, message: '请输入产品介绍内容!' }], initialValue: description }) */}
+            <Editor key="description" icons={icons} onChange={this.handleAlter.bind(this)} plugins={plugins} value={this.state.content} />
           </FormItem>
           <FormItem className={styles.FormItem} {...formItemLayout} label="产品备注" >
-              {getFieldDecorator('note', { initialValue: note })
-              (<textarea style={{width : "100%",height : "100px" , outline : "none"}}>{note}</textarea>)}
+            {getFieldDecorator('note', { initialValue: note })
+              (<textarea style={{ width: "100%", height: "100px", outline: "none" }}>{note}</textarea>)}
           </FormItem>
         </Modal>
       </span>
@@ -458,7 +462,7 @@ this.onDeleteHandler
     //   .filter(k => { return k.indexOf('_') !== -1 })
     //   .map(v => { return { key: v, value: tableData[v] } });
     let replace = true;
-    if ( Array.isArray(this.keysValue)) {
+    if (Array.isArray(this.keysValue)) {
       replace = false;
     }
     let keyObject = {};
@@ -541,24 +545,24 @@ this.onDeleteHandler
       </div>
       : '')
   }
-componentWiiReceiveProps(nextProps){
-  this.setState({checkOpts:this.getCheckOpts(nextProps)})
-}
+  componentWiiReceiveProps(nextProps) {
+    this.setState({ checkOpts: this.getCheckOpts(nextProps) })
+  }
 
-getCheckOpts(product){
-  let ret = {};
-  product.attributes && product.attributes.forEach(v => {
-    if(product.attributeMap[v.attribute_num] && product.attributeMap[v.attribute_num].select_type === '4'){
-      ret[v.attribute_num] = JSON.parse(v.value);
-    }
-  });
-  return ret;
-}
-checkChangeHandler(_id,v){
-  let checkOpts = this.state.checkOpts;
-  checkOpts[_id] = v;
-  this.setState({checkOpts})
-}
+  getCheckOpts(product) {
+    let ret = {};
+    product.attributes && product.attributes.forEach(v => {
+      if (product.attributeMap[v.attribute_num] && product.attributeMap[v.attribute_num].select_type === '4') {
+        ret[v.attribute_num] = JSON.parse(v.value);
+      }
+    });
+    return ret;
+  }
+  checkChangeHandler(_id, v) {
+    let checkOpts = this.state.checkOpts;
+    checkOpts[_id] = v;
+    this.setState({ checkOpts })
+  }
   // const extendsObject = {"0":'不继承','1':'尺寸','2':'颜色','3':'原产地','4':'品牌'};
   //const stypeObject = {'1':'运营输入','2':'使用SKU配图','3':'下拉选项'};
   getComponentByType(ko, formItemLayout, getFieldDecorator, keys) {
@@ -566,9 +570,9 @@ checkChangeHandler(_id,v){
     let coms;
     if (ko.extends_type === '0') {
       if (ko.select_type === '3') {//下拉选项
-        let temp_values = typeof ko.select_value === 'string' ?ko.select_value.split(",") :ko.select_value;
+        let temp_values = typeof ko.select_value === 'string' ? ko.select_value.split(",") : ko.select_value;
         options = temp_values.map(v => { return <Select.Option key={v} value={v}>{v}</Select.Option> });
-        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId ||ko._id} >
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId || ko._id} >
           {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(ko.vital_type === '2' ? <Select size="small" onChange={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
           {
             this.getSellHandle(ko, keys)
@@ -576,27 +580,27 @@ checkChangeHandler(_id,v){
         </FormItem>
       }
       else if (ko.select_type === '1') {//运营输入
-        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId ||ko._id} >
-          {getFieldDecorator(ko.sellId || ko._id, { initialValue: ko.sellId ? this.getInitialValue(ko,'sell'):this.getInitialValue(ko) })(ko.vital_type === '2' ? <Input size="small" onChange={this.sellChange.bind(this)} /> : <Input size="small" />)}
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId || ko._id} >
+          {getFieldDecorator(ko.sellId || ko._id, { initialValue: ko.sellId ? this.getInitialValue(ko, 'sell') : this.getInitialValue(ko) })(ko.vital_type === '2' ? <Input size="small" onChange={this.sellChange.bind(this)} /> : <Input size="small" />)}
           {
             this.getSellHandle(ko, keys)
           }
         </FormItem>
       }
       else if (ko.select_type === '2') {
-        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId ||ko._id} >
-          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko)  })(<span>使用SKU配图</span>)}
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId || ko._id} >
+          {getFieldDecorator(ko._id, { initialValue: this.getInitialValue(ko) })(<span>使用SKU配图</span>)}
           {
             this.getSellHandle(ko, keys)
           }
         </FormItem>
       }
       else if (ko.select_type === '4') {
-        console.log(ko._id,'--------------------------------------');
-        const temp = typeof ko.select_value === 'string' ? ko.select_value.split(','):ko.select_value;
+        console.log(ko._id, '--------------------------------------');
+        const temp = typeof ko.select_value === 'string' ? ko.select_value.split(',') : ko.select_value;
         let value = this.state.checkOpts[ko._id] ? this.state.checkOpts[ko._id] : [];
-        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId ||ko._id} >
-            <CheckboxGroup key={ko._id} options={temp} value={this.state.checkOpts[ko._id]} onChange={this.checkChangeHandler.bind(this,ko._id)}/>
+        return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId || ko._id} >
+          <CheckboxGroup key={ko._id} options={temp} value={this.state.checkOpts[ko._id]} onChange={this.checkChangeHandler.bind(this, ko._id)} />
           {
             this.getSellHandle(ko, keys)
           }
@@ -640,7 +644,7 @@ checkChangeHandler(_id,v){
         </FormItem>
       }
       else if (ko.name === '品牌') { //取值范围，在品牌当前分类对应的品牌中获取
-        options = Object.values(this.props.product.brandMap).map(v => { return <Select.Option key={ko.sellId ||v._id} value={v._id}>{v.name_cn}</Select.Option> });
+        options = Object.values(this.props.product.brandMap).map(v => { return <Select.Option key={ko.sellId || v._id} value={v._id}>{v.name_cn}</Select.Option> });
         return <FormItem className={styles.FormItem} {...formItemLayout} label={ko.name} key={ko.sellId || ko._id} >
           {getFieldDecorator(ko.sellId || ko._id, { initialValue: this.getInitialValue(ko, 'sell') })(ko.vital_type === '2' ? <Select size="small" onBlur={this.sellChange.bind(this)} {...{ defaultActiveFirstOption: true }} >{options}</Select> : <Select size="small" {...{ defaultActiveFirstOption: true }} >{options}</Select>)}
           {

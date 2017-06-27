@@ -39,7 +39,7 @@ class Sku extends React.Component {
 
     this.state.dispatch(routerRedux.push({
       pathname: '/skus',
-      query: { page ,searchWords:this.state.searchWords},
+      query: { page, searchWords: this.state.searchWords },
     }));
   }
 
@@ -59,7 +59,13 @@ class Sku extends React.Component {
   }
 
   search = (e) => {
-    this.setState({ "searchWords": e.target.value });
+    if(e.target){
+      this.setState({ "searchWords": e.target.value });
+    }
+    else{
+      this.setState({ "searchWords": e });
+    }
+    
   }
 
   getImg = (images) => {
@@ -82,7 +88,7 @@ class Sku extends React.Component {
       colorMap: nextProps.colorMap,
       countryMap: nextProps.countryMap,
       attributeMap: nextProps.attributeMap,
-      searchWords:nextProps.searchWords||''
+      searchWords: nextProps.searchWords || ''
     }
     this.setState(temp);
   }
@@ -108,7 +114,7 @@ class Sku extends React.Component {
         title: 'SKU编号',
         dataIndex: 'unique_num',
         key: 'unique_num',
-        render: (text, product) => <span>{getProductNum(product.category_num, this.state.categoryMap) + product.unique_num + text}</span>,
+        render: (text, product) => <span>{text}</span>,
       },
 
       {
@@ -180,19 +186,15 @@ class Sku extends React.Component {
     return (
       <div className={styles.normal}>
         <Row type="flex" justify="space-between" gutter={16}>
-          <Col span={16}>
+          <Col span={12}>
             <Input.Search
               type="text"
               placeholder="搜索"
               size="default"
               value={this.state.searchWords}
               onChange={v => this.search(v)}
+              onSearch={v => { this.search(v); this.pageChangeHandler() }}
             />
-          </Col>
-          <Col span={8}>
-            <Button style={{
-              marginRight: "16px"
-            }} onClick={this.pageChangeHandler }>查询</Button>
           </Col>
         </Row>
         <div>
@@ -217,7 +219,7 @@ class Sku extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const { list, total, page, serialMap, categoryMap, brandMap, colorMap, countryMap, attributeMap ,searchWords} = state.skus;
+  const { list, total, page, serialMap, categoryMap, brandMap, colorMap, countryMap, attributeMap, searchWords } = state.skus;
   return {
     loading: state.loading.models.skus,
     list,

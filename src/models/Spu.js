@@ -3,14 +3,21 @@ import { pad } from './utils';
 
 export var addSpuOption = function (spu) {
 
-    spu.effects.fetch = function* ({ payload: { page } }, { call, put }) {
+    spu.effects.fetch = function* ({ payload: { page ,searchWords} }, { call, put }) {
         const categoryMap = yield call(service["getCategoryMap"], 'Category');
         const serialMap = yield call(service["getSerialMap"], 'Serial');
         const colorMap = yield call(service["getColorMap"], 'Color');
         const countryMap = yield call(service["getCountryMap"], 'Country');
         const brandMap = yield call(service["getBrandMap"], 'Brand');
         const attributeMap = yield call(service["getAttributeMap"], 'Attribute');
-        const products = yield call(service["SpuService"].fetch, { page });
+
+
+        let filter = {};
+        if(searchWords && searchWords !== ''){
+            filter["$or"] = [{"name":{"$regex":searchWords}},{"unique_num":{"$regex":searchWords}}];
+        }
+
+        const products = yield call(service["SpuService"].fetch, { page,filter });
 
         const pids = products.data.data.list.map(p => {
             return p._id;
@@ -56,19 +63,21 @@ export var addSpuOption = function (spu) {
             countryMap: countryMap,
             brandMap: brandMap,
             attributeMap: attributeMap,
+            searchWords:searchWords
         }
         yield put({ type: 'save22', payload: rd });
     }
 
     spu.effects.add = function* ({ payload: { id, values } }, { call, put, select }) {
         console.log('patch', { id }, values, service)
+        
         let spu = yield call(service['insertSpuData'], 'Spu', values);
         let skus = values.skus;
 
         skus.forEach((sku, index) => {
             sku.name = spu.data.data.item.name;
             sku.spu_num = spu.data.data.item._id;
-            sku.unique_num = pad(index + 1, 2);
+            sku.unique_num = spu.unique_num + pad(index + 1, 2);
         })
         let skusRet = yield call(service['insertSkuData'], 'Sku', skus);
         let stocks = [];
@@ -77,7 +86,7 @@ export var addSpuOption = function (spu) {
             .map((v, index) => { return { name: v.name, sku_num: v._id, tempNum: v.count } })
             .forEach(item => {
                 for (let i = 0; i < skus[index].count; i++) {
-                    item.unique_num = pad((i + 1), 3);
+                    item.unique_num = skus[index].unique_num + pad((i + 1), 3);
                     stocks.push(item);
                 }
             });

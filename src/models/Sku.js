@@ -57,7 +57,7 @@ export var addSkuOption = function (sku) {
             {
                 //删除 sku.count - tempStocks.length 个数据
                 for (let i = 0; i < optionNum; i++) {
-                    stocks.push({ name: sku.name, sku_num: sku._id, unique_num: pad((i + parseInt(sku.count)), 3) });
+                    stocks.push({ name: sku.name, sku_num: sku._id, unique_num:sku.unique_num + pad((i + parseInt(sku.count)), 3) });
                 }
             }
             else if (optionNum < 0) {//需要删除
@@ -79,18 +79,18 @@ export var addSkuOption = function (sku) {
             }
             console.log('sku.distinct_words:   ', sku.distinct_words)
             sku.category_num = product.category_num;
-            sku.unique_num = pad(modifySkus.length + index + 1, 2);
+            sku.unique_num = product.unique_num+pad(modifySkus.length + index + 1, 2);
         })
         let skusRet = yield call(service['insertSkuData'], 'Sku', filterToData);
 
         skusRet.length && message.success(`插入Sku${skusRet.length}条`);
 
         skusRet.map(sku => { return sku.data.data.item })
-            .map(v => { return { name: v.name, sku_num: v._id, tempNum: v.count } })
+            .map(v => { return { name: v.name, sku_num: v._id, tempNum: v.count ,unique_num:v.unique_num} })
             .forEach(item => {
                 for (let i = 0; i < item.tempNum; i++) {
                     let obj = Object.assign({}, item);
-                    obj.unique_num = pad((i + 1), 3);
+                    obj.unique_num = item.unique_num+pad((i + 1), 3);
                     stocks.push(obj);
                 }
             });
@@ -112,7 +112,7 @@ export var addSkuOption = function (sku) {
 
         let filter = {};
         if(searchWords && searchWords !== ''){
-            filter["$or"] = [{"name":{"$regex":searchWords}}];
+            filter["$or"] = [{"name":{"$regex":searchWords}},{"unique_num":{"$regex":searchWords}}];
         }
 
         const skus = yield call(service["SkuService"].fetch, { page,filter});
