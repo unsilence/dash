@@ -169,7 +169,7 @@ class Spu extends React.Component {
           <Pagination
             className="ant-table-pagination"
             total={this.state.total}
-            current={this.state.current}
+            current={this.state.page}
             pageSize={PAGE_SIZE}
             onChange={this.pageChangeHandler}
           />
