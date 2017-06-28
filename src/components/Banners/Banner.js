@@ -1,143 +1,258 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Table, Pagination, Popconfirm, Row, Col, Button, Icon ,Input} from 'antd';
-import { routerRedux ,browserHistory } from 'dva/router';
+import { Table, Pagination, Popconfirm, Row, Col, Button, Icon, Input } from 'antd';
+import { routerRedux, browserHistory } from 'dva/router';
 import styles from '../list.less';
 let PAGE_SIZE = 10
 import AddBannerModal from './AddBannerModal.js';
 import BannerConsoleModal from './BannerConsoleModal.js';
 import HistryBannerModal from './HistryBannerModal.js';
 
-function Banners({ dispatch, list: dataSource, loading, total, page: current ,categoryMap}) {
-  console.log(dataSource);
-  function deleteHandler(itm) {
-    dispatch({
+class Banners extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      loading: this.props.loading,
+      plist: this.props.plist,
+      ptotal: this.props.ptotal,
+      ppage: this.props.ppage,
+      rlist: this.props.rlist,
+      rtotal: this.props.rtotal,
+      rpage: this.props.rpage,
+      categoryMap: this.props.categoryMap,
+      dispatch: this.props.dispatch
+    }
+  }
+
+  componentWillReceiveProps = (nextProps) => {
+    let temp = {
+      loading: nextProps.loading,
+      plist: nextProps.plist,
+      ptotal: nextProps.ptotal,
+      ppage: nextProps.ppage,
+      rlist: nextProps.rlist,
+      rtotal: nextProps.rtotal,
+      rpage: nextProps.rpage,
+      categoryMap: nextProps.categoryMap,
+      dispatch: nextProps.dispatch
+    }
+    this.setState(temp);
+  }
+
+  deleteHandler = (itm) => {
+    this.state.dispatch({
       type: 'banners/remove',
-      payload: {id:itm._id},
+      payload: { id: itm._id },
     });
   }
 
-  function pageChangeHandler(page) {
-    dispatch(routerRedux.push({
+  pageChangeHandler = (page) => {
+    this.state.dispatch(routerRedux.push({
       pathname: '/banners',
       query: { page },
     }));
   }
 
-  function editHandler(id, values) {
-      if(id){
-          dispatch({
-            type: 'banners/patch',
-            payload: { id, values },
-          });
-      }else {
-          dispatch({
-            type: 'banners/add',
-            payload: { id, values },
-          });
-      }
+  editHandler = (id, values) => {
+    if (id) {
+      this.state.dispatch({
+        type: 'banners/patch',
+        payload: { id, values },
+      });
+    } else {
+      this.state.dispatch({
+        type: 'banners/add',
+        payload: { id, values },
+      });
+    }
 
   }
-  let historyHandler = (e) => {
-      e.preventDefault();
-      (async function() {
-          browserHistory.push('/banners/histrybanner')
-      })();
-    }
-  const columns = [
-    {
-      title: '序号',
-      dataIndex: 'cnum',
-      key: 'cnum',
-    },
-    {
-      title: '标题',
-      dataIndex: 'title',
-      key: 'title',
-      render: text => <span>{text}</span>
-    },
-    {
-      title: '发布时间',
-      dataIndex: 'create_at',
-      key: 'create_at',
-      render: text => <span>{text}</span>
-    },
-    {
-      title: '点击量',
-      dataIndex: 'hot',
-      key: 'hot',
-      render: text => <span>{text}</span>
-    },
-    {
-      title : "排序"
-    },
-    {
-      title: '操作',
-      key: 'operation',
-      render: (text, record) => (
-        <span className={styles.operation2}>
-          <AddBannerModal banner={record } onOk={editHandler.bind(null, record._id)}>
-            <Icon type="edit" className={styles.icon} />
-          </AddBannerModal>
-          <Popconfirm title={"确定要删除banner【" + record.title + "】吗？"} onConfirm={deleteHandler.bind(null, record)}>
-            <Icon type="delete" className={styles.icon} />
-          </Popconfirm>
-        </span>
-      ),
-    },
-  ];
+  historyHandler = (e) => {
+    e.preventDefault();
+    (async function () {
+      browserHistory.push('/banners/histrybanner')
+    })();
+  }
 
-  return (
-    <div className={styles.normal}>
-      <div>
-        <Row type="flex" justify="space-between">
-          <Col span={15}>
-            <Input
-              type = "text"
-              placeholder="搜索"
-              size = "default"
-            />
-          </Col>
-          <Col span={9} push={1} style={{marginBottom:"15px"}}>
-            <Button onClick={historyHandler}>历史banner</Button>
-            <BannerConsoleModal>
-                <Button style={{marginLeft:"15px"}}>操作日志</Button>
-            </BannerConsoleModal>
-            
-            <AddBannerModal banner={{}} onOk={editHandler.bind(null,'')}>
-                <Button style={{marginLeft:"15px"}}>添加banner</Button>
+  downLine = (record) => {
+    record.is_online = false;
+    this.state.dispatch({
+      type: 'banners/patch',
+      payload: { id: record._id, values: record },
+    });
+  }
+  render() {
+    const columns = [
+      {
+        title: '序号',
+        dataIndex: 'cnum',
+        key: 'cnum',
+      },
+      {
+        title: '标题',
+        dataIndex: 'title',
+        key: 'title',
+        render: text => <span>{text}</span>
+      },
+      {
+        title: '发布时间',
+        dataIndex: 'create_at',
+        key: 'create_at',
+        render: text => <span>{text}</span>
+      },
+      {
+        title: '点击量',
+        dataIndex: 'hot',
+        key: 'hot',
+        render: text => <span>{text || 0}</span>
+      },
+      {
+        title: "排序",
+        dataIndex: 'rank',
+        key: 'rank',
+        render: text => <div><Icon type="arrow-down" key="arrow-down" onClick={() => { this.editHandler() }} style={{ marginRight: "10px" }} />  <Icon type="arrow-up" key="arrow-up" onClick={() => { this.editHandler() }} style={{ marginRight: "10px" }} /></div>
+      },
+      {
+        title: '操作',
+        key: 'operation',
+        render: (text, record) => (
+          <span className={styles.operation2}>
+            <AddBannerModal banner={record} onOk={this.editHandler.bind(null, record._id)}>
+              <Button type="danger">下线</Button>
             </AddBannerModal>
-          </Col>
-        </Row>
-        <Table
-          columns={columns}
-          dataSource={dataSource}
-          loading={loading}
-          rowKey={record => record._id}
-          pagination={false}
-        />
-        <Pagination
-          className="ant-table-pagination"
-          total={total}
-          current={current}
-          pageSize={PAGE_SIZE}
-          onChange={pageChangeHandler}
-        />
+            <Button type="primary" onClick={() => this.downLine(record)}>编辑</Button>
+          </span>
+        ),
+      },
+    ];
+
+    const history = [
+      {
+        title: '序号',
+        dataIndex: 'cnum',
+        key: 'cnum',
+      },
+      {
+        title: '标题',
+        dataIndex: 'title',
+        key: 'title',
+        render: text => <span>{text}</span>
+      },
+      {
+        title: '发布时间',
+        dataIndex: 'create_at',
+        key: 'create_at',
+        render: text => <span>{text}</span>
+      },
+      {
+        title: '点击量'
+      },
+      {
+        title: "排序"
+      },
+      {
+        title: '操作',
+        key: 'operation',
+        render: (text, record) => (
+          <span className={styles.operation2}>
+            <AddBannerModal banner={record} onOk={this.editHandler.bind(null, record._id)}>
+              <Button type="danger">下线</Button>
+            </AddBannerModal>
+            <Button type="primary" onClick={() => this.downLine(record)}>编辑</Button>
+          </span>
+        ),
+      },
+    ];
+
+    return (
+      <div className={styles.normal}>
+        <div>
+          <Row type="flex" justify="space-between">
+            <Col span={15}>
+              <Input.Search
+                type="text"
+                placeholder="搜索"
+                size="default"
+              />
+            </Col>
+            <Col span={9} push={1} style={{ marginBottom: "15px" }}>
+              <Button onClick={this.historyHandler}>历史banner</Button>
+              <BannerConsoleModal>
+                <Button style={{ marginLeft: "15px" }}>操作日志</Button>
+              </BannerConsoleModal>
+
+              <AddBannerModal banner={{}} onOk={this.editHandler.bind(null, '')}>
+                <Button style={{ marginLeft: "15px" }}>添加banner</Button>
+              </AddBannerModal>
+            </Col>
+          </Row>
+          <Row>
+            <div style={{ position: "relative", paddingLeft: "10px" }}>
+              <Table
+                columns={columns}
+                dataSource={this.state.plist || []}
+                loading={this.state.loading}
+                rowKey={record => record._id}
+                pagination={false}
+              />
+              <span style={{ display: 'inline-block', width: "15px", position: "absolute", left: "0px", top: "0px" }}>已发布</span>
+            </div>
+
+            <Pagination
+              className="ant-table-pagination"
+              total={this.state.ptotal}
+              current={this.state.ppage}
+              pageSize={PAGE_SIZE}
+              onChange={this.pageChangeHandler}
+            />
+          </Row>
+          <Row>
+            <div style={{ position: "relative", paddingLeft: "10px" }}>
+              <Table
+                columns={history}
+                dataSource={this.state.rlist || []}
+                loading={this.state.loading}
+                rowKey={record => record._id}
+                pagination={false}
+              />
+              <span style={{ display: 'inline-block', width: "15px", position: "absolute", left: "0px", top: "0px" }}>资源池</span>
+            </div>
+            <Pagination
+              className="ant-table-pagination"
+              total={this.state.rtotal}
+              current={this.state.rpage}
+              pageSize={PAGE_SIZE}
+              onChange={this.pageChangeHandler}
+            />
+          </Row>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
 }
 
 function mapStateToProps(state) {
 
-  const { list, total, page ,categoryMap} = state.banners;
-  return {
-    loading: state.loading.models.banners,
-    list,
-    total,
-    page,
-    categoryMap,
-  };
+  const { list } = state.banners;
+  if (Array.isArray(list)) {
+    return { loading: state.loading.models.banners, }
+  }
+  else {
+    return {
+      loading: state.loading.models.banners,
+      plist: list.p.data,
+      ptotal: list.p.total,
+      ppage: list.p.page,
+      rlist: list.r.data,
+      rtotal: list.r.total,
+      rpage: list.r.page,
+    };
+  }
+
 }
 
-export default connect(mapStateToProps)(Banners);
+function mapDispatchToProps(dispatch) {
+  return { dispatch: dispatch }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Banners);

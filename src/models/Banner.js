@@ -2,11 +2,21 @@ import * as service from './../services';
 
 export var addBannerOption = function (banner) {
 
-    banner.effects.fetch = function* ({ payload: { page } }, { call, put }) {
+    banner.effects.fetch = function* ({ payload: { page, historyPage } }, { call, put }) {
         // 无条件的
-        const banners = yield call(service["fetchRecommendPage"], 'Recommend', { "itype": "1" },{page});
-        // let recommendRes = yield call(service['getRecommendMap'], 'Recommend');
-        const rd = { data: banners.data.data.list, total: banners.data.data.count, page: parseInt(page) }
+        const publish = yield call(service["fetchRecommendPage"], 'Recommend', { "itype": "1" ,"is_online": true, "is_history": false}, { page});
+
+        //获取已发布的数据
+
+        // 获取资源池数据
+        const resource = yield call(service["fetchRecommendPage"], 'Recommend', { "itype": "1" ,"is_online": false, "is_history": false }, { page: historyPage});
+
+        const rd = {
+            data: {
+                p: { data: publish.data.data.list, total: publish.data.data.count, page: parseInt(page) },
+                r: { data: resource.data.data.list, total: resource.data.data.count, page: parseInt(historyPage) }
+            }
+        }
         yield put({ type: 'save22', payload: rd });
     }
 
