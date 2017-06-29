@@ -15,10 +15,10 @@ async function request(url, dt) {
     // console.log(url, "RETRUN:", data)
     return ret;
 }
-['Address','Order','Nav','Recommend','Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test','System'].map(cls => {
+['Address', 'Order', 'Nav', 'Recommend', 'Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test', 'System'].map(cls => {
     exports[cls + 'Service'] = {
-        fetch({ page = 1 ,filter={}}) {
-            return request(`/api/${cls}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 10, startPos: 10 * (page - 1),filter });
+        fetch({ page = 1, limit = 10, filter = {} }) {
+            return request(`/api/${cls}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: limit, startPos: limit * (page - 1), filter });
         },
         update(id, item) {
             return request(`/api/${cls}/updateById?token=${localStorage.token}`, { id, item });
@@ -33,8 +33,8 @@ async function request(url, dt) {
 });
 
 /**根据spuid 获得skus */
-exports['getDataService'] = async (v,opt)=> {
-    return request(`/api/${v}/fetch?token=${localStorage.token}`, {filter:opt});
+exports['getDataService'] = async (v, opt) => {
+    return request(`/api/${v}/fetch?token=${localStorage.token}`, { filter: opt });
 }
 
 
@@ -63,7 +63,7 @@ function getMapByList(list) {
     return tempMap
 }
 
-['Color', 'Country', 'Brand', 'Serial', 'Category', 'Attribute','Recommend','Nav','Order','Case','System',"Sku"].map(v => {
+['Color', 'Country', 'Brand', 'Serial', 'Category', 'Attribute', 'Recommend', 'Nav', 'Order', 'Case', 'System', "Sku"].map(v => {
     exports[`get${v}Map`] = async function (v) {
         let result = await request(`/api/${v}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 10000000, startPos: 0 })
         let list = result.data.data.list
@@ -82,7 +82,7 @@ function getMapByListCnum(list) {
     return tempMap
 }
 
-['Color', 'Country', 'Brand', 'Serial', 'Category', 'Attribute','Recommend','Nav','Order','Case','System',"Sku"].map(v => {
+['Color', 'Country', 'Brand', 'Serial', 'Category', 'Attribute', 'Recommend', 'Nav', 'Order', 'Case', 'System', "Sku"].map(v => {
     exports[`get${v}MapCnum`] = async function (v) {
         let result = await request(`/api/${v}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: 10000000, startPos: 0 })
         let list = result.data.data.list
@@ -96,10 +96,9 @@ function getMapByListCnum(list) {
 
 
 //带分页 有条件查询
-['Recommend','Banner','CaseManage','HotProduct','Nav','Order','Projectinfo','Case','System'].map(v => {
-    exports[`fetch${v}Page`] = async function (v,filter,page) {
-        let opt = { orderBy: { cnum: -1 }, limit: 10, startPos: 0 ,filter:filter};
-        return await request(`/api/${v}/fetch?token=${localStorage.token}`, {filter:filter,page});
+['Recommend', 'Banner', 'CaseManage', 'HotProduct', 'Nav', 'Order', 'Projectinfo', 'Case', 'System'].map(v => {
+    exports[`fetch${v}Page`] = async function (v, filter, page, limit = 10, orderBy = { cnum: -1 }) {
+        return await request(`/api/${v}/fetch?token=${localStorage.token}`, { filter: filter, page, limit, startPos: limit * (page - 1), orderBy});
     }
 });
 
@@ -121,7 +120,7 @@ function getMapByListCnum(list) {
     }
 });
 
-[ 'Sku', 'Stock'].map(v => {
+['Sku', 'Stock'].map(v => {
     exports[`update${v}Data`] = async function (v, datas) {
         if (Array.isArray(datas)) {
             let data = []
@@ -140,7 +139,7 @@ function getMapByListCnum(list) {
     }
 });
 
-[ 'Sku', 'Stock'].map(v => {
+['Sku', 'Stock'].map(v => {
     exports[`delete${v}Data`] = async function (v, datas) {
         if (Array.isArray(datas)) {
             let data = []

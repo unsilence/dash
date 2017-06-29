@@ -3,7 +3,8 @@ import { connect } from 'dva';
 import { Table, Pagination, Popconfirm, Row, Col, Button, Icon, Input } from 'antd';
 import { routerRedux, browserHistory } from 'dva/router';
 import styles from '../list.less';
-let PAGE_SIZE = 10
+const PAGE_SIZE_P = 2;
+const PAGE_SIZE_R = 1;
 import AddBannerModal from './AddBannerModal.js';
 import BannerConsoleModal from './BannerConsoleModal.js';
 import HistryBannerModal from './HistryBannerModal.js';
@@ -49,8 +50,23 @@ class Banners extends React.Component {
   pageChangeHandler = (page) => {
     this.state.dispatch(routerRedux.push({
       pathname: '/banners',
-      query: { page },
+      query: { page, rpage: this.state.rpage },
     }));
+  }
+  rpageChangeHandler = (page) => {
+    this.state.dispatch(routerRedux.push({
+      pathname: '/banners',
+      query: { page: this.state.ppage, rpage: page },
+    }));
+  }
+
+  offlineHandle = (id, values) => {
+    values.is_online = false;
+    values.is_history = true;
+    this.state.dispatch({
+      type: 'banners/patch',
+      payload: { id, values },
+    });
   }
 
   editHandler = (id, values) => {
@@ -65,8 +81,23 @@ class Banners extends React.Component {
         payload: { id, values },
       });
     }
-
   }
+
+  uptop = (record) => {
+    this.state.dispatch({
+      type: 'banners/uptop',
+      payload: { record },
+    });
+  }
+
+  upbottom = (record) => {
+    this.state.dispatch({
+      type: 'banners/upbottom',
+      payload: { record },
+    });
+  }
+
+
   historyHandler = (e) => {
     e.preventDefault();
     (async function () {
@@ -81,12 +112,34 @@ class Banners extends React.Component {
       payload: { id: record._id, values: record },
     });
   }
+
+  getImg = (images) => {
+    if (images.length > 0) {
+      return <img src={"/api/file/" + images} style={{ width: "30px", height: "30px" }} />
+    } else {
+      return '无图';
+    }
+  }
+
+  getRank(record) {
+    let opts = [];
+    if ((this.state.plist.indexOf(record) + PAGE_SIZE_P * (this.state.ppage ? this.state.ppage - 1 : 0)) === 0) {
+      opts.push(<Icon type="arrow-down" key="arrow-down" onClick={() => { this.upbottom(record) }} style={{ marginRight: "10px" }} />)
+    } else if ((this.state.plist.indexOf(record) + PAGE_SIZE_P * (this.state.ppage ? this.state.ppage - 1 : 0)) === this.state.ptotal - 1) {
+      opts.push(<Icon type="arrow-up" key="arrow-up" onClick={() => { this.uptop(record) }} style={{ marginRight: "10px" }} />);
+    } else {
+      opts.push(<Icon type="arrow-up" key="arrow-up" onClick={() => { this.uptop(record) }} style={{ marginRight: "10px" }} />);
+      opts.push(<Icon type="arrow-down" key="arrow-down" onClick={() => { this.upbottom(record) }} style={{ marginRight: "10px" }} />)
+    }
+    return <div> {opts}</div>
+  }
   render() {
-    const columns = [
+    let columns = [
       {
         title: '序号',
         dataIndex: 'cnum',
         key: 'cnum',
+        render: (text, record) => <span>{(this.state.plist.indexOf(record) + 1) + PAGE_SIZE_P * (this.state.ppage ? this.state.ppage - 1 : 0)}</span>
       },
       {
         title: '标题',
@@ -110,17 +163,18 @@ class Banners extends React.Component {
         title: "排序",
         dataIndex: 'rank',
         key: 'rank',
-        render: text => <div><Icon type="arrow-down" key="arrow-down" onClick={() => { this.editHandler() }} style={{ marginRight: "10px" }} />  <Icon type="arrow-up" key="arrow-up" onClick={() => { this.editHandler() }} style={{ marginRight: "10px" }} /></div>
+        render: (text, record) => this.getRank(record)
       },
       {
         title: '操作',
         key: 'operation',
         render: (text, record) => (
           <span className={styles.operation2}>
+            <Button type="primary" onClick={this.offlineHandle.bind(null, record._id, record)}>下线</Button>
             <AddBannerModal banner={record} onOk={this.editHandler.bind(null, record._id)}>
-              <Button type="danger">下线</Button>
+              <Button type="danger">编辑</Button>
             </AddBannerModal>
-            <Button type="primary" onClick={() => this.downLine(record)}>编辑</Button>
+
           </span>
         ),
       },
@@ -128,9 +182,9 @@ class Banners extends React.Component {
 
     const history = [
       {
-        title: '序号',
-        dataIndex: 'cnum',
-        key: 'cnum',
+        title: 'URL',
+        dataIndex: 'url',
+        key: 'url',
       },
       {
         title: '标题',
@@ -139,16 +193,10 @@ class Banners extends React.Component {
         render: text => <span>{text}</span>
       },
       {
-        title: '发布时间',
-        dataIndex: 'create_at',
-        key: 'create_at',
-        render: text => <span>{text}</span>
-      },
-      {
-        title: '点击量'
-      },
-      {
-        title: "排序"
+        title: '图片',
+        dataIndex: 'image',
+        key: 'image',
+        render: text => <span>{this.getImg(text)}</span>
       },
       {
         title: '操作',
@@ -156,9 +204,9 @@ class Banners extends React.Component {
         render: (text, record) => (
           <span className={styles.operation2}>
             <AddBannerModal banner={record} onOk={this.editHandler.bind(null, record._id)}>
-              <Button type="danger">下线</Button>
+              <Button type="danger">发布</Button>
             </AddBannerModal>
-            <Button type="primary" onClick={() => this.downLine(record)}>编辑</Button>
+            <Button type="edit" onClick={() => this.downLine(record)}>编辑</Button>
           </span>
         ),
       },
@@ -201,8 +249,8 @@ class Banners extends React.Component {
             <Pagination
               className="ant-table-pagination"
               total={this.state.ptotal}
-              current={this.state.ppage}
-              pageSize={PAGE_SIZE}
+              current={this.state.ppage || 1}
+              pageSize={PAGE_SIZE_P}
               onChange={this.pageChangeHandler}
             />
           </Row>
@@ -211,7 +259,6 @@ class Banners extends React.Component {
               <Table
                 columns={history}
                 dataSource={this.state.rlist || []}
-                loading={this.state.loading}
                 rowKey={record => record._id}
                 pagination={false}
               />
@@ -220,9 +267,9 @@ class Banners extends React.Component {
             <Pagination
               className="ant-table-pagination"
               total={this.state.rtotal}
-              current={this.state.rpage}
-              pageSize={PAGE_SIZE}
-              onChange={this.pageChangeHandler}
+              current={this.state.rpage || 1}
+              pageSize={PAGE_SIZE_R}
+              onChange={this.rpageChangeHandler}
             />
           </Row>
         </div>

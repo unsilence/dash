@@ -2,19 +2,19 @@ import * as service from './../services';
 
 export var addBannerOption = function (banner) {
 
-    banner.effects.fetch = function* ({ payload: { page, historyPage } }, { call, put }) {
+    banner.effects.fetch = function* ({ payload: { page, rpage } }, { call, put }) {
         // 无条件的
-        const publish = yield call(service["fetchRecommendPage"], 'Recommend', { "itype": "1" ,"is_online": true, "is_history": false}, { page});
+        const publish = yield call(service["fetchRecommendPage"], 'Recommend', { "itype": "1", "is_online": true, "is_history": false }, page, 2, { "rank": -1, "update_at": 1 });
 
         //获取已发布的数据
 
         // 获取资源池数据
-        const resource = yield call(service["fetchRecommendPage"], 'Recommend', { "itype": "1" ,"is_online": false, "is_history": false }, { page: historyPage});
+        const resource = yield call(service["fetchRecommendPage"], 'Recommend', { "itype": "1", "is_online": false, "is_history": false }, rpage, 1);
 
         const rd = {
             data: {
                 p: { data: publish.data.data.list, total: publish.data.data.count, page: parseInt(page) },
-                r: { data: resource.data.data.list, total: resource.data.data.count, page: parseInt(historyPage) }
+                r: { data: resource.data.data.list, total: resource.data.data.count, page: parseInt(rpage) }
             }
         }
         yield put({ type: 'save22', payload: rd });
@@ -25,19 +25,57 @@ export var addBannerOption = function (banner) {
         // let recommendRes = yield call(service['getRecommendMap'], 'Recommend');
         // values.order = Object.keys(recommendRes).length + 1;
         yield call(service['RecommendService'].insert, values);
-        const page = yield select(state => state['banners'].page);
-        yield put({ type: 'fetch', payload: { page } });
+        const page = yield select(state => state['banners'].list.p.page);
+        const rpage = yield select(state => state['banners'].list.r.page);
+        yield put({ type: 'fetch', payload: { page, rpage } });
     }
     banner.effects.remove = function* ({ payload: { id } }, { call, put, select }) {
         console.log('remove', { id })
         yield call(service['RecommendService'].remove, id);
-        const page = yield select(state => state['banners'].page);
-        yield put({ type: 'fetch', payload: { page } });
+        const page = yield select(state => state['banners'].list.p.page);
+        const rpage = yield select(state => state['banners'].list.r.page);
+        yield put({ type: 'fetch', payload: { page, rpage } });
     }
     banner.effects.patch = function* ({ payload: { id, values } }, { call, put, select }) {
         console.log('patch', { id })
         yield call(service['RecommendService'].update, id, values);
-        const page = yield select(state => state['banners'].page);
-        yield put({ type: 'fetch', payload: { page } });
+        const page = yield select(state => state['banners'].list.p.page);
+        const rpage = yield select(state => state['banners'].list.r.page);
+        yield put({ type: 'fetch', payload: { page, rpage } });
+    }
+
+
+    banner.effects.uptop = function* ({ payload: { record } }, { call, put, select }) {
+        const publish = yield call(service["fetchRecommendPage"], 'Recommend', { "itype": "1", "is_online": true, "is_history": false, 'rank': { "$gte": record.rank } }, 1, 1);
+        if (publish.data.data.list.length > 0) {
+            let tempOne = publish.data.data.list[0].rank + 1;
+
+            yield call(service['RecommendService'].update, record._id, { rank: tempOne });
+        }
+        const page = yield select(state => state['banners'].list.p.page);
+        const rpage = yield select(state => state['banners'].list.r.page);
+        yield put({ type: 'fetch', payload: { page, rpage } });
+    }
+
+    banner.effects.upbottom = function* ({ payload: { record } }, { call, put, select }) {
+        console.log('upbottom-----', record)
+        const publish = yield call(service["fetchRecommendPage"], 'Recommend', { "itype": "1", "is_online": true, "is_history": false, 'rank': { "$lte": record.rank } }, 1, 1);
+
+        console.log(publish, '------------')
+
+        if (publish.data.data.list.length > 0) {
+            let tempOne = publish.data.data.list[0].rank - 1;
+
+            yield call(service['RecommendService'].update, record._id, { rank: tempOne });
+        }
+
+        const page = yield select(state => state['banners'].list.p.page);
+        const rpage = yield select(state => state['banners'].list.r.page);
+        yield put({ type: 'fetch', payload: { page, rpage } });
+    }
+
+    banner.effects.histrybanner = function* ({ payload: { page, rpage } }, { call, put }) {
+        // 无条件的
+       consle.log('00000000000000000000000')
     }
 }
