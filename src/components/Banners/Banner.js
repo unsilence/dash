@@ -101,7 +101,7 @@ class Banners extends React.Component {
   historyHandler = (e) => {
     e.preventDefault();
     (async function () {
-      browserHistory.push('/banners/histrybanner')
+      browserHistory.push('/historybanners')
     })();
   }
 

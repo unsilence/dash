@@ -20,6 +20,7 @@ import Sku from "./routes/Sku";
 import Stock from "./routes/Stock";
 import HotProducts from './routes/HotProducts';
 import * as Banner  from "./routes/Banners.js";
+import HistoryBanners  from "./routes/HistoryBanners.js";
 
 
 function RouterConfig({ history }) {
@@ -27,7 +28,7 @@ function RouterConfig({ history }) {
     <Router history={history}>
       <Route path="/" component={IndexPage} />
       <Route path="/banners" component={Banner.banners} />
-      <Route path="/banners/histrybanner" component={Banner.HistryBanner} />
+      <Route path="/historybanners" component={HistoryBanners} />
       <Route path="/casemanages" component={CaseManages} />
       <Route path="/hotproducts" component={HotProducts} />
       <Route path="/navmanages" component={NavManages} />

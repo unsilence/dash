@@ -16,17 +16,6 @@ function Banners(props) {
   );
 }
 
-
-function HistryBanner(props) {
-  return (
-      <MainLayout location={location}>
-        <div className={styles.normal}>
-          <HistryBannerModal />
-        </div>
-      </MainLayout>
-  );
-}
-
 function BannerConsole(props) {
   return (
       <MainLayout location={location}>
@@ -41,5 +30,4 @@ function mapStateToProps(state) {
 }
 
 exports["banners"] = connect(mapStateToProps)(Banners);
-exports["HistryBanner"] = connect(mapStateToProps)(HistryBanner);
 exports["BannerConsole"] = connect(mapStateToProps)(BannerConsole);

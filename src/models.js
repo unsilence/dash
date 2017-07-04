@@ -1,19 +1,20 @@
 import * as service from './services';
-import {generate,pad} from './models/utils';
-import {addSpuOption} from './models/Spu';
-import {addSkuOption} from './models/Sku';
-import {addBannerOption} from './models/Banner';
-import {recommendOption} from './models/Recom';
-import {caseManageOption} from './models/CaseManage'; 
-import {hotProductsOption} from './models/HotProduct';
-import {navRecomOption} from "./models/NavRecom";
-import {editOrderOption} from "./models/Order.js";
-import {casesOption} from "./models/Cases.js";
-import {brandOption} from './models/Brand'
-import {stockOption } from './models/Stock'
+import { generate, pad } from './models/utils';
+import { addSpuOption } from './models/Spu';
+import { addSkuOption } from './models/Sku';
+import { addBannerOption } from './models/Banner';
+import { recommendOption } from './models/Recom';
+import { caseManageOption } from './models/CaseManage';
+import { hotProductsOption } from './models/HotProduct';
+import { navRecomOption } from "./models/NavRecom";
+import { editOrderOption } from "./models/Order.js";
+import { casesOption } from "./models/Cases.js";
+import { brandOption } from './models/Brand'
+import { stockOption } from './models/Stock'
+import { addHistoryBannerOption } from './models/HistoryBanner.js'
 
 
-['ProjectInfo','NavManage','HotProduct','CaseManage','Banner', 'Recom','Recommend', 'Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
+['ProjectInfo', 'NavManage', 'HotProduct', 'CaseManage', 'Banner', 'HistoryBanner', 'Recom', 'Recommend', 'Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
   exports[cls + 'Model'] = generate(cls.toLowerCase() + 's', cls + 'Service');
 });
 
@@ -28,6 +29,7 @@ editOrderOption(exports["OrderModel"]);
 casesOption(exports["CaseModel"]);
 brandOption(exports["BrandModel"]);
 stockOption(exports["StockModel"]);
+addHistoryBannerOption(exports["HistoryBannerModel"]);
 
 exports['login'] = function () { return service.login() }
 exports['checkAccount'] = function () { return service.checkAccount() }
@@ -69,25 +71,25 @@ exports["CategoryModel"].effects.fetch = function* ({ payload: { page } }, { cal
 //   yield put({ type: 'save22', payload: rd });
 // }
 
-exports['getCategory'] = function ({page,id}) { return service.fetchSystemPage("Recommend",{ "itype": "5" ,"category_num" : id },{page})};
+exports['getCategory'] = function ({ page, id }) { return service.fetchSystemPage("Recommend", { "itype": "5", "category_num": id }, { page }) };
 
-exports['addNavList'] =  async function (id , value ) { 
-        value.itype = '5';
-        await service.RecommendService.insert(value);
-        let ocj = await service.fetchSystemPage("Recommend",{ "itype": "5" ,"category_num" : value.category_num },{page : 1});
-        return ocj;
-        // const page = yield select(state => state['navmanages'].page);
-        
+exports['addNavList'] = async function (id, value) {
+  value.itype = '5';
+  await service.RecommendService.insert(value);
+  let ocj = await service.fetchSystemPage("Recommend", { "itype": "5", "category_num": value.category_num }, { page: 1 });
+  return ocj;
+  // const page = yield select(state => state['navmanages'].page);
+
 };
-exports['upDataList'] = async function (id , value) { 
-        await service.RecommendService.update(id,value);
-        // const page = yield select(state => state['navmanages'].page);
-        let obj = await service.fetchSystemPage("Recommend",{ "itype": "5" ,"category_num" : value.category_num  },{page : 1});
-        return obj;
+exports['upDataList'] = async function (id, value) {
+  await service.RecommendService.update(id, value);
+  // const page = yield select(state => state['navmanages'].page);
+  let obj = await service.fetchSystemPage("Recommend", { "itype": "5", "category_num": value.category_num }, { page: 1 });
+  return obj;
 };
-exports["removeNavList"] = function ( id , num) {
-        service.RecommendService.remove(id);
-        return service.fetchSystemPage("Recommend",{ "itype": "5" ,"category_num" : num },{page : 1});
+exports["removeNavList"] = function (id, num) {
+  service.RecommendService.remove(id);
+  return service.fetchSystemPage("Recommend", { "itype": "5", "category_num": num }, { page: 1 });
 }
 // exports['SpuModel'].effects.fetch = function* ({ payload: { page } }, { call, put }) {
 //   const categoryMap = yield call(service["getCategoryMap"], 'Category');
