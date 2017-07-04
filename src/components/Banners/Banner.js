@@ -21,7 +21,8 @@ class Banners extends React.Component {
       rtotal: this.props.rtotal,
       rpage: this.props.rpage,
       categoryMap: this.props.categoryMap,
-      dispatch: this.props.dispatch
+      dispatch: this.props.dispatch,
+      searchWords: this.props.searchWords || ""
     }
   }
 
@@ -35,7 +36,8 @@ class Banners extends React.Component {
       rtotal: nextProps.rtotal,
       rpage: nextProps.rpage,
       categoryMap: nextProps.categoryMap,
-      dispatch: nextProps.dispatch
+      dispatch: nextProps.dispatch,
+      searchWords: nextProps.searchWords
     }
     this.setState(temp);
   }
@@ -43,20 +45,20 @@ class Banners extends React.Component {
   deleteHandler = (itm) => {
     this.state.dispatch({
       type: 'banners/remove',
-      payload: { id: itm._id },
+      payload: { id: itm._id, searchWords: this.state.searchWords },
     });
   }
 
   pageChangeHandler = (page) => {
     this.state.dispatch(routerRedux.push({
       pathname: '/banners',
-      query: { page, rpage: this.state.rpage },
+      query: { page, rpage: this.state.rpage, searchWords: this.state.searchWords },
     }));
   }
   rpageChangeHandler = (page) => {
     this.state.dispatch(routerRedux.push({
       pathname: '/banners',
-      query: { page: this.state.ppage, rpage: page },
+      query: { page: this.state.ppage, rpage: page, searchWords: this.state.searchWords },
     }));
   }
 
@@ -65,7 +67,7 @@ class Banners extends React.Component {
     values.is_history = true;
     this.state.dispatch({
       type: 'banners/patch',
-      payload: { id, values },
+      payload: { id, values, searchWords: this.state.searchWords },
     });
   }
 
@@ -86,14 +88,14 @@ class Banners extends React.Component {
   uptop = (record) => {
     this.state.dispatch({
       type: 'banners/uptop',
-      payload: { record },
+      payload: { record, searchWords: this.state.searchWords },
     });
   }
 
   upbottom = (record) => {
     this.state.dispatch({
       type: 'banners/upbottom',
-      payload: { record },
+      payload: { record, searchWords: this.state.searchWords },
     });
   }
 
@@ -109,7 +111,7 @@ class Banners extends React.Component {
     record.is_online = false;
     this.state.dispatch({
       type: 'banners/patch',
-      payload: { id: record._id, values: record },
+      payload: { id: record._id, values: record, searchWords: this.state.searchWords },
     });
   }
 
@@ -133,6 +135,18 @@ class Banners extends React.Component {
     }
     return <div> {opts}</div>
   }
+
+
+  search = (e) => {
+    if (e.target) {
+      this.setState({ "searchWords": e.target.value });
+    }
+    else {
+      this.setState({ "searchWords": e });
+    }
+
+  }
+
   render() {
     let columns = [
       {
@@ -221,6 +235,9 @@ class Banners extends React.Component {
                 type="text"
                 placeholder="搜索"
                 size="default"
+                value={this.state.searchWords}
+                onChange={v => this.search(v)}
+                onSearch={v => { this.search(v); this.pageChangeHandler() }}
               />
             </Col>
             <Col span={9} push={1} style={{ marginBottom: "15px" }}>
@@ -281,9 +298,9 @@ class Banners extends React.Component {
 
 function mapStateToProps(state) {
 
-  const { list } = state.banners;
+  const { list ,searchWords} = state.banners;
   if (Array.isArray(list)) {
-    return { loading: state.loading.models.banners, }
+    return { loading: state.loading.models.banners,searchWords:searchWords }
   }
   else {
     return {
@@ -294,6 +311,7 @@ function mapStateToProps(state) {
       rlist: list.r.data,
       rtotal: list.r.total,
       rpage: list.r.page,
+      searchWords:searchWords
     };
   }
 
