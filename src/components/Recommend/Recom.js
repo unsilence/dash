@@ -5,37 +5,58 @@ import { routerRedux } from 'dva/router';
 import styles from '../list.less';
 let PAGE_SIZE = 10
 import RecomModal from './RecomModal';
-
-function Recoms({ dispatch, list: dataSource, loading, total, page: current }) {
-  function deleteHandler(itm) {
-    dispatch({
+/*
+  ({ dispatch, list: dataSource, loading, total, page: current })
+*/
+class Recoms extends React.Component{
+  constructor(props){
+    super(props);
+    this.state={
+      dataSource : props.props,
+      loading : props.loading,
+      total : props.total,
+      current : props.page,
+      dispatch:props.dispatch
+    }
+  }
+  componentWillReceiveProps(nextProps){
+    this.setState({
+      dataSource : nextProps.dataSource,
+      loading : nextProps.loading,
+      total : nextProps.total,
+      current : nextProps.page,
+      dispatch:nextProps.dispatch
+    })
+  }
+  deleteHandler = (itm) => {
+    this.state.dispatch({
       type: 'recoms/remove',
       payload: {id:itm._id},
     });
   }
 
-  function pageChangeHandler(page) {
-    dispatch(routerRedux.push({
+  pageChangeHandler = (page) => {
+    this.state.dispatch(routerRedux.push({
       pathname: '/recoms',
       query: { page },
     }));
   }
 
-  function editHandler(id, values) {
+  editHandler = (id, values) => {
       if(id){
-          dispatch({
+          this.state.dispatch({
             type: 'recoms/patch',
             payload: { id, values },
           });
       }else {
-          dispatch({
+          this.state.dispatch({
             type: 'recoms/add',
             payload: { id, values },
           });
       }
 
   }
-
+render () {
   const columns = [
     {
       title: '序号',
@@ -67,17 +88,17 @@ function Recoms({ dispatch, list: dataSource, loading, total, page: current }) {
       key: 'operation',
       render: (text, serial) => (
         <span className={styles.operation2}>
-          <RecomModal recommend={serial} onOk={editHandler.bind(null, serial._id)}>
+          <RecomModal recommend={serial} onOk={this.editHandler(serial._id)}>
             <Icon type="edit" className={styles.icon}/>
           </RecomModal>
-          <Popconfirm title={"确定要删除推荐吗？"} onConfirm={deleteHandler.bind(null, serial)}>
+          <Popconfirm title={"确定要删除推荐吗？"} onConfirm={() => this.deleteHandler(serial)}>
             <Icon type="delete" className={styles.icon}/>
           </Popconfirm>
         </span>
       ),
     },
   ];
-
+  console.log(this.props.dataSource);
   return (
     <div className={styles.normal}>
       <div>
@@ -88,39 +109,44 @@ function Recoms({ dispatch, list: dataSource, loading, total, page: current }) {
             <Col span={8}>
               <Button style={{marginRight : "16px"}}>历史推荐</Button>
               <Button style={{marginRight : "16px"}}>操作日志</Button>
-              <RecomModal recommend={{}} onOk={editHandler.bind(null,'')}>
+              <RecomModal recommend={{}} onOk={this.editHandler}>
                 <Button>添加推荐</Button>
               </RecomModal>
             </Col>
         </Row>
         <Table
           columns={columns}
-          dataSource={dataSource}
-          loading={loading}
+          dataSource={this.state.dataSource}
+          loading={this.state.loading}
           rowKey={serial => serial._id}
           pagination={false}
         />
         <Pagination
           className="ant-table-pagination"
-          total={total}
-          current={current}
+          total={this.state.total}
+          current={this.state.current}
           pageSize={PAGE_SIZE}
-          onChange={pageChangeHandler}
+          onChange={this.pageChangeHandler}
         />
       </div>
     </div>
   );
+}
 }
 
 function mapStateToProps(state) {
   const {list, total, page ,categoryMap} = state.recoms;
   return {
     loading: state.loading.models.recoms,
-    list,
+    dataSource:list,
     total,
     page,
     categoryMap
   };
 }
 
-export default connect(mapStateToProps)(Recoms);
+function mapDispatchToProps(dispatch) {
+  return { dispatch: dispatch }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(Recoms);

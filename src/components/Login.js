@@ -3,6 +3,7 @@ import { browserHistory } from 'dva/router';
 import {  Modal,  Form,  Input,  Select,  DatePicker,  Popconfirm
     ,  Row,message,  Col,  Button,  Icon,  Upload} from 'antd';
 
+import * as loginStyle from "./login.less";
 let styles ={}
 
 import * as UserModel from '../model_mvp/user';
@@ -88,9 +89,9 @@ class _Main extends Component {
   render() {
       console.log('componnents:: login/content will render')
     return (
-      <span >
+      <span className={loginStyle.login_outBox}>
         <Row type="flex" justify="space-around" align="middle">
-            <Col span={4} >
+            <Col span={20} >
                 <Row >
                   <Col span={24} style={{fontSize : "16px"}}>美学管家-后台管理系统</Col>
                 </Row>

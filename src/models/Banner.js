@@ -4,7 +4,7 @@ export var addBannerOption = function (banner) {
 
     banner.effects.fetch = function* ({ payload: { page, rpage,searchWords} }, { call, put }) {
         // 无条件的
-        const publish = yield call(service["fetchRecommendPage"], 'Recommend', { "itype": "1", "is_online": true, "is_history": false }, page, 2, { "rank": -1, "update_at": 1 });
+        const publish = yield call(service["fetchRecommendPage"], 'Recommend', { "itype": "1", "is_online": true, "is_history": false }, page, 5, { "rank": -1, "update_at": 1 });
 
         //获取已发布的数据
 
@@ -13,7 +13,7 @@ export var addBannerOption = function (banner) {
         if(searchWords && searchWords !== ''){
             filter["title"] ={"$regex":searchWords};
         }
-        const resource = yield call(service["fetchRecommendPage"], 'Recommend', Object.assign({ "itype": "1", "is_online": false, "is_history": false },filter), rpage, 1);
+        const resource = yield call(service["fetchRecommendPage"], 'Recommend', Object.assign({ "itype": "1", "is_online": false, "is_history": false },filter), rpage, 5);
 
         const rd = {
             data: {

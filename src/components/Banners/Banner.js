@@ -1,13 +1,17 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Table, Pagination, Popconfirm, Row, Col, Button, Icon, Input } from 'antd';
+import { Table, Pagination, Popconfirm, Row, Col, Button, Icon, Input , message} from 'antd';
 import { routerRedux, browserHistory } from 'dva/router';
 import styles from '../list.less';
-const PAGE_SIZE_P = 2;
-const PAGE_SIZE_R = 1;
+const PAGE_SIZE_P = 5;
+const PAGE_SIZE_R = 5;
 import AddBannerModal from './AddBannerModal.js';
 import BannerConsoleModal from './BannerConsoleModal.js';
 import HistryBannerModal from './HistryBannerModal.js';
+
+import moment from 'moment'
+
+const dateFormat = 'YYYY/MM/DD  hh:mm:ss';
 
 class Banners extends React.Component {
   constructor(props) {
@@ -26,7 +30,7 @@ class Banners extends React.Component {
     }
   }
 
-  componentWillReceiveProps = (nextProps) => {
+  componentWillReceiveProps (nextProps) {
     let temp = {
       loading: nextProps.loading,
       plist: nextProps.plist,
@@ -146,6 +150,15 @@ class Banners extends React.Component {
     }
 
   }
+  // 资源池  发布按钮的方法
+  upLineHandler = (record) => {
+    if(record.title && record.image){
+      record.is_online = true;
+      this.editHandler(record._id,record);
+    }else{
+      message.warning('请填写完整数据');
+    }
+  }
 
   render() {
     let columns = [
@@ -165,7 +178,7 @@ class Banners extends React.Component {
         title: '发布时间',
         dataIndex: 'create_at',
         key: 'create_at',
-        render: text => <span>{text}</span>
+        render: text => <span>{moment(text).format(dateFormat)}</span>
       },
       {
         title: '点击量',
@@ -217,10 +230,10 @@ class Banners extends React.Component {
         key: 'operation',
         render: (text, record) => (
           <span className={styles.operation2}>
+            <Button type="danger" onClick={() => this.upLineHandler(record)}>发布</Button>
             <AddBannerModal banner={record} onOk={this.editHandler.bind(null, record._id)}>
-              <Button type="danger">发布</Button>
+              <Button type="edit">编辑</Button>
             </AddBannerModal>
-            <Button type="edit" onClick={() => this.downLine(record)}>编辑</Button>
           </span>
         ),
       },
