@@ -12,7 +12,7 @@ import Brands from "./routes/Brands.js";
 import Cases from "./routes/Cases.js";
 import Tests from "./routes/Tests.js";
 import Login from "./routes/login.js";
-import Recommend from './routes/Recommends';
+import * as Recommend from './routes/Recommends';
 import CaseManages from './routes/CaseManages';
 import NavManages from "./routes/NavManages"
 import Spu from "./routes/Spu";
@@ -46,7 +46,8 @@ function RouterConfig({ history }) {
       <Route path="/colors" component={Colors} />
       <Route path="/serials" component={Serials} />
       <Route path="/login" component={Login} />
-      <Route path="/recoms" component={Recommend} />
+      <Route path="/recoms" component={Recommend.Recommends} />
+      <Route path="/recoms/historyRecom" component={Recommend.RecommendsHistory} />
     </Router>
   );
 }
