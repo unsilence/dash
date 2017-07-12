@@ -16,7 +16,6 @@ function Recommends(props) {
 }
 
 function RecommendsHistory(props) {
-console.log('11111111111111111111111111111111')
   return (
 
       <MainLayout location={location}>

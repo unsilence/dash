@@ -1,6 +1,6 @@
 /**
    * 格式化服务端数据
-   * @param {*} data 
+   * @param {*} data
    */
 function getFormatData(data) {
   let rst = [];
@@ -32,8 +32,8 @@ exports['getFormatData'] = getFormatData;
 
 /**
  * 获得格式化的颜色数据
- * @param {*} serials 
- * @param {*} colors 
+ * @param {*} serials
+ * @param {*} colors
  */
 function getColorSerialFormatData(serials, colors) {
   let rst = [];
@@ -145,40 +145,40 @@ exports['keysrt'] = keysrt;
 /* 去掉字符串前后的空格字符方法*/
 
 
-//供使用者调用  
-function trim(s){  
-    return trimRight(trimLeft(s));  
-}  
-//去掉左边的空白  
-function trimLeft(s){  
-    if(s == null) {  
-        return "";  
-    }  
-    var whitespace = new String(" \t\n\r");  
-    var str = new String(s);  
-    if (whitespace.indexOf(str.charAt(0)) != -1) {  
-        var j=0, i = str.length;  
-        while (j < i && whitespace.indexOf(str.charAt(j)) != -1){  
-            j++;  
-        }  
-        str = str.substring(j, i);  
-    }  
-    return str;  
-}  
+//供使用者调用
+function trim(s){
+    return trimRight(trimLeft(s));
+}
+//去掉左边的空白
+function trimLeft(s){
+    if(s == null) {
+        return "";
+    }
+    var whitespace = new String(" \t\n\r");
+    var str = new String(s);
+    if (whitespace.indexOf(str.charAt(0)) != -1) {
+        var j=0, i = str.length;
+        while (j < i && whitespace.indexOf(str.charAt(j)) != -1){
+            j++;
+        }
+        str = str.substring(j, i);
+    }
+    return str;
+}
 
-//去掉右边的空白 www.2cto.com   
-function trimRight(s){  
-    if(s == null) return "";  
-    var whitespace = new String(" \t\n\r");  
-    var str = new String(s);  
-    if (whitespace.indexOf(str.charAt(str.length-1)) != -1){  
-        var i = str.length - 1;  
-        while (i >= 0 && whitespace.indexOf(str.charAt(i)) != -1){  
-           i--;  
-        }  
-        str = str.substring(0, i+1);  
-    }  
-    return str;  
+//去掉右边的空白 www.2cto.com
+function trimRight(s){
+    if(s == null) return "";
+    var whitespace = new String(" \t\n\r");
+    var str = new String(s);
+    if (whitespace.indexOf(str.charAt(str.length-1)) != -1){
+        var i = str.length - 1;
+        while (i >= 0 && whitespace.indexOf(str.charAt(i)) != -1){
+           i--;
+        }
+        str = str.substring(0, i+1);
+    }
+    return str;
 }
 
 exports["trim"] = trim;
@@ -205,7 +205,7 @@ function imgMove(record,callback){
   //       }
   //     })
   // }
-  
+
   let body_ = document.querySelector("body");
   let img = document.createElement("img");
   img.setAttribute("style","width:30px;height:30px;position:absolute;z-index:9999999999;pointer-events:none;");
@@ -328,3 +328,28 @@ function initalPoints (points) {
 }
 
 exports["initalPoints"] = initalPoints;
+
+
+
+/*
+  把浮点数保留小数点后两位的处理方法
+*/
+
+function timeLayoutHandler (time) {
+  var f_x = parseFloat(time); 
+   if (isNaN(f_x)){ 
+       return '0.00'; 
+   } 
+    var f_x = Math.round(f_x*100)/100; 
+    var s_x = f_x.toString(); 
+    var pos_decimal = s_x.indexOf('.'); 
+    if (pos_decimal < 0){ 
+        pos_decimal = s_x.length; 
+        s_x += '.'; 
+    } 
+    while (s_x.length <= pos_decimal + 2){ 
+        s_x += '0'; 
+    }
+  return s_x;
+}
+exports["timeLayoutHandler"] = timeLayoutHandler;

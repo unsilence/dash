@@ -12,9 +12,13 @@ import { casesOption } from "./models/Cases.js";
 import { brandOption } from './models/Brand'
 import { stockOption } from './models/Stock'
 import { addHistoryBannerOption } from './models/HistoryBanner.js'
+import { recommendHistoryOption } from "./models/RecomHistory.js";
 
 
-['ProjectInfo', 'NavManage', 'HotProduct', 'CaseManage', 'Banner', 'HistoryBanner', 'Recom', 'Recommend', 'Category', 'Customer', 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute', 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
+['Recoms/Historyrecom','ProjectInfo', 'NavManage', 'HotProduct', 'CaseManage', 'Banner',
+'HistoryBanner', 'Recom', 'Recommend', 'Category', 'Customer', 'Order',
+'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute',
+'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
   exports[cls + 'Model'] = generate(cls.toLowerCase() + 's', cls + 'Service');
 });
 
@@ -30,6 +34,7 @@ casesOption(exports["CaseModel"]);
 brandOption(exports["BrandModel"]);
 stockOption(exports["StockModel"]);
 addHistoryBannerOption(exports["HistoryBannerModel"]);
+recommendHistoryOption(exports["Recoms/HistoryrecomModel"])
 
 exports['login'] = function () { return service.login() }
 exports['checkAccount'] = function () { return service.checkAccount() }
@@ -160,7 +165,7 @@ exports["removeNavList"] = function (id, num) {
 // exports['SkuModel'].effects.add = function* ({ payload: { product, values, message } }, { call, put, select }) {
 //   console.log('patch', { product }, values, service)
 
-//   // 判断 是更新，还是 新添加 
+//   // 判断 是更新，还是 新添加
 //   let skus = values.skus;
 
 //   // 这里还需要一步操作，判断当前value 中是否已经生成过，如果生成过如何处理。
@@ -175,7 +180,7 @@ exports["removeNavList"] = function (id, num) {
 
 //   //判断状态
 //   let existIds = list.map(v => { return v._id });
-//   let existStocks = yield call(service['getDataService'], 'Stock', { 'skuId': { "$in": existIds } });//今后还需要加条件 
+//   let existStocks = yield call(service['getDataService'], 'Stock', { 'skuId': { "$in": existIds } });//今后还需要加条件
 
 //   let modifySkus = [];
 //   let addSkus = [];
@@ -293,6 +298,3 @@ exports["removeNavList"] = function (id, num) {
 //   }
 //   yield put({ type: 'save22', payload: rd });
 // }
-
-
-

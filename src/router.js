@@ -47,7 +47,7 @@ function RouterConfig({ history }) {
       <Route path="/serials" component={Serials} />
       <Route path="/login" component={Login} />
       <Route path="/recoms" component={Recommend.Recommends} />
-      <Route path="/recoms/historyRecom" component={Recommend.RecommendsHistory} />
+      <Route path="/recoms/historyrecoms" component={Recommend.RecommendsHistory} />
     </Router>
   );
 }

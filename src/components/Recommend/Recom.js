@@ -3,8 +3,10 @@ import { connect } from 'dva';
 import { Table, Pagination, Popconfirm ,Row,Col,Button,Icon,Input , Modal} from 'antd';
 import { routerRedux , browserHistory } from 'dva/router';
 import styles from '../list.less';
-let PAGE_SIZE = 5
+let PAGE_SIZE = 5;
+let PAGE_SIZE_P = 5;
 import RecomModal from './RecomModal';
+import {timeLayoutHandler} from "../utils.js";
 import moment from 'moment'
 
 const dateFormat = 'YYYY/MM/DD  hh:mm:ss';
@@ -21,7 +23,9 @@ class Recoms extends React.Component{
       total : props.total,
       current : props.page,
       dispatch:props.dispatch,
-      resourcesData : props.resourcesData
+      resourcesData : props.resourcesData,
+      page:props.page ? props.page.page : 1,
+      rpage:props.page ? props.page.rpage : 1
     }
   }
   componentWillReceiveProps(nextProps){
@@ -31,7 +35,9 @@ class Recoms extends React.Component{
       total : nextProps.total,
       current : nextProps.page,
       dispatch:nextProps.dispatch,
-      resourcesData : nextProps.resourcesData
+      resourcesData : nextProps.resourcesData,
+      page:nextProps.page.page,
+      rpage:nextProps.page.rpage
     })
   }
   deleteHandler = (itm) => {
@@ -45,6 +51,12 @@ class Recoms extends React.Component{
     this.state.dispatch(routerRedux.push({
       pathname: '/recoms',
       query: { page },
+    }));
+  }
+  pageChangeHandlerZ = (rpage) => {
+    this.state.dispatch(routerRedux.push({
+      pathname: '/recoms',
+      query: { rpage },
     }));
   }
 
@@ -65,20 +77,22 @@ class Recoms extends React.Component{
   /*
     下线按钮的方法
   */
-  downLineHandler = (value) => {
-    console.log(value);
+  downLineHandler = (value1) => {
+    let value = {};
     value.is_online = false;
     value.is_history = true;
-    this.editHandler(value._id,value);
+    value.pend = true;
+    this.editHandler(value1._id,value);
   }
   /*
     发布上线按钮的方法
   */
-  upLineHandler = (value) => {
-    console.log(value);
+  upLineHandler = (value1) => {
+    let value = {};
     value.is_online = true;
     value.is_history = false;
-    this.editHandler(value._id,value);
+    value.pstart = true;
+    this.editHandler(value1._id,value);
     this.setState({
       visible : true,
     })
@@ -176,14 +190,62 @@ class Recoms extends React.Component{
   发布时长的数据计算方法
 */
 endAtHandler = (time) => {
-
+  let tim = new Date(time).getTime();
+  let nowTim = new Date().getTime();
+  let tl = (nowTim - tim) / 1000 / 60 / 60;
+  if(tl < 0){
+    tl = 0;
+  }
+  let dt = timeLayoutHandler(tl);
+  let date;
+  if(parseFloat(dt)  >= 72){
+    date = timeLayoutHandler(parseFloat(dt) / 24) + "天";
+  }else{
+    date = dt+"小时";
+  }
+  return  date;
 }
 /*
   历史推荐跳转路由方法
 */
 historyRecommendHandler = (e) => {
   e.preventDefault();
-  browserHistory.push('/recoms/historyRecom');
+  browserHistory.push('/recoms/historyrecoms');
+}
+
+/*
+  排序样式的方法
+*/
+getRank = (record) => {
+  let opts = [];
+  if ((this.state.dataSource.indexOf(record) + PAGE_SIZE_P * (this.state.page ? this.state.page - 1 : 0)) === 0) {
+    opts.push(<Icon type="arrow-down" key="arrow-down" onClick={() => { this.upbottom(record) }} style={{ marginRight: "10px",cursor:"pointer"}} />)
+  } else if ((this.state.dataSource.indexOf(record) + PAGE_SIZE_P * (this.state.page ? this.state.page - 1 : 0)) === this.state.total - 1) {
+    opts.push(<Icon type="arrow-up" key="arrow-up" onClick={() => { this.upOnline(record) }} style={{ marginRight: "10px" ,cursor:"pointer"}} />);
+  } else {
+    opts.push(<Icon type="arrow-up" key="arrow-up" onClick={() => { this.upOnline(record) }} style={{ marginRight: "10px",cursor:"pointer" }} />);
+    opts.push(<Icon type="arrow-down" key="arrow-down" onClick={() => { this.upbottom(record) }} style={{ marginRight: "10px" ,cursor:"pointer"}} />)
+  }
+  return <div> {opts}</div>
+}
+/*
+  排序的向上按钮
+*/
+upOnline = (serial) => {
+  this.state.dispatch({
+    type:"recoms/uptop",
+    payload : {record : serial}
+  })
+}
+
+/*
+  排序向下的按钮
+*/
+upbottom = (serial) => {
+  this.state.dispatch({
+    type: 'recoms/upbottom',
+    payload: { record : serial, searchWords: this.state.searchWords },
+  });
 }
 render () {
   console.log(this.state.dataSource);
@@ -200,19 +262,25 @@ render () {
     },
     {
       title: '发布时间',
-      dataIndex: 'create_at',
-      key: 'create_at',
+      dataIndex: 'pstart',
+      key: 'pstart',
       render: text => <span>{moment(text).format(dateFormat)}</span>
     },
     {
       title: '发布时长',
-      dataIndex: 'end_at',
-      key: 'end_at'
+      dataIndex: 'pstart',
+      key: 'pstart_at_1',
+      render : text => <span>{this.endAtHandler(text)}</span>
     },
     {
       title: '点击量',
       dataIndex: 'hot',
       key: 'hot',
+    },
+    {
+      title : "排序",
+      key : "sort",
+      render : (text,serial) => this.getRank(serial)
     },
     {
       title: '操作',
@@ -274,7 +342,7 @@ render () {
             <Col span={8}>
               <Button style={{marginRight : "16px"}} onClick={this.historyRecommendHandler}>历史推荐</Button>
               <Button style={{marginRight : "16px"}}>操作日志</Button>
-              <RecomModal recommend={{}} onOk={this.editHandler}>
+              <RecomModal recommend={{}} onOk={(values) => this.editHandler(null,values)}>
                 <Button>添加推荐</Button>
               </RecomModal>
             </Col>
@@ -312,7 +380,7 @@ render () {
               total={this.state.total}
               current={this.state.current}
               pageSize={PAGE_SIZE}
-              onChange={this.pageChangeHandler}
+              onChange={this.pageChangeHandlerZ}
             />
           </Col>
         </Row>
