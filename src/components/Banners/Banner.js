@@ -67,11 +67,13 @@ class Banners extends React.Component {
   }
 
   offlineHandle = (id, values) => {
-    values.is_online = false;
-    values.is_history = true;
+    let obj = {};
+    obj.is_online = false;
+    obj.is_history = true;
+    obj.pend = true;
     this.state.dispatch({
       type: 'banners/patch',
-      payload: { id, values, searchWords: this.state.searchWords },
+      payload: { id, values : obj, searchWords: this.state.searchWords },
     });
   }
 
@@ -111,13 +113,16 @@ class Banners extends React.Component {
     })();
   }
 
-  downLine = (record) => {
-    record.is_online = false;
-    this.state.dispatch({
-      type: 'banners/patch',
-      payload: { id: record._id, values: record, searchWords: this.state.searchWords },
-    });
-  }
+  // downLine = (record) => {
+  //   let value = {};
+  //   value.is_online = false;
+  //   value.is_history = true;
+  //   value.pend = true;
+  //   this.state.dispatch({
+  //     type: 'banners/patch',
+  //     payload: { id: record._id, values: value, searchWords: this.state.searchWords },
+  //   });
+  // }
 
   getImg = (images) => {
     if (images.length > 0) {
@@ -153,8 +158,11 @@ class Banners extends React.Component {
   // 资源池  发布按钮的方法
   upLineHandler = (record) => {
     if(record.title && record.image){
-      record.is_online = true;
-      this.editHandler(record._id,record);
+      let value = {};
+      value.is_online = true;
+      value.is_history = false;
+      value.pstart = true;
+      this.editHandler(record._id,value);
     }else{
       message.warning('请填写完整数据');
     }
@@ -176,8 +184,8 @@ class Banners extends React.Component {
       },
       {
         title: '发布时间',
-        dataIndex: 'create_at',
-        key: 'create_at',
+        dataIndex: 'pstart',
+        key: 'pstart',
         render: text => <span>{moment(text).format(dateFormat)}</span>
       },
       {

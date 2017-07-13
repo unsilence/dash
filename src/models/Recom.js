@@ -6,9 +6,17 @@ export var recommendOption = function (recom) {
         // 无条件的
         const recoms = yield call(service["fetchRecommendPage"], 'Recommend', {"itype": "2","is_online": true, "is_history": false  },page,5,{ "rank": -1, "update_at": 1 });
         // 获取非历史  资源池里的数据
-        const resource = yield call(service["fetchRecommendPage"], 'Recommend', {"itype": "2","is_online": false, "is_history": false  },rpage,5,{ "rank": -1, "update_at": 1 });
-        const rd = { data:{updata:recoms.data.data.list, resourcesData:resource.data.data.list,page:parseInt(page),rpage:parseInt(rpage)} ,
-                     total: {updata:recoms.data.data.count,resourcesData:resource.data.data.count},
+        let filter = {};
+        if(searchWords && searchWords !== ''){
+            filter["title"] ={"$regex":searchWords};
+        }
+        const resource = yield call(service["fetchRecommendPage"], 'Recommend', Object.assign({ "itype": "2", "is_online": false, "is_history": false },filter), rpage, 5);
+
+        const rd = { data: {
+                        p: { data: recoms.data.data.list, total: recoms.data.data.count, page: parseInt(page) },
+                        r: { data: resource.data.data.list, total: resource.data.data.count, page: parseInt(rpage) }
+                      },
+                     searchWords:searchWords
                    }
         console.log(rd);
         yield put({ type: 'save22', payload: rd });

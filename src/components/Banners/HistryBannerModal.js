@@ -2,9 +2,13 @@ import React, { Component } from 'react';
 import { Modal, Button, Table, Icon, Row, Pagination, Popconfirm,Col,Input} from 'antd';
 import { routerRedux } from 'dva/router';
 import styles from '../item.less';
-
+import * as service from '../../services';
 import { connect } from 'dva';
 
+import {timeLayoutHandler} from "../utils.js";
+import moment from 'moment'
+
+const dateFormat = 'YYYY/MM/DD  hh:mm:ss';
 
 class HistryBannerModal extends Component {
 
@@ -12,10 +16,19 @@ class HistryBannerModal extends Component {
     super(props);
     this.state = {
       visible: false,
-      searchWords:''
+      searchWords:'',
+      user : {}
     };
   }
-
+  componentDidMount () {
+    this.userdata();
+  }
+  userdata = async () => {
+      let user = await service["UserService"].fetch({filter : {"cnum" : JSON.parse(localStorage.user).cnum}});
+      this.setState({
+        user : user.data.data.list[0]
+      })
+  }
    deleteHandler = (itm) => {
     console.log('deleteHandler', itm)
     this.props.dispatch({
@@ -66,9 +79,21 @@ class HistryBannerModal extends Component {
     else{
       this.setState({ "searchWords": e });
     }
-    
-  }
 
+  }
+  timeLayoutHandler = (record) => {
+    console.log(record);
+    let startTm = new Date(record.pstart).getTime();
+    let endTm = new Date(record.pend).getTime();
+    let date;
+    let tm = timeLayoutHandler((endTm - startTm) / 1000 / 60 / 60);
+    if( tm < 72 ) {
+      date = tm + "小时";
+    }else{
+      date = timeLayoutHandler(tm / 24)+"天";
+    }
+    return date;
+  }
   render() {
     // let {children} = this.props;
     const columns = [{
@@ -82,20 +107,27 @@ class HistryBannerModal extends Component {
       key: 'title'
     }, {
       title: '发布时间',
-      dataIndex: '',
-      key: '',
+      dataIndex: 'pstart',
+      key: 'pstart',
+      render : (text,record) => <span>{moment(text).format(dateFormat)}</span>
     }, {
       title: '结束时间',
-      key: '',
+      dataIndex:"pend",
+      key: 'pend',
+      render : (text,record) => <span>{moment(text).format(dateFormat)}</span>
     }, {
       title: "发布时长",
-      dataIndex: ""
+      key:"uplineTime",
+      render : (text,record) => <span>{this.timeLayoutHandler(record)}</span>
     }, {
       title: "操作账户",
-      dataIndex: ""
+      key: "userName",
+      render : () => <span>{this.state.user.phone}</span>
     }, {
       title: "点击量",
-      dataIndex: ""
+      dataIndex: "hot",
+      key:"hot",
+      render : (text,record) => <span>{text ? text : 0}</span>
     }, {
       title: "操作",
       dataIndex: "",

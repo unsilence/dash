@@ -21,11 +21,12 @@ class Recoms extends React.Component{
       dataSource : props.dataSource || [],
       loading : props.loading,
       total : props.total,
-      current : props.page,
+      current : props.resourcesTotal,
       dispatch:props.dispatch,
       resourcesData : props.resourcesData,
-      page:props.page ? props.page.page : 1,
-      rpage:props.page ? props.page.rpage : 1
+      page:props.page,
+      rpage:props.page,
+      searchWords : props.searchWords ||  ""
     }
   }
   componentWillReceiveProps(nextProps){
@@ -33,11 +34,12 @@ class Recoms extends React.Component{
       dataSource : nextProps.dataSource,
       loading : nextProps.loading,
       total : nextProps.total,
-      current : nextProps.page,
+      current : nextProps.resourcesTotal,
       dispatch:nextProps.dispatch,
       resourcesData : nextProps.resourcesData,
-      page:nextProps.page.page,
-      rpage:nextProps.page.rpage
+      page:nextProps.page,
+      rpage:nextProps.rpage,
+      searchWords : nextProps.searchWords
     })
   }
   deleteHandler = (itm) => {
@@ -50,13 +52,13 @@ class Recoms extends React.Component{
   pageChangeHandler = (page) => {
     this.state.dispatch(routerRedux.push({
       pathname: '/recoms',
-      query: { page },
+      query: { page ,rpage: this.state.rpage, searchWords: this.state.searchWords},
     }));
   }
   pageChangeHandlerZ = (rpage) => {
     this.state.dispatch(routerRedux.push({
       pathname: '/recoms',
-      query: { rpage },
+      query: { page: this.state.ppage, rpage: page, searchWords: this.state.searchWords },
     }));
   }
 
@@ -120,72 +122,16 @@ class Recoms extends React.Component{
       resourceSelectData : {}
     })
   }
-  /*
-  选择发布位置弹出框的item 选择方法
-  */
-  // selectPositionHandler = (v,index) => {
-  //   this.state.isClick = {};
-  //   if(v.rank){
-  //       this.state.isClick[v.rank] = true;
-  //   }else{
-  //       this.state.isClick[index+1] = true;
-  //   }
-  //
-  //   this.setState({
-  //     isClick : this.state.isClick,
-  //     rank : index+1
-  //   })
-  // }
+
   /*
   删除已发布的组件
   <Popconfirm title={"确定要删除推荐吗？"} onConfirm={() => this.deleteHandler(serial)}>
     <Icon type="delete" className={styles.icon}/>
   </Popconfirm>
 
-  <Modal
-    title="请选择要发布的推荐位置"
-    visible={this.state.visible}
-    onOk={this.handleOk}
-    onCancel={this.handleCancel}
-    width={800}
-    >
-    <div style={{width:"100%",height:"300px"}}>
-      <Row gutter={20}>
-        {
-          this.disposePositionDataHandler(this.state.dataSource).map((v,index) => (
-            <Col span={6} key={index}>
-              <div style={{width:"100%",height:"120px",marginBottom:"30px",}}
-                className={this.state.isClick[index+1] ? styles.isClick : styles.noClick}
-                onClick={() => this.selectPositionHandler(v,index)}
-              >
-              {
-                v.image ?
-                <img src={"/api/file/" + v.image} style={{width:"100%",height:"100%"}}/> :
-                <span className={styles.modelItem}>{(index+1)}</span>
-               }
-              </div>
-            </Col>
-          ))
-        }
-      </Row>
-    </div>
-  </Modal>
+
   */
-/*
-  对选择推荐发布位置的数据进行处理
-*/
-// disposePositionDataHandler = (arr) => {
-//   let sortArr = [];
-//   if(arr.length > 0) {
-//     for(let i = 0;i< 8 ; i++ ){
-//       sortArr.push({});
-//     }
-//     arr.forEach(v => {
-//       sortArr.splice((v.rank-1),1,v);
-//     })
-//   }
-//   return sortArr;
-// }
+
 /*
   发布时长的数据计算方法
 */
@@ -234,7 +180,7 @@ getRank = (record) => {
 upOnline = (serial) => {
   this.state.dispatch({
     type:"recoms/uptop",
-    payload : {record : serial}
+    payload : {record : serial , searchWords: this.state.searchWords }
   })
 }
 
@@ -246,6 +192,13 @@ upbottom = (serial) => {
     type: 'recoms/upbottom',
     payload: { record : serial, searchWords: this.state.searchWords },
   });
+}
+search = (e) => {
+  if(e.target){
+    this.setState({
+      searchWords : e.target.value
+    })
+  }
 }
 render () {
   console.log(this.state.dataSource);
@@ -335,37 +288,50 @@ render () {
   return (
     <div className={styles.normal}>
       <div>
-        <Row type="flex" justify="space-between" gutter={16}>
-            <Col span={16}>
-              <Input />
-            </Col>
-            <Col span={8}>
-              <Button style={{marginRight : "16px"}} onClick={this.historyRecommendHandler}>历史推荐</Button>
-              <Button style={{marginRight : "16px"}}>操作日志</Button>
-              <RecomModal recommend={{}} onOk={(values) => this.editHandler(null,values)}>
-                <Button>添加推荐</Button>
-              </RecomModal>
-            </Col>
-        </Row>
-        <Table
-          columns={columns}
-          dataSource={this.state.dataSource}
-          loading={this.state.loading}
-          rowKey={serial => serial._id}
-          pagination={false}
-        />
-      <Row>
-        <Col>
-          <Pagination
-            className="ant-table-pagination"
-            total={this.state.total}
-            current={this.state.current}
-            pageSize={PAGE_SIZE}
-            onChange={this.pageChangeHandler}
+        <div style={{marginBottom:"20px"}}>
+          <Row type="flex" justify="space-between" gutter={16}>
+              <Col span={16}>
+                <Input.Search
+                  type="text"
+                  placeholder="搜索"
+                  size="default"
+                  value={this.state.searchWords}
+                  onChange={v => this.search(v)}
+                  onSearch={v => { this.search(v); this.pageChangeHandlerZ() }}
+                />
+              </Col>
+              <Col span={8}>
+                <Button style={{marginRight : "16px"}} onClick={this.historyRecommendHandler}>历史推荐</Button>
+                <Button style={{marginRight : "16px"}}>操作日志</Button>
+                <RecomModal recommend={{}} onOk={(values) => this.editHandler(null,values)}>
+                  <Button>添加推荐</Button>
+                </RecomModal>
+              </Col>
+          </Row>
+        </div>
+        <div style={{position:"relative"}}>
+          <span style={{position:"absolute",left:"-5px",top:"0px",display:"inline-block",width:"15px",zIndex:"5000"}}>已发布</span>
+          <Table
+            columns={columns}
+            dataSource={this.state.dataSource}
+            loading={this.state.loading}
+            rowKey={serial => serial._id}
+            pagination={false}
           />
-        </Col>
-      </Row>
-
+          <Row>
+            <Col>
+              <Pagination
+                className="ant-table-pagination"
+                total={this.state.total}
+                current={this.state.current}
+                pageSize={PAGE_SIZE}
+                onChange={this.pageChangeHandler}
+              />
+            </Col>
+          </Row>
+      </div>
+      <div style={{position:"relative"}}>
+        <span style={{position:"absolute",left:"-5px",top:"0px",display:"inline-block",width:"15px",zIndex:"5000"}}>资源池</span>
         <Table
           columns={resource}
           dataSource={this.state.resourcesData}
@@ -385,22 +351,30 @@ render () {
           </Col>
         </Row>
       </div>
+      </div>
     </div>
   );
 }
 }
 
 function mapStateToProps(state) {
-  const {list, total, page ,categoryMap} = state.recoms;
-  return {
-    loading: state.loading.models.recoms,
-    dataSource:list.updata,
-    resourcesData:list.resourcesData,
-    total:total ? total.updata : 1,
-    resourcesTotal:total ? total.resourcesData : 1,
-    page,
-    categoryMap
-  };
+  const {list, page ,categoryMap,searchWords} = state.recoms;
+  if (Array.isArray(list)) {
+    return { loading: state.loading.models.recoms,searchWords:searchWords }
+  }else{
+    return {
+      loading: state.loading.models.recoms,
+      dataSource:list.p.data,
+      resourcesData:list.r.data,
+      total:list.p.total ? list.p.total : 1,
+      resourcesTotal:list.r.total ? list.p.total : 1,
+      searchWords:list.searchWords,
+      page : list.p.page,
+      rpage : list.r.rpage,
+      categoryMap
+    };
+  }
+
 }
 
 function mapDispatchToProps(dispatch) {
