@@ -34,8 +34,8 @@ export default class HotProductsRadio extends Component {
             }
           })
         }
-      } 
-    } 
+      }
+    }
     this.setState({
       childValue : options
     })
@@ -50,7 +50,7 @@ export default class HotProductsRadio extends Component {
   }
   onOk = (_value) => {
     console.log(_value);
-    const { dispatch ,hotList} = this.props;
+    const { dispatch ,hotList,searchWords,ppage,rpage,infoCheck} = this.props;
     let hotProduct = [];
     let id = Object.keys(hotList)[0];
     _value.forEach(v => {
@@ -63,12 +63,12 @@ export default class HotProductsRadio extends Component {
     if(id){
       dispatch({
         type: 'hotproducts/hotpatch',
-        payload: { id, values },
+        payload: { id, values,ppage,rpage,searchWords ,categoryId:this.state.value ? this.state.value : infoCheck},
       })
     }else{
       dispatch({
         type: 'hotproducts/addCategory',
-        payload: { id, values },
+        payload: { id, values,ppage,rpage,searchWords,categoryId:this.state.value ? this.state.value : infoCheck},
       })
     }
   }
@@ -93,12 +93,12 @@ export default class HotProductsRadio extends Component {
   // }
   render(){
     const { categoryMap ,infoCheck , list ,hotList} = this.props;
-    
+
     let categoryList = [];
     for(let v in categoryMap){
       categoryList.push(categoryMap[v]);
     }
-    
+
     return (
         <span>
           <Row type="flex" justify="start" gutter={10} style={{marginBottom : "10px" ,marginTop : "10px"}}>
@@ -116,7 +116,7 @@ export default class HotProductsRadio extends Component {
                     </HotProductsRadioModal>
                 </Col>
            </Row>
-        </span>     
+        </span>
       )
   }
 }

@@ -108,6 +108,12 @@ class Recommends extends Component{
     let obj ={};
     obj.is_online = true;
     obj.pstart = true;
+    this.state.plist.forEach(v => {
+      if(v.rank === value.rank){
+        v.rank = "";
+      }
+    })
+    obj.rank = value.rank;
     this.editHandler(value._id,obj);
   }
   goHistoryHandler = (e) => {
@@ -121,6 +127,7 @@ class Recommends extends Component{
     let value = {};
     value.is_online = false;
     value.is_history = true;
+    value.rank = "";
     value.pend = true;
     this.editHandler(serial._id,value);
   }
@@ -204,8 +211,12 @@ render () {
       key: 'operation',
       render: (text, serial) => (
         <span className={styles.operation2}>
-          <SelectPositionModalComponent plist={this.state.plist} >
-            <Button style={{marginRight:"20px"}} type="danger" onClick={() => {}}>发布</Button>
+          <SelectPositionModalComponent
+            plist={this.state.plist}
+            onHandler={(value) => this.upLineHandler(value)}
+            slectItem={serial}
+          >
+            <Button style={{marginRight:"20px"}} type="danger">发布</Button>
           </SelectPositionModalComponent>
           <CaseManageModal casemanage={serial} onOk={(values) => this.editHandler(serial._id,values)}>
             <Button type="edit">编辑</Button>

@@ -2,8 +2,7 @@ import * as service from './../services';
 
 export var hotProductsOption = function (hotProduct) {
 
-    hotProduct.effects.fetch = function* ({ payload: { id,page } }, { call, put }) {
-        // 无条件的
+    hotProduct.effects.fetch = function* ({ payload: { id,page, rpage,searchWords } }, { call, put }) {
         const hotCategory = yield call(service["getSystemMap"],"System")
         let hotList = {};
         let ids;
@@ -13,20 +12,34 @@ export var hotProductsOption = function (hotProduct) {
                 ids = JSON.parse(v.value);
             }
         })
-        console.log(hotList);
+        const categoryMap = yield call(service["getCategoryMap"],"Category");
         let _id ;
         id ? _id = id : _id = (ids&&ids.length > 0 ? ids[0] : null);
-        console.log(_id);
-        let filter = { itype: '4'};
+        // 已发布数据请求的过滤对象
+        let filter = { itype: '4',"is_online" : true , "is_history" : false};
         if(_id){
             filter['category_num'] = _id;
         }
-        const hotproducts = yield call(service["fetchHotProductPage"], 'Recommend', filter,{page});
-        const categoryMap = yield call(service["getCategoryMap"],"Category");
-        console.log(categoryMap);
-        console.log(hotproducts);
-        console.log(hotCategory);
-        const rd = { data: hotproducts.data.data.list, total: hotproducts.data.data.count, page: parseInt(page) ,categoryMap , hotList}
+        // 资源池数据请求的过滤对象
+        let historyFilter = {"itype" : "4" , "is_online" : false , "is_history" : false };
+        if(_id){
+          historyFilter['category_num'] = _id;
+        }
+        // 获取 已上线的热品推荐数据请求
+        const hotproducts = yield call(service["fetchHotProductPage"], 'Recommend', filter,page,5);
+
+        // 获取资源池中的 热品推荐数据请求
+        const resource = yield call(service["fetchHotProductPage"], 'Recommend', historyFilter,rpage,5);
+
+        const rd = {
+            data: {
+                p: { data: hotproducts.data.data.list, total: hotproducts.data.data.count, page: parseInt(page) },
+                r: { data: resource.data.data.list, total: resource.data.data.count, page: parseInt(rpage) }
+            },
+            searchWords:searchWords,
+            categoryMap,
+            hotList
+        }
         yield put({ type: 'save22', payload: rd });
     }
 
@@ -44,24 +57,24 @@ export var hotProductsOption = function (hotProduct) {
         const page = yield select(state => state['recommends'].page);
         yield put({ type: 'fetch', payload: { page , id : categoryId} });
     }
-    hotProduct.effects.patch = function* ({ payload: { id, values } }, { call, put, select }) {
+    hotProduct.effects.patch = function* ({ payload: { id, values,categoryId,ppage,rpage,searchWords } }, { call, put, select }) {
         console.log('patch', { id })
         yield call(service['RecommendService'].update, id, values);
-        const page = yield select(state => state['recommends'].page);
-        yield put({ type: 'fetch', payload: { id : values.category_num,page } });
+        // const page = yield select(state => state['recommends'].page);
+        yield put({ type: 'fetch', payload: { id : categoryId,page : ppage , rpage, searchWords} });
     }
-    hotProduct.effects.addCategory = function* ({ payload: { id, values } }, { call, put, select }) {
+    hotProduct.effects.addCategory = function* ({ payload: { id, values,ppage,rpage,searchWords,categoryId} }, { call, put, select }) {
         // let recommendRes = yield call(service['getRecommendMap'], 'Recommend');
         // values.order = Object.keys(recommendRes).length + 1;
         // yield call(service['RecommendService'].insert, values);
         yield call(service['SystemService'].insert, values);
         const page = 1;
-        yield put({ type: 'fetch', payload: { page } });
+        yield put({ type: 'fetch', payload: {id:categoryId, page: ppage,rpage,searchWords } });
     }
-    hotProduct.effects.hotpatch = function* ({ payload: { id, values } }, { call, put, select }) {
+    hotProduct.effects.hotpatch = function* ({ payload: { id, values,ppage,rpage,searchWords,categoryId } }, { call, put, select }) {
         console.log('patch', { id })
         yield call(service['SystemService'].update, id, values);
         const page = 1;
-        yield put({ type: 'fetch', payload: { page } });
+        yield put({ type: 'fetch', payload: { id:categoryId,page: ppage,rpage,searchWords} });
     }
 }

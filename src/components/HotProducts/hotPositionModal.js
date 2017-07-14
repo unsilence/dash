@@ -6,7 +6,7 @@ import style from "../list.less";
 
 
 
-class SelectPositionModalComponent extends Component {
+class HotSelectPositionModalComponent extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -55,12 +55,12 @@ class SelectPositionModalComponent extends Component {
   */
   handleOk = () => {
     const { onHandler } = this.props;
-    onHandler(this.state.slectItem);
     this.setState({
       isClick:{},
       rank:"",
       slectItem : {}
     })
+    onHandler(this.state.slectItem);
   }
   /*
     对选择推荐发布位置的数据进行处理
@@ -68,14 +68,14 @@ class SelectPositionModalComponent extends Component {
   disposePositionDataHandler = (arr) => {
     let sortArr = [];
     if(arr.length > 0) {
-      for(let i = 0;i< 5 ; i++ ){
+      for(let i = 0;i< 7 ; i++ ){
         sortArr.push({});
       }
       arr.forEach(v => {
         sortArr.splice((v.rank-1),1,v);
       })
     }else{
-      for(let i = 0;i< 5 ; i++ ){
+      for(let i = 0;i< 7 ; i++ ){
         sortArr.push({});
       }
     }
@@ -96,8 +96,7 @@ class SelectPositionModalComponent extends Component {
   }
   render () {
     let arr = this.disposePositionDataHandler(this.state.plist);
-    console.log(arr);
-    let dataArr = this.disposePositionDataHandler(this.state.plist).slice(1,this.disposePositionDataHandler(this.state.plist).length);
+    let dataArr = arr.slice(1,arr.length);
     return (
       <span>
         <span onClick={this.showModelHandler}>
@@ -108,11 +107,11 @@ class SelectPositionModalComponent extends Component {
           visible={this.state.visible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
-          width={800}
+          width={1000}
           >
           <div style={{width:"100%",height:"300px"}}>
             <Row gutter={20}>
-              <Col span={12}>
+              <Col span={8}>
                 <div className={this.state.isClick[1] ? style.selectLeft_big_pic : style.left_big_pic}
                   onClick={() => this.selectPositionHandler(0)}>
                   {
@@ -122,13 +121,14 @@ class SelectPositionModalComponent extends Component {
                   }
                 </div>
               </Col>
-              <Col span={12}>
+              <Col span={16}>
                 <div className={style.left_small_pic_box}>
                   {
                     dataArr.map((v,index) => (
                       <span className={this.state.isClick[(index+2)] ? style.selectLeft_small_pic_box_item : style.left_small_pic_box_item}
                             key={index}
                             onClick={() => this.selectPositionHandler(index+1)}
+                            style={{width:"200px"}}
                       >
                         {
                           v.image ?
@@ -148,4 +148,4 @@ class SelectPositionModalComponent extends Component {
   }
 }
 
-export default SelectPositionModalComponent;
+export default HotSelectPositionModalComponent;
