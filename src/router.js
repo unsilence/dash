@@ -15,7 +15,7 @@ import Login from "./routes/login.js";
 import * as Recommend from './routes/Recommends';
 import * as CaseManages from './routes/CaseManages';
 import * as HotProducts from './routes/HotProducts';
-import NavManages from "./routes/NavManages"
+import * as NavManages from "./routes/NavManages"
 import Spu from "./routes/Spu";
 import Sku from "./routes/Sku";
 import Stock from "./routes/Stock";
@@ -33,7 +33,8 @@ function RouterConfig({ history }) {
       <Route path="/casemanages/historyrecoms" component={CaseManages.CaseManagesHistory} />
       <Route path="/hotproducts" component={HotProducts.HotProducts} />
       <Route path="/hotproducts/historyrecoms" component={HotProducts.HotProductsHistory} />
-      <Route path="/navmanages" component={NavManages} />
+      <Route path="/navmanages" component={NavManages.NavManage} />
+      <Route path="/navmanages/historyrecoms" component={NavManages.NavProductsHistory} />
       <Route path="/brands" component={Brands} />
       <Route path="/cases" component={Cases} />
       <Route path="/tests" component={Tests} />

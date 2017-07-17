@@ -27,9 +27,12 @@ export var hotProductsOption = function (hotProduct) {
         }
         // 获取 已上线的热品推荐数据请求
         const hotproducts = yield call(service["fetchHotProductPage"], 'Recommend', filter,page,5);
-
+        let historyFilterSearchWord = {};
+        if(searchWords && searchWords !== ''){
+            historyFilterSearchWord["title"] ={"$regex":searchWords};
+        }
         // 获取资源池中的 热品推荐数据请求
-        const resource = yield call(service["fetchHotProductPage"], 'Recommend', historyFilter,rpage,5);
+        const resource = yield call(service["fetchHotProductPage"], 'Recommend', Object.assign({},historyFilter,historyFilterSearchWord) ,rpage,5);
 
         const rd = {
             data: {

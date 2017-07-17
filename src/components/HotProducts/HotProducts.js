@@ -165,6 +165,19 @@ class HotProducts extends Component{    //({ dispatch, list: dataSource, loading
     value.pend = true;
     this.editHandler(serial._id,value);
   }
+  /*
+  搜索方法
+  */
+  search = (e) => {
+    if(e.target){
+      this.setState({
+        searchWords : e.target.value
+      })
+    }
+  }
+  searchWordsHandler = () => {
+    this.rPageChangeHandler();
+  }
   render () {
   const columns = [
     {
@@ -254,6 +267,10 @@ class HotProducts extends Component{    //({ dispatch, list: dataSource, loading
               <Col span={16}>
                 <Input.Search
                   placeholder="搜索"
+                  size="default"
+                  value={this.state.searchWords}
+                  onChange={v => this.search(v)}
+                  onSearch={v => { this.search(v); this.searchWordsHandler() }}
                 />
               </Col>
               <Col span={8}>

@@ -19,7 +19,7 @@ class AddNavManageModal extends Component {
 
   componentWillUpdate(nextProps,  nextState){
 
-  } 
+  }
 
 
   componentDidMount() {
@@ -80,46 +80,46 @@ class AddNavManageModal extends Component {
     return (
       <span>
       <span onClick={this.showModelHandler}>
-      {children}
+        {children}
       </span>
       <Modal
-      title="添加推荐"
-      visible={this.state.visible}
-      onOk={this.okHandler}
-      onCancel={this.hideModelHandler}
+        title="添加推荐"
+        visible={this.state.visible}
+        onOk={this.okHandler}
+        onCancel={this.hideModelHandler}
       >
       <Form horizontal onSubmit={this.okHandler}>
-      <FormItem className={styles.FormItem} {...formItemLayout} label='URL'>
-      {getFieldDecorator('url', {initialValue:url,
-        rules: [{
-          type: 'url', message: '请输入正确URL地址!',
-        }],
-      })(
-      <Input type="url" placeholder="请输入URL地址" className={styles.FormInput} />
-      )}
-      </FormItem>
-      <FormItem className={styles.FormItem} {...formItemLayout} label="标题">
-      {getFieldDecorator('title', {initialValue:title,
-        rules: [{
-          type: 'string', message: '请输入正确标题地址!',
-        }],
-      })(
-      <Input type="text" placeholder="请输入标题" className={styles.FormInput} />
-      )}
-      </FormItem>
-      <FormItem className={styles.FormItem} {...formItemLayout} label="图片" >
-      <Upload multiple={true} action='/api/file/upload' showUploadList={false} listType="picture-card" onChange={this.handleChange}>
-      {
-        imageUrl?
-        <img style={{width:"50px",heigth:"50px"}} src={'/api/file/'+imageUrl}/>
-        :
-        uploadButton
-      }
-      </Upload>
-      </FormItem>
-      <FormItem style={{ marginLeft: 10 }} {...formItemLayout}>
-      <p>图片尺寸(100*200)</p>
-      </FormItem>
+        <FormItem className={styles.FormItem} {...formItemLayout} label='URL'>
+        {getFieldDecorator('url', {initialValue:url,
+          rules: [{
+            type: 'url', message: '请输入正确URL地址!',
+          }],
+        })(
+        <Input type="url" placeholder="请输入URL地址" className={styles.FormInput} />
+        )}
+        </FormItem>
+        <FormItem className={styles.FormItem} {...formItemLayout} label="标题">
+        {getFieldDecorator('title', {initialValue:title,
+          rules: [{
+            type: 'string', message: '请输入正确标题地址!',
+          }],
+        })(
+        <Input type="text" placeholder="请输入标题" className={styles.FormInput} />
+        )}
+        </FormItem>
+        <FormItem className={styles.FormItem} {...formItemLayout} label="图片" >
+          <Upload multiple={true} action='/api/file/upload' showUploadList={false} listType="picture-card" onChange={this.handleChange}>
+          {
+            imageUrl?
+            <img style={{width:"50px",heigth:"50px"}} src={'/api/file/'+imageUrl}/>
+            :
+            uploadButton
+          }
+          </Upload>
+        </FormItem>
+        <FormItem style={{ marginLeft: 10 }} {...formItemLayout}>
+        <p>图片尺寸(100*200)</p>
+        </FormItem>
       </Form>
       </Modal>
       </span>

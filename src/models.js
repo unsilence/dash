@@ -15,9 +15,10 @@ import { addHistoryBannerOption } from './models/HistoryBanner.js'
 import { recommendHistoryOption } from "./models/RecomHistory.js";
 import {casemanagesHistoryOption} from "./models/CasemanageHistory.js";
 import {hotproductsHistoryOption} from "./models/RecomHotHistory.js";
+import {navproductsHistoryOption} from "./models/NavHistory.js";
 
 
-["Hotproducts/Historyrecom","Casemanages/Historyrecom",'Recoms/Historyrecom','ProjectInfo', 'NavManage', 'HotProduct', 'CaseManage', 'Banner',
+["Navmanages/Historyrecom","Hotproducts/Historyrecom","Casemanages/Historyrecom",'Recoms/Historyrecom','ProjectInfo', 'NavManage', 'HotProduct', 'CaseManage', 'Banner',
 'HistoryBanner', 'Recom', 'Recommend', 'Category', 'Customer', 'Order',
 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case', 'Attribute',
 'Spu', 'Sku', 'Stock', 'Test'].map(cls => {
@@ -39,6 +40,7 @@ addHistoryBannerOption(exports["HistoryBannerModel"]);
 recommendHistoryOption(exports["Recoms/HistoryrecomModel"])
 casemanagesHistoryOption(exports["Casemanages/HistoryrecomModel"])
 hotproductsHistoryOption(exports["Hotproducts/HistoryrecomModel"])
+navproductsHistoryOption(exports["Navmanages/HistoryrecomModel"])
 
 exports['login'] = function () { return service.login() }
 exports['checkAccount'] = function () { return service.checkAccount() }

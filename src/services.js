@@ -17,8 +17,8 @@ async function request(url, dt) {
 }
 ['Address', 'Order', 'Nav', 'Recommend', 'Category', 'Customer',
 'Order', 'Country', 'Brand', 'Color', 'User', 'Serial', 'Case',
-'Attribute', 'Spu', 'Sku', 'Stock', 'Test', 'System',
-"Recoms/Historyrecom","Casemanages/Historyrecom","Hotproducts/Historyrecom"].map(cls => {
+'Attribute', 'Spu', 'Sku', 'Stock', 'Test', 'System','NavManage',
+"Recoms/Historyrecom","Casemanages/Historyrecom","Hotproducts/Historyrecom","Navmanages/Historyrecom"].map(cls => {
     exports[cls + 'Service'] = {
         fetch({ page = 1, limit = 10, filter = {} }) {
             return request(`/api/${cls}/fetch?token=${localStorage.token}`, { orderBy: { cnum: -1 }, limit: limit, startPos: limit * (page - 1), filter });
