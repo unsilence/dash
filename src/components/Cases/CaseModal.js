@@ -129,13 +129,8 @@ class CaseEditModal extends Component {
     console.log(nextprops);
     let points = [];
     if (nextprops.cases.points && nextprops.cases.points.length > 0) {
-      nextprops
-        .cases
-        .points
-        .forEach(v => {
-          nextprops
-            .skuList
-            .forEach(k => {
+      nextprops.cases.points.forEach(v => {
+          nextprops.skuList.forEach(k => {
               if (v.sku_num == k.cnum) {
                 points.push({span: v, prop: k})
               }
@@ -146,19 +141,13 @@ class CaseEditModal extends Component {
     if (nextprops.cases.images && nextprops.cases.images.length > 0) {
       let addAfter = [],
         addBefore = [];
-      nextprops
-        .cases
-        .images
-        .forEach(v => {
+      nextprops.cases.images.forEach(v => {
           if (v.case_type == "after") {
             addAfter.push(v)
           }
         })
 
-      nextprops
-        .cases
-        .images
-        .forEach(v => {
+      nextprops.cases.images.forEach(v => {
           if (v.case_type == "before") {
             addBefore.push(v)
           }
@@ -170,7 +159,7 @@ class CaseEditModal extends Component {
   }
 
   componentDidUpdate() {
-    utils.initalPoints(this.props.cases.points);
+    utils.initalPoints(this.state.points);
   }
   handleImgCancel = () => this.setState({previewVisible: false})
 
@@ -218,7 +207,7 @@ class CaseEditModal extends Component {
     this.setState({addBefore: fileList})
   }
   showModelHandler = (e) => {
-    if (e) 
+    if (e)
       e.stopPropagation();
     this.setState({visible: true});
   }
@@ -240,10 +229,7 @@ class CaseEditModal extends Component {
     const {onOk, cases} = this.props;
     let item = Object.assign({}, this.props.record);
 
-    this
-      .props
-      .form
-      .validateFields((err, values) => {
+    this.props.form.validateFields((err, values) => {
         if (!err) {
           // values.images = this.images;
           values.points = [];
@@ -251,13 +237,8 @@ class CaseEditModal extends Component {
           console.log(this.state.points);
           console.log(this.state.addAfter);
           if (this.state.points.length > 0) {
-            this
-              .state
-              .points
-              .forEach(v => {
-                values
-                  .points
-                  .push({"imgage_md5": this.state.addAfter[0].md5, "sku_num": v.prop.cnum, "position_x": v.span.style.left, "position_y": v.span.style.top})
+            this.state.points.forEach(v => {
+                values.points.push({"imgage_md5": this.state.addAfter[0].md5, "sku_num": v.prop.cnum, "position_x": v.span.position_x, "position_y": v.span.position_y})
               })
           }
           console.log(values);
@@ -348,8 +329,19 @@ class CaseEditModal extends Component {
   tagsHandler = (value) => {
     this.setState({tags: value})
   }
-  confirm = (id) => {
-    console.log("aaaaaaaaaaaaaaa");
+  /* 场景内商品列表 删除操作*/
+  confirm = (data) => {
+    console.log("aaaaaaaaaaaaaaa",data);
+    for(let i=0;i<this.state.points.length;i++){
+      if(this.state.points[i].prop.cnum === data.prop.cnum){
+        this.state.points.splice(i,1);
+        break;
+      }
+    }
+    utils.initalPoints(this.state.points)
+    this.setState({
+      points : this.state.points
+    })
   }
   render() {
     const {children, cases} = this.props;
@@ -441,13 +433,13 @@ class CaseEditModal extends Component {
       }, {
         title: "操作",
         key: "todo",
-        dataIndex: "todo",
+        dataIndex: "prop.cnum",
         render: (text, data) => {
           return (
             <Popconfirm
               placement="left"
               title={text}
-              onConfirm={(text) => this.confirm(text)}
+              onConfirm={() => this.confirm(data)}
               okText="确定"
               cancelText="取消">
               <span>删除</span>
@@ -529,7 +521,10 @@ class CaseEditModal extends Component {
           onCancel={this.hideModelHandler}
           width={1400}
           footer=
-          { [ < Button key = "delete" size = "large" onClick = { this.deleteHandler } > 删除 </Button>, <Button key="offline" size="large" loading={this.state.loading} onClick={this.offlineHandler}> 下架 </Button >, <Button key="submit" type="primary" size="large" loading={this.state.loading} onClick={this.okHandler}> 保存 </Button > ] }>
+          { [ <Button key = "delete" size = "large" onClick = { this.deleteHandler } > 删除 </Button>,
+              <Button key="offline" size="large" loading={this.state.loading} onClick={this.offlineHandler}> 下架 </Button >,
+              <Button key="submit" type="primary" size="large" loading={this.state.loading} onClick={this.okHandler}> 保存 </Button >
+          ] }>
           <Form horizontal onSubmit={this.okHandler}>
             <Row justify="space-between">
               <Col span={12}>
@@ -587,9 +582,7 @@ class CaseEditModal extends Component {
                     initialValue: cases.note
                   })(<Editor
                     icons={icons}
-                    onChange={this
-                    .handleAlter
-                    .bind(this)}
+                    onChange={this.handleAlter.bind(this)}
                     plugins={plugins}/>)}
                 </FormItem>
                 <FormItem className={styles.FormItem} {...formItemLayout} label="添加软装后案例图(长X宽)">
@@ -688,7 +681,18 @@ class CaseEditModal extends Component {
                     pagination={false}
                     onRowClick={(record, index) => {
                     utils.imgMove(record, (points) => {
-                      this.setState({points: points})
+                      let obj = {
+                        prop : points[0].prop,
+                        span : {
+                          image_md5:record.images[0].md5,
+                          position_x : points[0].span.style.left,
+                          position_y:points[0].span.style.top,
+                          sku_num:record.cnum
+                        }
+                      }
+                      this.state.points.push(obj);
+                      utils.initalPoints(this.state.points);
+                      this.setState({points: this.state.points})
                     });
                   }}/>
                 </Row>

@@ -5,11 +5,18 @@ export var casesOption = function (cases) {
     cases.effects.fetch = function* ({ payload: { page } }, { call, put }) {
         // 无条件的
         const cases = yield call(service["fetchCasePage"], 'Case', {},{page});
-        const skus = yield call(service["getSkuMap"], 'Sku');
+        // 获得cases 里的 sku_num;
+        let sku_numList = [];
+        cases.data.data.list.forEach(v => {
+          v.points.forEach(k => {
+            sku_numList.push(k.sku_num);
+          })
+        })
+        const skus = yield call(service["fetchSkuPage"], 'Sku',{"cnum":{"$in":sku_numList}});
         let skuList = [];
-        for(let sku in skus){
-            skuList.push(skus[sku]);
-        }
+        skus.data.data.list.forEach(v => {
+          skuList.push(v);
+        })
         const rd = { data: cases.data.data.list, total: cases.data.data.count, page: parseInt(page) ,skuList}
         console.log(rd);
         yield put({ type: 'save22', payload: rd });

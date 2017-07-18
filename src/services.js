@@ -99,7 +99,7 @@ function getMapByListCnum(list) {
 
 
 //带分页 有条件查询
-['Recommend', 'Banner', 'CaseManage', 'HotProduct', 'Nav', 'Order', 'Projectinfo', 'Case', 'System'].map(v => {
+['Recommend', 'Banner', 'CaseManage', 'HotProduct', 'Nav', 'Order', 'Projectinfo', 'Case', 'System',"Sku"].map(v => {
     exports[`fetch${v}Page`] = async function (v, filter, page, limit = 10, orderBy = { cnum: -1 }) {
         return await request(`/api/${v}/fetch?token=${localStorage.token}`, { filter: filter, page, limit, startPos: limit * (page - 1), orderBy});
     }

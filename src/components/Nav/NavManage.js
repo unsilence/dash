@@ -326,7 +326,8 @@ class NavManage extends Component { //{ dispatch, list: dataSource, loading, tot
             tablist={this.props.dataSource}
             okHandler={this.okHandler}
             isHasId={this.props.isHasId}/>
-          <div>
+          <div style={{position:"relative"}}>
+            <span style={{position:"absolute",left:"-5px",top:"0px",display:"inline-block",width:"15px",zIndex:"5000"}}>已发布</span>
             <Table
               columns={columns}
               dataSource={this.state.plist}
@@ -335,7 +336,8 @@ class NavManage extends Component { //{ dispatch, list: dataSource, loading, tot
               pagination={false}
             />
           </div>
-          <div style={{marginTop:"30px"}}>
+          <div style={{marginTop:"30px",position:"relative"}}>
+            <span style={{position:"absolute",left:"-5px",top:"0px",display:"inline-block",width:"15px",zIndex:"5000"}}>资源池</span>
             <Table
               columns={rColumns}
               dataSource={this.state.rlist}
